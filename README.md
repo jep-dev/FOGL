@@ -1,2 +1,2 @@
-# CitaDel
-Asynchronous MVC engine
+# GLOMP
+Graphics engine using OpenGL and OpenMP (under construction)
