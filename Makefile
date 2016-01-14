@@ -10,7 +10,7 @@ vpath %.hpp $(INCIDR)
 # CXX?=clang++
 CXX?=g++
 CPPFLAGS?=-std=c++11 -pthread
-EXE?=$(BINDIR)citadel
+EXE?=$(BINDIR)glomp
 WFLAGS?=# -Wno-non-template-friend
 LDFLAGS?=-fopenmp -lpthread \
 		 -lGL -lGLU \
