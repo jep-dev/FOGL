@@ -7,12 +7,13 @@ BINDIR=./bin/
 vpath %.cpp $(SRCDIR)
 vpath %.hpp $(INCIDR)
 
-CXX?=clang++
+CXX?=g++
 CPPFLAGS?=-std=c++11 -pthread
 EXE?=$(BINDIR)glomp
 
-LDFLAGS?=-fopenmp -lpthread -lGL -lGLU \
-		 -lsfml-system -lsfml-graphics 
+LDFLAGS?=-fopenmp -lpthread \
+		 -lGL -lGLU \
+		 -lsfml-graphics -lsfml-window -lsfml-system 
 
 
 INCS=$(wildcard $(INCDIR)*.hpp)
@@ -29,10 +30,6 @@ $(EXE):$(OBJS) $(INCS)
 	@echo Linking $@
 	$(CXX) $(OBJS) -o $@ $(LDFLAGS)
 
-check:
-	@echo "TODO: Check dependencies
-	@$(CXX) --version
-
 clean:
 	@rm -f $(EXE) $(OBJS)
 
@@ -40,4 +37,4 @@ do:$(EXE)
 	@echo "Running $(EXE)"
 	@$(EXE)
 
-.PHONY: all clean check do
+.PHONY: all clean do
