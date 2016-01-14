@@ -9,7 +9,7 @@ vpath %.hpp $(INCIDR)
 
 CXX?=clang++
 CPPFLAGS?=-std=c++11 -pthread
-EXE?=$(BINDIR)citadel
+EXE?=$(BINDIR)glomp
 
 LDFLAGS?=-fopenmp -lpthread -lGL -lGLU \
 		 -lsfml-system -lsfml-graphics 
