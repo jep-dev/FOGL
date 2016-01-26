@@ -1,9 +1,12 @@
-#include "../inc/model.hpp"
 #include <algorithm>
 #include <iostream>
 #include <string>
 #include <vector>
 #include <utility>
+
+#include "../inc/model.hpp"
+#include "../inc/dual.hpp"
+#include "../inc/quat.hpp"
 
 namespace Model {
 	template<class C> std::ostream& operator<<(std::ostream& lhs,
