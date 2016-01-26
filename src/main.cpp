@@ -6,10 +6,11 @@
 #include <iostream>
 
 int main(int argc, const char **argv) {
+	std::cout.precision(5);
+
+	//Dual::test();
 	Model::test();
 	//View::test();
-	//Control::test();
-
 
 	return 0;
 }

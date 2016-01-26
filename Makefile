@@ -29,7 +29,7 @@ all:$(EXE)
 
 $(OBJDIR)%.o:$(SRCDIR)%.cpp 
 	@echo Compiling $@
-	$(CXX) $(CPPFLAGS) -c -o $@ $<
+	$(CXX) $(CPPFLAGS) $(WFLAGS) -c -o $@ $<
 
 $(EXE):$(OBJS) $(INCS)
 	@echo Linking $@
@@ -46,12 +46,5 @@ $(ASMDIR)%.lst:$(ASMDIR)%.s
 asm:$(LSTS) $(ASMS)
 	@rm a.out
 ## TODO depend without generating a.out
-
-clean:
-	@rm -f $(EXE) $(OBJS) $(ASMS) $(LSTS)
-
-do:$(EXE)
-	@echo "Running $(EXE)"
-	@$(EXE)
 
 .PHONY: all asm clean do
