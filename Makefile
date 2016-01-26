@@ -36,15 +36,21 @@ $(EXE):$(OBJS) $(INCS)
 	$(CXX) $(OBJS) -o $@ $(LDFLAGS)
 
 $(ASMDIR)%.s:$(SRCDIR)%.cpp
-	@echo Generating assembly $@ from $<
+#	@echo Generating assembly $@ from $<
 	$(CXX) $(CPPFLAGS) $(ASMFLAGS) -o $@ $<
 
 $(ASMDIR)%.lst:$(ASMDIR)%.s
-	@echo Interleaving $< with source
+#	@echo Interleaving $< with source
 	as $(LSTFLAGS) $< > $@
 
+## TODO depend without generating a.out
 asm:$(LSTS) $(ASMS)
 	@rm a.out
-## TODO depend without generating a.out
+
+clean:
+	@rm -f $(EXE) $(OBJS) $(ASMS) $(LSTS)
+
+do:$(EXE)
+	@$(EXE)
 
 .PHONY: all asm clean do
