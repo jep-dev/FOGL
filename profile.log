@@ -1,0 +1,297 @@
+FUNCTION  <SNR>13_CompleteColon()
+Called 2 times
+Total time:   0.000503
+ Self time:   0.000131
+
+count  total (s)   self (s)
+    2              0.000080   if g:clang_complete_auto != 1 || getline('.')[col('.') - 2] != ':'
+    1              0.000005     return ':'
+                              endif
+    1   0.000399   0.000027   return ':' . s:LaunchCompletion()
+
+FUNCTION  <SNR>13_LaunchCompletion()
+Called 1 time
+Total time:   0.000372
+ Self time:   0.000060
+
+count  total (s)   self (s)
+    1              0.000009   let l:result = ""
+    1   0.000329   0.000017   if s:ShouldComplete()
+    1              0.000009     let l:result = "\<C-X>\<C-U>"
+    1              0.000003     if g:clang_auto_select != 2
+    1              0.000006       let l:result .= "\<C-P>"
+    1              0.000001     endif
+    1              0.000003     if g:clang_auto_select == 1
+                                  let l:result .= "\<C-R>=(pumvisible() ? \"\\<Down>\" : '')\<CR>"
+                                endif
+    1              0.000002   endif
+    1              0.000003   return l:result
+
+FUNCTION  ClangComplete()
+Called 2 times
+Total time:   0.030713
+ Self time:   0.030713
+
+count  total (s)   self (s)
+    2              0.000010   if a:findstart
+    1              0.000008     let l:line = getline('.')
+    1              0.000007     let l:start = col('.') - 1
+    1              0.000004     let l:wsstart = l:start
+    1              0.000013     if l:line[l:wsstart - 1] =~ '\s'
+                                  while l:wsstart > 0 && l:line[l:wsstart - 1] =~ '\s'
+                                    let l:wsstart -= 1
+                                  endwhile
+                                endif
+    1              0.000012     while l:start > 0 && l:line[l:start - 1] =~ '\i'
+                                  let l:start -= 1
+                                endwhile
+    1              0.000005     let b:col = l:start + 1
+    1              0.000003     return l:start
+                              else
+    1              0.000002     if g:clang_debug == 1
+                                  let l:time_start = reltime()
+                                endif
+                            
+    1              0.000103     python snippetsReset()
+                            
+    1              0.029141     python completions, timer = getCurrentCompletions(vim.eval('a:base'))
+    1              0.001057     python vim.command('let l:res = ' + completions)
+    1              0.000070     python timer.registerEvent("Load into vimscript")
+                            
+    1              0.000007     if g:clang_make_default_keymappings == 1
+    1              0.000003       if s:use_maparg
+    1              0.000021         let s:old_cr = maparg('<CR>', 'i', 0, 1)
+    1              0.000003       else
+                                    let s:old_snr = matchstr(maparg('<CR>', 'i'), '<SNR>\d\+_')
+                                  endif
+    1              0.000026       inoremap <expr> <buffer> <C-Y> <SID>HandlePossibleSelectionCtrlY()
+    1              0.000016       inoremap <expr> <buffer> <CR> <SID>HandlePossibleSelectionEnter()
+    1              0.000002     endif
+    1              0.000005     augroup ClangComplete
+    1              0.000010       au CursorMovedI <buffer> call <SID>TriggerSnippet()
+    1              0.000006       if exists('##CompleteDone')
+    1              0.000010         au CompleteDone,InsertLeave <buffer> call <SID>StopMonitoring()
+    1              0.000002       else
+                                    au InsertLeave <buffer> call <SID>StopMonitoring()
+                                  endif
+    1              0.000002     augroup end
+    1              0.000005     let b:snippet_chosen = 0
+                            
+    1              0.000042     python timer.finish()
+                            
+    1              0.000005     if g:clang_debug == 1
+                                  echom 'clang_complete: completion time ' . split(reltimestr(reltime(l:time_start)))[0]
+                                endif
+    1              0.000003     return l:res
+                              endif
+
+FUNCTION  <SNR>13_ShouldComplete()
+Called 1 time
+Total time:   0.000312
+ Self time:   0.000312
+
+count  total (s)   self (s)
+    1              0.000022   if (getline('.') =~ '#\s*\(include\|import\)')
+                                return 0
+                              else
+    1              0.000004     if col('.') == 1
+                                  return 1
+                                endif
+    4              0.000186     for l:id in synstack(line('.'), col('.') - 1)
+    3              0.000055       if match(synIDattr(l:id, 'name'), '\CComment\|String\|Number') != -1
+                                    return 0
+                                  endif
+    3              0.000008     endfor
+    1              0.000002     return 1
+                              endif
+
+FUNCTION  <SNR>13_StopMonitoring()
+Called 1 time
+Total time:   0.000143
+ Self time:   0.000143
+
+count  total (s)   self (s)
+    1              0.000012   if b:snippet_chosen
+                                call s:TriggerSnippet()
+                                return
+                              endif
+                            
+    1              0.000005   if g:clang_make_default_keymappings == 1
+                                " Restore original return and Ctrl-Y key mappings
+                            
+    1              0.000003     if s:use_maparg
+    1              0.000009       if get(s:old_cr, 'buffer', 0)
+                                    silent! execute s:old_cr.mode. (s:old_cr.noremap ? 'noremap '  : 'map'). (s:old_cr.buffer  ? '<buffer> ' : ''). (s:old_cr.expr    ? '<expr> '   : ''). (s:old_cr.nowait  ? '<nowait> ' : ''). s:old_cr.lhs.' '. substitute(s:old_cr.rhs, '<SID>', '<SNR>'.s:old_cr.sid.'_', 'g')
+                                  else
+    1              0.000013         silent! iunmap <buffer> <CR>
+    1              0.000001       endif
+    1              0.000001     else
+                                  silent! execute substitute(g:clang_restore_cr_imap, '<SID>', s:old_snr, 'g')
+                                endif
+                            
+    1              0.000008     silent! iunmap <buffer> <C-Y>
+    1              0.000001   endif
+                            
+    1              0.000005   augroup ClangComplete
+    1              0.000013     au! CursorMovedI,InsertLeave <buffer>
+    1              0.000007     if exists('##CompleteDone')
+    1              0.000005       au! CompleteDone <buffer>
+    1              0.000001     endif
+    1              0.000002   augroup END
+
+FUNCTION  Tab_Or_Complete()
+Called 1 time
+Total time:   0.000036
+ Self time:   0.000036
+
+count  total (s)   self (s)
+    1              0.000027 	if col('.')>1 && strpart( getline('.'), col('.')-2, 3 ) =~ '^\w'
+    1              0.000005 		return "\<C-N>"
+                            	else
+                            		return "\<Tab>"
+                            	endif
+
+FUNCTION  <SNR>16_Highlight_Matching_Pair()
+Called 15 times
+Total time:   0.008630
+ Self time:   0.008630
+
+count  total (s)   self (s)
+                              " Remove any previous match.
+   15              0.000216   if exists('w:paren_hl_on') && w:paren_hl_on
+    2              0.000015     3match none
+    2              0.000015     let w:paren_hl_on = 0
+    2              0.000006   endif
+                            
+                              " Avoid that we remove the popup menu.
+                              " Return when there are no colors (looks like the cursor jumps).
+   15              0.000157   if pumvisible() || (&t_Co < 8 && !has("gui_running"))
+                                return
+                              endif
+                            
+                              " Get the character under the cursor and check if it's in 'matchpairs'.
+   15              0.000113   let c_lnum = line('.')
+   15              0.000079   let c_col = col('.')
+   15              0.000044   let before = 0
+                            
+   15              0.000147   let c = getline(c_lnum)[c_col - 1]
+   15              0.000476   let plist = split(&matchpairs, '.\zs[:,]')
+   15              0.000114   let i = index(plist, c)
+   15              0.000037   if i < 0
+                                " not found, in Insert mode try character before the cursor
+   14              0.000090     if c_col > 1 && (mode() == 'i' || mode() == 'R')
+   11              0.000034       let before = 1
+   11              0.000078       let c = getline(c_lnum)[c_col - 2]
+   11              0.000054       let i = index(plist, c)
+   11              0.000017     endif
+   14              0.000024     if i < 0
+                                  " not found, nothing to do
+   13              0.000024       return
+                                endif
+    1              0.000001   endif
+                            
+                              " Figure out the arguments for searchpairpos().
+    2              0.000005   if i % 2 == 0
+    2              0.000008     let s_flags = 'nW'
+    2              0.000012     let c2 = plist[i + 1]
+    2              0.000005   else
+                                let s_flags = 'nbW'
+                                let c2 = c
+                                let c = plist[i - 1]
+                              endif
+    2              0.000006   if c == '['
+                                let c = '\['
+                                let c2 = '\]'
+                              endif
+                            
+                              " Find the match.  When it was just before the cursor move it there for a
+                              " moment.
+    2              0.000004   if before > 0
+    1              0.000009     let save_cursor = winsaveview()
+    1              0.000009     call cursor(c_lnum, c_col - before)
+    1              0.000002   endif
+                            
+                              " When not in a string or comment ignore matches inside them.
+                              " We match "escape" for special items, such as lispEscapeSpecial.
+    2              0.000018   let s_skip ='synIDattr(synID(line("."), col("."), 0), "name") ' . '=~?  "string\\|character\\|singlequote\\|escape\\|comment"'
+    2              0.000838   execute 'if' s_skip '| let s_skip = 0 | endif'
+                            
+                              " Limit the search to lines visible in the window.
+    2              0.000016   let stoplinebottom = line('w$')
+    2              0.000015   let stoplinetop = line('w0')
+    2              0.000006   if i % 2 == 0
+    2              0.000009     let stopline = stoplinebottom
+    2              0.000002   else
+                                let stopline = stoplinetop
+                              endif
+                            
+                              " Limit the search time to 300 msec to avoid a hang on very long lines.
+                              " This fails when a timeout is not supported.
+    2              0.000011   if mode() == 'i' || mode() == 'R'
+    1              0.000013     let timeout = exists("b:matchparen_insert_timeout") ? b:matchparen_insert_timeout : g:matchparen_insert_timeout
+    1              0.000001   else
+    1              0.000011     let timeout = exists("b:matchparen_timeout") ? b:matchparen_timeout : g:matchparen_timeout
+    1              0.000001   endif
+    2              0.000006   try
+    2              0.004930     let [m_lnum, m_col] = searchpairpos(c, '', c2, s_flags, s_skip, stopline, timeout)
+    2              0.000012   catch /E118/
+                                " Can't use the timeout, restrict the stopline a bit more to avoid taking
+                                " a long time on closed folds and long lines.
+                                " The "viewable" variables give a range in which we can scroll while
+                                " keeping the cursor at the same position.
+                                " adjustedScrolloff accounts for very large numbers of scrolloff.
+                                let adjustedScrolloff = min([&scrolloff, (line('w$') - line('w0')) / 2])
+                                let bottom_viewable = min([line('$'), c_lnum + &lines - adjustedScrolloff - 2])
+                                let top_viewable = max([1, c_lnum-&lines+adjustedScrolloff + 2])
+                                " one of these stoplines will be adjusted below, but the current values are
+                                " minimal boundaries within the current window
+                                if i % 2 == 0
+                                  if has("byte_offset") && has("syntax_items") && &smc > 0
+                            	let stopbyte = min([line2byte("$"), line2byte(".") + col(".") + &smc * 2])
+                            	let stopline = min([bottom_viewable, byte2line(stopbyte)])
+                                  else
+                            	let stopline = min([bottom_viewable, c_lnum + 100])
+                                  endif
+                                  let stoplinebottom = stopline
+                                else
+                                  if has("byte_offset") && has("syntax_items") && &smc > 0
+                            	let stopbyte = max([1, line2byte(".") + col(".") - &smc * 2])
+                            	let stopline = max([top_viewable, byte2line(stopbyte)])
+                                  else
+                            	let stopline = max([top_viewable, c_lnum - 100])
+                                  endif
+                                  let stoplinetop = stopline
+                                endif
+                                let [m_lnum, m_col] = searchpairpos(c, '', c2, s_flags, s_skip, stopline)
+                              endtry
+                            
+    2              0.000006   if before > 0
+    1              0.000031     call winrestview(save_cursor)
+    1              0.000002   endif
+                            
+                              " If a match is found setup match highlighting.
+    2              0.000012   if m_lnum > 0 && m_lnum >= stoplinetop && m_lnum <= stoplinebottom 
+    2              0.000080     exe '3match MatchParen /\(\%' . c_lnum . 'l\%' . (c_col - before) . 'c\)\|\(\%' . m_lnum . 'l\%' . m_col . 'c\)/'
+    2              0.000010     let w:paren_hl_on = 1
+    2              0.000004   endif
+
+FUNCTIONS SORTED ON TOTAL TIME
+count  total (s)   self (s)  function
+    2   0.030713             ClangComplete()
+   15   0.008630             <SNR>16_Highlight_Matching_Pair()
+    2   0.000503   0.000131  <SNR>13_CompleteColon()
+    1   0.000372   0.000060  <SNR>13_LaunchCompletion()
+    1   0.000312             <SNR>13_ShouldComplete()
+    1   0.000143             <SNR>13_StopMonitoring()
+    1   0.000036             Tab_Or_Complete()
+
+FUNCTIONS SORTED ON SELF TIME
+count  total (s)   self (s)  function
+    2              0.030713  ClangComplete()
+   15              0.008630  <SNR>16_Highlight_Matching_Pair()
+    1              0.000312  <SNR>13_ShouldComplete()
+    1              0.000143  <SNR>13_StopMonitoring()
+    2   0.000503   0.000131  <SNR>13_CompleteColon()
+    1   0.000372   0.000060  <SNR>13_LaunchCompletion()
+    1              0.000036  Tab_Or_Complete()
+

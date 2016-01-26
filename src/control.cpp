@@ -2,6 +2,12 @@
 
 #include <SFML/Window.hpp>
 
-void notify(const sf::Event event) {
-	
+namespace Control {
+	void notify(const sf::Event event) {
+		
+	}
+
+	int test(void) {
+		return 0;
+	}
 }
