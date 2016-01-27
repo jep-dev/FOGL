@@ -1,7 +1,9 @@
 #ifndef MODEL_HPP
 #define MODEL_HPP
 
+#include <map>
 #include <vector>
+#include <functional>
 #include <iostream>
 #include <utility>
 #include <cmath>
@@ -10,6 +12,24 @@
 #include "../inc/dual.hpp"
 
 namespace Model {
+
+	template<typename R = float>
+	struct model {
+		static unsigned int nextID;
+		const unsigned int uid;
+		bool operator<(model<R> const& rhs) const {
+			return uid < rhs.uid;
+		}
+		std::map<model<R>,dual<R>> subs;
+		model(void): uid(nextID++), subs{} {}
+	};
+	template<typename R = float>
+	std::ostream& operator<<(std::ostream& lhs, model<R> const& rhs) {
+		for(auto &entry : rhs.subs) {
+			lhs << entry.second << ": " << entry.first << "\r\n";
+		}
+		return lhs;
+	}
 	
 	template<typename R = float>
 	std::ostream& operator<<(std::ostream& lhs, 
