@@ -27,11 +27,11 @@ LSTS=$(patsubst $(SRCDIR)%.cpp,$(ASMDIR)%.lst,$(SRCS))
 
 all:$(EXE)
 
-$(OBJDIR)%.o:$(SRCDIR)%.cpp 
+$(OBJDIR)%.o:$(SRCDIR)%.cpp $(INCDIR)%.hpp
 	@echo Compiling $@
 	$(CXX) $(CPPFLAGS) $(WFLAGS) -c -o $@ $<
 
-$(EXE):$(OBJS) $(INCS)
+$(EXE):$(OBJS) 
 	@echo Linking $@
 	$(CXX) $(OBJS) -o $@ $(LDFLAGS)
 
