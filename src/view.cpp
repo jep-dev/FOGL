@@ -1,15 +1,37 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
-
 #include "../inc/view.hpp"
 
 namespace View {
 
+	float aspect(int w, int h) {
+		return w/float(h);
+	}
+	void project(sf::RenderWindow & win, 
+			int w, int h) {
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		gluPerspective(60, aspect(w,h), 1, 100);
+	}
+
 	void redraw(sf::RenderWindow & win) {
 		if(win.isOpen()) {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+
+			glColor3f(0.6, 0.3, 0.3);
+			glBegin(GL_TRIANGLES);
+			glVertex3f(-0.25, 0, -0.25);
+			glVertex3f(0, 0, 0.25);
+			glVertex3f(0.25, 0, -0.25);
+			glEnd();
+
+			auto sz = win.getSize();
+			project(win, sz.x, sz.y);
+			gluLookAt(0,-1,0, 0,1,0, 0,0,1);
 			win.display();
-			sf::sleep(sf::milliseconds(200));
 		}
 	}
 
@@ -18,17 +40,21 @@ namespace View {
 			void (*update)(void)) {
 		sf::Event ev;
 		
-		glViewport(0, 0, 1, 1);
+		win.setVerticalSyncEnabled(true);
+		win.setFramerateLimit(60);
 
 		bool live = true;
 		while(live) {
-			while(win.pollEvent(ev)) {
+			while(live && win.pollEvent(ev)) {
 				switch(ev.type) {
 					case sf::Event::Closed:
 						live = false;
 						break;
-					case sf::Event::Resized:
+					case sf::Event::Resized: {
+						auto sz = ev.size;
+						glViewport(0, 0, sz.width, sz.height);
 						break;
+					}
 					default:
 						break;
 				}
@@ -36,23 +62,17 @@ namespace View {
 			if(live) {
 				update();
 				redraw(win);
-			} else {
-				win.close();
-				break;
 			}
 		}
 	}
 
 	int test(void) {
-		sf::VideoMode mode(256, 256, 32);
-		sf::ContextSettings settings{24,8,0,3,0};
-		sf::RenderWindow win(mode, "Title", 
-				sf::Style::Default, settings);
-		
-		run(win, [](void){
-			static int t = 0;
-			std::cout << "Frame " << t++ << std::endl;
-		});
+		static sf::VideoMode vmode(640,480);
+		static sf::RenderWindow win(vmode, 
+				"Title", sf::Style::Default, 
+				sf::ContextSettings(24, 8, 0, 3, 0));
+
+		run(win, [](void){});
 		return 0;
 	}
 }
