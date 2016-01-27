@@ -9,6 +9,9 @@
 #include "../inc/quat.hpp"
 
 namespace Model {
+	template<typename R>
+	unsigned int model<R>::nextID = 0;
+
 	template<class C> std::ostream& operator<<(std::ostream& lhs,
 			std::vector<std::pair<const char*,C>> const& rhs) {
 		for(auto p : rhs) {
@@ -50,5 +53,10 @@ namespace Model {
 			{"1/(T R)", 1/(T*R)}
 		};
 		std::cout << ds << std::endl;
+
+		/*model<float> root, a, b;
+		root.subs.emplace(a, T);
+		root.subs.emplace(b, R);
+		std::cout << root << std::endl;*/
 	}
 }
