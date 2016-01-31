@@ -10,8 +10,23 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 
 namespace View {
-	void redraw(sf::RenderWindow&);
-	void run(sf::RenderWindow&, void (*)(void));
+
+	struct view {
+		bool initialized = false;
+		GLint progID;
+		GLuint vaID, vbuf, ibuf, 
+			   transformID, frustumID;
+		sf::RenderWindow win;
+		sf::Shader shader;
+		void project(int w, int h);
+		void redraw(void);
+		bool attach(const char *vPath, const char *fPath);
+		//bool init(void);
+		void run(void (*)(void), int rate = 60);
+		view(int w, int h, const char *title);
+		virtual ~view(void);
+	};
+
 	int test(void);
 }
 
