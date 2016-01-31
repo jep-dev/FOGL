@@ -3,14 +3,16 @@
 #include "../inc/model.hpp"
 #include "../inc/view.hpp"
 
+#include <future>
+#include <functional>
+
 #include <iostream>
 
 int main(int argc, const char **argv) {
-	std::cout.precision(5);
-
-	//Dual::test();
-	Model::test();
-	//View::test();
+	View::view v(512, 512, "View");
+	std::async(std::launch::async, [&v]{
+		v.run([](void){});
+	});
 
 	return 0;
 }
