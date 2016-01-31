@@ -15,7 +15,7 @@ CPPFLAGS?=-std=c++11 -pthread
 EXE?=$(BINDIR)glomp
 TEST_EXE?=$(BINDIR)glomp_test
 
-LDFLAGS?=-fopenmp -lpthread \
+LDFLAGS?=-fopenmp -pthread -lpthread\
 		 -lGL -lGLU -lGLEW \
 		 -lsfml-graphics -lsfml-window -lsfml-system 
 
@@ -36,6 +36,8 @@ TEST_OBJS=$(filter-out $(OBJDIR)main.o,$(OBJS)) \
 
 ASMS=$(patsubst $(SRCDIR)%.cpp,$(ASMDIR)%.s,$(SRCS))
 LSTS=$(patsubst $(SRCDIR)%.cpp,$(ASMDIR)%.lst,$(SRCS))
+
+default: $(EXE)
 
 all:$(EXE) $(TEST_EXE)
 
