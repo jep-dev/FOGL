@@ -20,7 +20,7 @@ namespace Model {
 		/** Distributes conjugation to members */
 		dual<R> operator~(void) const;
 		/** Cast operator, as Euclidean norm */
-		operator R(void) const;
+		explicit operator R(void) const;
 		/** Squared Euclidean norm */
 		R operator()(void) const;
 
@@ -57,6 +57,7 @@ namespace Model {
 		dual<R> operator/=(dual<R> const& rhs);
 
 		dual(quat<R> const& re, quat<R> const& du = R(0));
+		dual(quat<R> && re, quat<R> && du = R(0));
 		dual(R uw = R(0), R ux = R(0), 
 				R uy = R(0), R uz = R(0), 
 				R vw = R(0), R vx = R(0), 
@@ -206,6 +207,11 @@ namespace Model {
 	template<typename R>
 	dual<R>::dual(quat<R> const& re, quat<R> const& du):
 		u(re), v(du) {}
+
+	template<typename R>
+	dual<R>::dual(quat<R> && re, quat<R> && du):
+		u(std::move(re)), v(std::move(du)) {}
+
 	template<typename R>
 	dual<R>::dual(R uw, R ux, R uy, R uz,
 			R vw, R vx, R vy, R vz):
