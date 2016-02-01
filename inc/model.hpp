@@ -34,9 +34,11 @@ namespace Model {
 	template<typename R = float>
 	std::ostream& operator<<(std::ostream& lhs, 
 			quat<R> const& rhs) {
-		quat<R> singlet = rhs.w;
+		/*quat<R> singlet = rhs.w;
 		if(rhs == singlet) {return lhs << rhs.w;}
 		return lhs << "[" << rhs.w << ", " << rhs.x 
+			<< ", " << rhs.y << ", " << rhs.z << "]";*/
+		return lhs << "[" << rhs.w << ", " << rhs.x
 			<< ", " << rhs.y << ", " << rhs.z << "]";
 	}
 
