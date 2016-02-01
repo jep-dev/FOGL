@@ -27,12 +27,28 @@ namespace Model {
 	}
 
 	int test(void) {
-		float theta = 30 * M_PI/180, 
+		std::cout << "A" << std::endl;
+		dual<float> a(1);
+		std::cout << "\r\nB" << std::endl;
+		dual<float> b = {1};
+		std::cout << "\r\nC" << std::endl;
+		dual<float> c = std::move(a);
+		std::cout << "\r\n" << std::endl;
+
+		dual<float> extra(c.u, c.v);
+		extra.u += extra.u;
+
+		std::vector<dual<float>*> lst = {
+			&a, &b, &c, &extra};
+		std::cout << "\r\nDump:" << std::endl;
+		for(auto d : lst) {std::cout << *d << std::endl;}
+
+		/*float theta = 30 * M_PI/180, 
 			  rw = float(cos(theta/2)), 
 			  rz = float(sin(theta/2));
-		dual<float> u = {1,{0,0,0.5,0}}, 
-			T = {1,{0,0.5}}, 
-			R = {{rw,0,0,rz},0};
+		dual<float> u = 1, 
+			T(1,0,0,0,0,0.5,0,0), 
+			R(rw,0,0,rz,0,0,0,0);
 
 		std::vector<std::pair<const char*,dual<float>>> ds{
 			{"u (origin)", u},
@@ -50,13 +66,8 @@ namespace Model {
 			{"T R", T*R},
 			{"T (R u ~R) ~T = (T R) u ~(R T)", 
 				T(R(u))}, {"", (T*R)(u)},
-			{"1/(T R)", 1/(T*R)}
+			{"1/(T R)", dual<float>(1)/(T*R)}
 		};
-		std::cout << ds << std::endl;
-
-		/*model<float> root, a, b;
-		root.subs.emplace(a, T);
-		root.subs.emplace(b, R);
-		std::cout << root << std::endl;*/
+		std::cout << ds << std::endl;*/
 	}
 }
