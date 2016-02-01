@@ -12,7 +12,8 @@
 namespace View {
 
 	struct view {
-		bool initialized = false;
+		bool initialized = false,
+			 done = false;
 		GLint progID;
 		GLuint vaID, vbuf, ibuf, 
 			   transformID, frustumID;
