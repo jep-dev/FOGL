@@ -42,7 +42,7 @@ namespace View {
 	}
 	
 	void view::redraw(void) {
-		if(win.isOpen()) {
+		if(!done) {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			glEnableVertexAttribArray(0);
@@ -69,12 +69,12 @@ namespace View {
 		win.setVerticalSyncEnabled(true);
 		win.setFramerateLimit(rate);
 
-		bool live = true;
-		while(live) {
-			while(live && win.pollEvent(ev)) {
+		while(!done) {
+			while(!done && win.pollEvent(ev)) {
 				switch(ev.type) {
 					case sf::Event::Closed:
-						live = false;
+						done = true;
+						win.close();
 						break;
 					case sf::Event::Resized: {
 						auto sz = ev.size;
@@ -85,7 +85,7 @@ namespace View {
 						break;
 				}
 			}
-			if(live) {
+			if(!done) {
 				update();
 				redraw();
 			}
@@ -142,6 +142,7 @@ namespace View {
 		win.setActive(false);
 	}
 	view::~view(void) {
+		done = true;
 		if(win.isOpen()) {
 			win.close();
 		}
