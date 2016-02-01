@@ -16,7 +16,7 @@ EXE?=$(BINDIR)glomp
 TEST_EXE?=$(BINDIR)glomp_test
 
 LDFLAGS?=-fopenmp -pthread -lpthread\
-		 -lGL -lGLU -lGLEW \
+		 -lGL -lGLU -lGLEW -lX11\
 		 -lsfml-graphics -lsfml-window -lsfml-system 
 
 TEST_LDFLAGS?=$(LDFLAGS) -lboost_unit_test_framework
@@ -74,7 +74,7 @@ do:$(EXE)
 	@$(EXE)
 
 test:$(TEST_EXE)
-	@$(TEST_EXE) --log_level=all
+	@$(TEST_EXE) --log_level=error
 	
 
 .PHONY: all asm clean do test
