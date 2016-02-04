@@ -9,14 +9,14 @@ TESTDIR=./test/
 vpath %.cpp $(SRCDIR)
 vpath %.hpp $(INCIDR)
 
-CXX?=g++
+CXX?=clang++ # Remove ? to override default (g++)
 CPPFLAGS?=-std=c++11 -pthread
 
 EXE?=$(BINDIR)glomp
 TEST_EXE?=$(BINDIR)glomp_test
 
-LDFLAGS?=-fopenmp -pthread -lpthread\
-		 -lGL -lGLU -lGLEW -lX11\
+LDFLAGS?=-lpthread \
+		 -lGL -lGLU -lGLEW -lX11 \
 		 -lsfml-graphics -lsfml-window -lsfml-system 
 
 TEST_LDFLAGS?=$(LDFLAGS) -lboost_unit_test_framework
