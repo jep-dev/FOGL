@@ -28,7 +28,7 @@ int main(int argc, const char **argv) {
 		}
 	};
 	auto runView = [&display, &runFrame]{
-		display.run(runFrame);
+		display.run(runFrame, 1);
 	};
 
 	std::thread viewThread(runView), 
@@ -36,8 +36,6 @@ int main(int argc, const char **argv) {
 
 	viewThread.join();
 	modelThread.join();
-
-	//Model::test();
 
 	return 0;
 }
