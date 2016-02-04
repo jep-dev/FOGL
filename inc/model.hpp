@@ -46,8 +46,6 @@ namespace Model {
 	std::ostream& operator<<(std::ostream& lhs, dual<R> const& rhs) {
 		return lhs << "{" << rhs.u << ", " << rhs.v << "}";
 	}
-
-	int test(void);
 }
 
 #endif
