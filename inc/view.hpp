@@ -16,7 +16,7 @@ namespace View {
 			 done = false;
 		GLint progID;
 		GLuint vaID, vbuf, ibuf, 
-			   transformID, frustumID;
+			   transformID, projXYID, projZWID;
 		sf::RenderWindow win;
 		sf::Shader shader;
 		void project(int w, int h);
@@ -27,8 +27,6 @@ namespace View {
 		view(int w, int h, const char *title);
 		virtual ~view(void);
 	};
-
-	int test(void);
 }
 
 #endif
