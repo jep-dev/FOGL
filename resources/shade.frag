@@ -1,4 +1,6 @@
-#version 130
+#version 300 es
+
+precision highp float;
 
 in vec4 InColor;
 out vec4 FragColor;
