@@ -19,7 +19,6 @@ int main(int argc, const char **argv) {
 		// One view frame
 	};
 	auto runModel = [&display]{
-		// One model frame
 		display.win.setActive(false);
 		static int t = 0;
 		while(!display.done) {
