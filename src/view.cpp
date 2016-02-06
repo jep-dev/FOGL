@@ -1,25 +1,29 @@
 #include <string>
-#include <SFML/Graphics.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
 #include "../inc/view.hpp"
 
 namespace View {
 
 	void printErrors(const char *prefix = "") {
+		bool once = false;
 		GLenum err;
-		std::string errmsg;
 		while((err = glGetError()) != GL_NO_ERROR) {
+			if(!once) {
+				std::cout << prefix;
+				once = true;
+			}
 			switch(err) {
 				case GL_INVALID_ENUM:
-					{errmsg = "GL Invalid Enum";} break;
+					{std::cout << "invalid enum; ";} break;
 				case GL_INVALID_VALUE:
-					{errmsg = "GL Invalid Value";} break;
+					{std::cout << "invalid value; ";} break;
 				case GL_INVALID_OPERATION:
-					{errmsg = "Invalid Operation";} break;
+					{std::cout << "invalid operation; ";} break;
 				default:
-					{errmsg = "Unhandled GL Error";} break;
+					break;
 			}
-			std::cout << prefix << errmsg << std::endl;
+		}
+		if(once) {
+			endl(std::cout);
 		}
 	}
 
@@ -41,18 +45,13 @@ namespace View {
 			xyData[] = { x,  0.0, 0.0,   y},
 			zwData[] = {z1, -1.0,  z2, 0.0};
 
-		printErrors("44: ");
-		glUniformMatrix4fv(transformID,
-				1, GL_FALSE, transformData);
-		printErrors("47: ");
+		glUniformMatrix4fv(transformID, 1, 
+				GL_FALSE, transformData);
+		printErrors("glUniformMatrix4fv -> ");
 
-		glUniformMatrix2fv(projXYID,
-				1, GL_FALSE, xyData);
-		printErrors("51: ");
-
-		glUniformMatrix2fv(projZWID,
-				1, GL_FALSE, zwData);
-		printErrors("55: ");
+		glUniformMatrix2fv(projXYID, 1, GL_FALSE, xyData);
+		glUniformMatrix2fv(projZWID, 1, GL_FALSE, zwData);
+		printErrors("glUniformMatrix2fv -> ");
 	}
 	bool view::attach(const char *vPath, const char *fPath) {
 		if(!shader.loadFromFile(vPath, fPath)) {
@@ -60,25 +59,16 @@ namespace View {
 		}
 		sf::Shader::bind(&shader);
 		glGetIntegerv(GL_CURRENT_PROGRAM, &progID);
-
-		//glBindFragDataLocation(progID, 0, "FragColor");
-		
-		printErrors("66: ");
 		transformID = glGetUniformLocation(progID, "transform");
 		projXYID = glGetUniformLocation(progID, "projXY");
 		projZWID = glGetUniformLocation(progID, "projZW");
 		GLint query;
-		std::cout
- 			<< "Program: " << (glGetIntegerv(GL_CURRENT_PROGRAM, 
-						&query), query)	
-			<< "; uniforms: " << (glGetProgramiv(progID,
-					GL_ACTIVE_UNIFORMS, &query), query)
-			<< "; attributes: " << (glGetProgramiv(progID,
-					GL_ACTIVE_ATTRIBUTES, &query), query)
+		std::cout << "Program: " << progID << "; uniforms: " 
+			<< (glGetProgramiv(progID, GL_ACTIVE_UNIFORMS, 
+						&query), query) << "; attributes: " 
+			<< (glGetProgramiv(progID, GL_ACTIVE_ATTRIBUTES, 
+						&query), query) 
 			<< std::endl;
-
-		
-		printErrors("70: ");
 		return true;
 	}
 	
@@ -90,12 +80,11 @@ namespace View {
 			glBindBuffer(GL_ARRAY_BUFFER, vbuf);
 			glVertexAttribPointer(0, 3, GL_FLOAT, 
 					GL_FALSE, 0, (void*) 0);
-			printErrors("82: ");
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibuf);
 			glDrawElements(GL_TRIANGLES, 12*3,
 					GL_UNSIGNED_INT, (void*) 0);
 			glDisableVertexAttribArray(0);
-			printErrors("87: ");
+			printErrors("Redraw -> ");
 			auto sz = win.getSize();
 			project(sz.x, sz.y);
 			win.display();
@@ -123,7 +112,6 @@ namespace View {
 						break;
 				}
 			}
-			printErrors("115: ");
 			if(!done) {
 				update();
 				redraw();
@@ -139,7 +127,6 @@ namespace View {
 		glewExperimental = GL_TRUE;
 		glewInit();
 		glEnable(GL_DEPTH_TEST);
-		//glClearColor(0.1, 0.18, 0.13, 1.0);
 		
 		glGenVertexArrays(1, &vaID);
 		glBindVertexArray(vaID);
@@ -162,7 +149,6 @@ namespace View {
 			2,4,0, 2,6,4, // N
 			3,5,7, 3,1,5  // S
 		};
-		//glFrontFace(GL_FRONT);
 		glGenBuffers(1, &vbuf);
 		glBindBuffer(GL_ARRAY_BUFFER, vbuf);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(vbufData), 
@@ -175,8 +161,7 @@ namespace View {
 		attach("resources/shade.vert", 
 				"resources/shade.frag");
 
-		printErrors("167: ");
-		//win.setActive(false);
+		printErrors("Attach -> ");
 	}
 	view::~view(void) {
 		done = true;
