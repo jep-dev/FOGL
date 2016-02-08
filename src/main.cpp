@@ -1,5 +1,4 @@
 #include "../inc/main.hpp"
-#include "../inc/control.hpp"
 #include "../inc/model.hpp"
 #include "../inc/view.hpp"
 
@@ -27,7 +26,7 @@ int main(int argc, const char **argv) {
 		}
 	};
 	auto runView = [&display, &runFrame]{
-		display.run(runFrame, 1);
+		display.run(runFrame, 60);
 	};
 
 	std::thread viewThread(runView), 
