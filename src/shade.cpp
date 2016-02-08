@@ -42,13 +42,14 @@ namespace View {
 		GLint len, status;
 		GLuint vert = glCreateShader(GL_VERTEX_SHADER),
 			frag = glCreateShader(GL_FRAGMENT_SHADER);
-		if(success = compile(vertName, vert)) {
-			if(success = compile(fragName, frag)) {
+		if((success = compile(vertName, vert))) {
+			if((success = compile(fragName, frag))) {
 				glAttachShader(program, vert);
 				glAttachShader(program, frag);
 				glLinkProgram(program);
 				glGetProgramiv(program, 
 						GL_LINK_STATUS, &status);
+				success = status == GL_TRUE;
 				glGetProgramiv(program, 
 						GL_INFO_LOG_LENGTH, &len);
 				if(len > 0) {
@@ -62,7 +63,7 @@ namespace View {
 			}
 			glDeleteShader(vert);
 		}
-		return success && (status == GL_TRUE);
+		return success;
 	}
 
 }
