@@ -9,15 +9,15 @@ TESTDIR=./test/
 vpath %.cpp $(SRCDIR)
 vpath %.hpp $(INCIDR)
 
-CXX?=clang++ # Remove ? to override default (g++)
+CXX=g++ 
 CPPFLAGS?=-std=c++11 -pthread
 
 EXE?=$(BINDIR)glomp
 TEST_EXE?=$(BINDIR)glomp_test
 
 LDFLAGS?=-lpthread \
-		 -lGL -lGLU -lGLEW -lX11 \
-		 -lsfml-graphics -lsfml-window -lsfml-system 
+		-lGL -lGLU -lGLEW -lX11 \
+		-lsfml-graphics -lsfml-window -lsfml-system
 
 TEST_LDFLAGS?=$(LDFLAGS) -lboost_unit_test_framework
 
@@ -42,25 +42,21 @@ default: $(EXE)
 all:$(EXE) $(TEST_EXE)
 
 $(OBJDIR)%.o:$(SRCDIR)%.cpp $(INCDIR)%.hpp
-	@echo Compiling $@
 	$(CXX) $(CPPFLAGS) $(WFLAGS) -c -o $@ $<
 
 $(TESTDIR)%.o:$(TESTDIR)%.cpp
 	$(CXX) $(CPPFLAGS) $(WFLAGS) -c -o $@ $<
 
 $(EXE):$(OBJS) 
-	@echo Linking $@
 	$(CXX) $(OBJS) -o $@ $(LDFLAGS)
 
 $(TEST_EXE):$(TEST_OBJS)
 	$(CXX) $(TEST_OBJS) -o $@ $(TEST_LDFLAGS)
 
 $(ASMDIR)%.s:$(SRCDIR)%.cpp
-#	@echo Generating assembly $@ from $<
 	$(CXX) $(CPPFLAGS) $(ASMFLAGS) -o $@ $<
 
 $(ASMDIR)%.lst:$(ASMDIR)%.s
-#	@echo Interleaving $< with source
 	as $(LSTFLAGS) $< > $@
 
 ## TODO depend without generating a.out
