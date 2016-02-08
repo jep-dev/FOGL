@@ -5,7 +5,10 @@
 #define BOOST_TEST_MODULE Model
 #include <boost/test/included/unit_test.hpp>
 
+#include "../inc/quat.hpp"
+#include "../inc/dual.hpp"
 #include "../inc/model.hpp"
+
 using namespace Model;
 
 const quat<float> R0{0}, R1{1}, 
