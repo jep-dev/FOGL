@@ -8,16 +8,14 @@
 namespace View {
 
 	struct view {
-		bool initialized = false,
-			 done = false;
-		GLint progID;
-		GLuint vaID, vbuf, ibuf, 
+		bool initialized = false, done = false;
+		GLuint progID, vaID, vbuf, ibuf, 
 			   transformID, projXYID, projZWID;
 		sf::RenderWindow win;
-		sf::Shader shader;
+		//sf::Shader shader;
 		void project(int w, int h);
 		void redraw(void);
-		bool attach(const char *vPath, const char *fPath);
+		//bool attach(const char *vPath, const char *fPath);
 		void run(void (*)(void), int rate = 60);
 		view(int w, int h, const char *title);
 		virtual ~view(void);

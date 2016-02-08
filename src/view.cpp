@@ -1,5 +1,5 @@
-#include <string>
 #include "../inc/view.hpp"
+#include "../inc/shade.hpp"
 
 namespace View {
 
@@ -22,6 +22,7 @@ namespace View {
 					break;
 			}
 		}
+		 
 		if(once) {
 			endl(std::cout);
 		}
@@ -29,18 +30,22 @@ namespace View {
 
 	void view::project(int w, int h) {
 		static float t = 0;
-		t += 0.1f;
+		t += float(M_PI/180);
+
 		const float aspect = h/float(w),
-			fov = float(1 / tan(60 * M_PI / 180)),
-			near = 1.0, far = 10.0,
+			fov = float(1 / tan(45 * M_PI / 180)),
+			near = 1.0, far = 100.0,
 			x = fov*aspect, y = fov, 
 			z1 = (far+near)/(far-near),
 			z2 = 2*far*near/(far-near),
+			t_x = float(cos(t)*5), 
+			t_y = float(sin(t)*5),
+			t_z = -10,
 			transformData[] = {
 				1.0, 0.0, 0.0, 0.0,
 				0.0, 1.0, 0.0, 0.0,
 				0.0, 0.0, 1.0, 0.0,
-				0.0, 0.0,-5.0, 1.0
+				t_x, t_y, t_z, 1.0
 			}, 
 			xyData[] = { x,  0.0, 0.0,   y},
 			zwData[] = {z1, -1.0,  z2, 0.0};
@@ -53,24 +58,17 @@ namespace View {
 		glUniformMatrix2fv(projZWID, 1, GL_FALSE, zwData);
 		printErrors("glUniformMatrix2fv -> ");
 	}
-	bool view::attach(const char *vPath, const char *fPath) {
+	/*bool view::attach(const char *vPath, const char *fPath) {
 		if(!shader.loadFromFile(vPath, fPath)) {
 			return false;
 		}
 		sf::Shader::bind(&shader);
-		glGetIntegerv(GL_CURRENT_PROGRAM, &progID);
+		glGetIntegerv(GL_CURRENT_PROGRAM, (GLint*)(&progID));
 		transformID = glGetUniformLocation(progID, "transform");
 		projXYID = glGetUniformLocation(progID, "projXY");
 		projZWID = glGetUniformLocation(progID, "projZW");
-		GLint query;
-		std::cout << "Program: " << progID << "; uniforms: " 
-			<< (glGetProgramiv(progID, GL_ACTIVE_UNIFORMS, 
-						&query), query) << "; attributes: " 
-			<< (glGetProgramiv(progID, GL_ACTIVE_ATTRIBUTES, 
-						&query), query) 
-			<< std::endl;
 		return true;
-	}
+	}*/
 	
 	void view::redraw(void) {
 		if(!done) {
@@ -94,11 +92,11 @@ namespace View {
 	void view::run(void (*update)(void), int rate) {
 		sf::Event ev;
 		win.setActive(true);
-		win.setVerticalSyncEnabled(true);
+		//win.setVerticalSyncEnabled(true);
 		win.setFramerateLimit(rate);
 
 		while(!done) {
-			while(!done && win.pollEvent(ev)) {
+			while(win.pollEvent(ev)) {
 				switch(ev.type) {
 					case sf::Event::Closed: {
 						done = true;
@@ -112,10 +110,11 @@ namespace View {
 						break;
 				}
 			}
-			if(!done) {
-				update();
-				redraw();
+			if(done) {
+				break;
 			}
+			update();
+			redraw();
 		}
 	}
 
@@ -127,6 +126,7 @@ namespace View {
 		glewExperimental = GL_TRUE;
 		glewInit();
 		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_CULL_FACE);
 		
 		glGenVertexArrays(1, &vaID);
 		glBindVertexArray(vaID);
@@ -142,12 +142,12 @@ namespace View {
 			-1,-1,-1, // 7  W D S
 		};
 		const GLuint ibufData[] = {
-			1,2,0, 1,3,2, // E
-			0,5,1, 0,4,5, // U
-			4,7,5, 4,6,7, // W
-			6,3,7, 6,2,3, // D
-			2,4,0, 2,6,4, // N
-			3,5,7, 3,1,5  // S
+			1,0,2, 1,2,3, // E
+			0,1,5, 0,5,4, // U
+			4,5,7, 4,7,6, // W
+			6,7,3, 6,3,2, // D
+			2,0,4, 2,4,6, // N
+			3,7,5, 3,5,1  // S
 		};
 		glGenBuffers(1, &vbuf);
 		glBindBuffer(GL_ARRAY_BUFFER, vbuf);
@@ -158,12 +158,20 @@ namespace View {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibuf);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(ibufData),
 				ibufData, GL_DYNAMIC_DRAW);
-		attach("resources/shade.vert", 
-				"resources/shade.frag");
 
-		printErrors("Attach -> ");
+		const char *vName = "resources/shade.vert",
+			  *fName = "resources/shade.frag";
+		if(link(vName, fName, progID = glCreateProgram())) {
+			transformID = glGetUniformLocation(progID, "transform");
+			projXYID = glGetUniformLocation(progID, "projXY");
+			projZWID = glGetUniformLocation(progID, "projZW");
+			glUseProgram(progID);
+		} else {
+			done = true;
+		}
 	}
 	view::~view(void) {
+		glDeleteProgram(progID);
 		done = true;
 		if(win.isOpen()) {
 			win.close();
