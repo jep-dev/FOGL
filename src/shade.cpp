@@ -26,7 +26,7 @@ namespace View {
 			glCompileShader(shader);
 			glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
 			glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &len);
-			if(len > 0) {
+			if(len > 1) {
 				char msg[len+1];
 				msg[len] = '\0';
 				glGetShaderInfoLog(shader, len, NULL, msg);
@@ -52,7 +52,7 @@ namespace View {
 				success = status == GL_TRUE;
 				glGetProgramiv(program, 
 						GL_INFO_LOG_LENGTH, &len);
-				if(len > 0) {
+				if(len > 1) {
 					char msg[len+1];
 					msg[len] = '\0';
 					glGetProgramInfoLog(program, 
