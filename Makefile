@@ -17,7 +17,8 @@ TEST_EXE?=$(BINDIR)glomp_test
 
 LDFLAGS?=-lpthread \
 		-lGL -lGLU -lGLEW -lX11 \
-		-lsfml-graphics -lsfml-window -lsfml-system
+		-lSDL2
+#		-lsfml-graphics -lsfml-window -lsfml-system
 
 TEST_LDFLAGS?=$(LDFLAGS) -lboost_unit_test_framework
 

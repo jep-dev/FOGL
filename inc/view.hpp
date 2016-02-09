@@ -2,23 +2,38 @@
 #define VIEW_HPP
 
 #include <iostream>
+#include <X11/Xlib.h>
 #include <GL/glew.h>
-#include <SFML/Graphics.hpp>
+#include <SDL2/SDL.h>
 
 namespace View {
 
+	struct GateCond {
+		bool value;
+		SDL_mutex *gate;
+		GateCond(bool def = false):
+			value(def), 
+			gate(SDL_CreateMutex()) {}
+		virtual ~GateCond(void) {
+			if(gate) {
+				SDL_DestroyMutex(gate);
+			}
+		}
+	};
+
 	struct view {
-		bool initialized = false, done = false;
+		GateCond alive;
 		GLuint progID, vaID, vbuf, ibuf, 
 			   transformID, projXYID, projZWID;
-		sf::RenderWindow win;
-		//sf::Shader shader;
+		SDL_Window *win;
+		SDL_GLContext context;
 		void project(int w, int h);
 		void redraw(void);
-		//bool attach(const char *vPath, const char *fPath);
 		void run(void (*)(void), int rate = 60);
 		view(int w, int h, const char *title);
 		virtual ~view(void);
+	private:
+		bool done = false;
 	};
 }
 

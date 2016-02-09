@@ -26,11 +26,12 @@ namespace View {
 			glCompileShader(shader);
 			glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
 			glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &len);
-			if(len > 0) {
+			if(len > 1) {
 				char msg[len+1];
 				msg[len] = '\0';
 				glGetShaderInfoLog(shader, len, NULL, msg);
-				std::cout << msg << std::endl;
+				std::cout << "GL shader info log: \r\n\t"
+					<< msg << std::endl;
 			}
 		}
 		return status == GL_TRUE;
@@ -52,12 +53,13 @@ namespace View {
 				success = status == GL_TRUE;
 				glGetProgramiv(program, 
 						GL_INFO_LOG_LENGTH, &len);
-				if(len > 0) {
+				if(len > 1) {
 					char msg[len+1];
 					msg[len] = '\0';
 					glGetProgramInfoLog(program, 
 							len, NULL, msg);
-					std::cout << msg << std::endl;
+					std::cout << "GL program info log: \r\n\t"
+						<< msg << std::endl;
 				}
 				glDeleteShader(frag);
 			}

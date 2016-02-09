@@ -12,14 +12,18 @@ namespace View {
 				once = true;
 			}
 			switch(err) {
-				case GL_INVALID_ENUM:
-					{std::cout << "invalid enum; ";} break;
-				case GL_INVALID_VALUE:
-					{std::cout << "invalid value; ";} break;
-				case GL_INVALID_OPERATION:
-					{std::cout << "invalid operation; ";} break;
-				default:
-					break;
+			case GL_INVALID_ENUM:
+				std::cout << "invalid enum; ";
+				break;
+			case GL_INVALID_VALUE:
+				std::cout << "invalid value; ";
+ 				break;
+			case GL_INVALID_OPERATION:
+				std::cout << "invalid operation; ";
+				break;
+			default: // TODO
+				std::cout << "unknown error; ";
+				break;
 			}
 		}
 		 
@@ -52,79 +56,101 @@ namespace View {
 
 		glUniformMatrix4fv(transformID, 1, 
 				GL_FALSE, transformData);
-		printErrors("glUniformMatrix4fv -> ");
-
 		glUniformMatrix2fv(projXYID, 1, GL_FALSE, xyData);
 		glUniformMatrix2fv(projZWID, 1, GL_FALSE, zwData);
-		printErrors("glUniformMatrix2fv -> ");
 	}
-	/*bool view::attach(const char *vPath, const char *fPath) {
-		if(!shader.loadFromFile(vPath, fPath)) {
-			return false;
-		}
-		sf::Shader::bind(&shader);
-		glGetIntegerv(GL_CURRENT_PROGRAM, (GLint*)(&progID));
-		transformID = glGetUniformLocation(progID, "transform");
-		projXYID = glGetUniformLocation(progID, "projXY");
-		projZWID = glGetUniformLocation(progID, "projZW");
-		return true;
-	}*/
 	
 	void view::redraw(void) {
-		if(!done) {
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			glEnableVertexAttribArray(0);
-			glBindBuffer(GL_ARRAY_BUFFER, vbuf);
-			glVertexAttribPointer(0, 3, GL_FLOAT, 
-					GL_FALSE, 0, (void*) 0);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibuf);
-			glDrawElements(GL_TRIANGLES, 12*3,
-					GL_UNSIGNED_INT, (void*) 0);
-			glDisableVertexAttribArray(0);
-			printErrors("Redraw -> ");
-			auto sz = win.getSize();
-			project(sz.x, sz.y);
-			win.display();
-		}
+		glEnableVertexAttribArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, vbuf);
+		glVertexAttribPointer(0, 3, GL_FLOAT, 
+				GL_FALSE, 0, (void*) 0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibuf);
+		glDrawElements(GL_TRIANGLES, 12*3,
+				GL_UNSIGNED_INT, (void*) 0);
+		glDisableVertexAttribArray(0);
+		/*auto sz = win.getSize();
+		project(sz.x, sz.y);
+		win.display();*/
+		SDL_UpdateWindowSurface(win);
+		SDL_GL_SwapWindow(win);
 	}
 
 	void view::run(void (*update)(void), int rate) {
-		sf::Event ev;
-		win.setActive(true);
-		//win.setVerticalSyncEnabled(true);
-		win.setFramerateLimit(rate);
-
+		SDL_Event ev;
 		while(!done) {
-			while(win.pollEvent(ev)) {
+			while(SDL_PollEvent(&ev)) {
 				switch(ev.type) {
-					case sf::Event::Closed: {
+				case SDL_QUIT:
+					done = true;
+					break;
+				case SDL_WINDOWEVENT: {
+					auto winEv = ev.window;
+					auto d1 = winEv.data1,
+						 d2 = winEv.data2;
+					switch(winEv.type) {
+					case SDL_WINDOWEVENT_CLOSE:
 						done = true;
-						win.close();
-						break; }
-					case sf::Event::Resized: {
-						auto sz = ev.size;
-						glViewport(0, 0, sz.width, sz.height);
-						break; }
+						break;
+					case SDL_WINDOWEVENT_RESIZED:
+						glViewport(0, 0, d1, d2);
+						break;
 					default:
 						break;
+					}
+				} break;
+				default:
+					break;
 				}
+				update();
+				redraw();
 			}
 			if(done) {
-				break;
+				if(SDL_LockMutex(alive.gate) == 0) {
+					alive.value = false;
+					SDL_UnlockMutex(alive.gate);
+				}
 			}
-			update();
-			redraw();
 		}
 	}
 
 	view::view(int w, int h, const char *title):
-		win(sf::VideoMode(w,h), 
-			title, sf::Style::Default,
-			sf::ContextSettings(24, 8, 0, 3, 0)) {
-		
+		alive(true) {
+
+		static bool once = false;
+		if(!once) {
+			XInitThreads();
+			if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) {
+				std::cout << "Could not initialize SDL.\r\n\t"
+					<< SDL_GetError() << std::endl;
+				done = true;
+				return;
+			}
+			once = true;
+		}
+
+		win = SDL_CreateWindow(title, 0, 0, w, h,
+				SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+		if(win == NULL) {
+			std::cout << "Could not create window;\r\n\t"
+				<< SDL_GetError() << std::endl;
+			done = true;
+			return;
+		}
+
+		context = SDL_GL_CreateContext(win);
+		if(context == NULL) {
+			std::cout << "Could not create GL context;\r\n\t"
+				<< SDL_GetError() << std::endl;
+			done = true;
+			return;
+		}
 		glewExperimental = GL_TRUE;
 		glewInit();
+
+		glClearColor(0,0,0,1);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 		
@@ -161,20 +187,26 @@ namespace View {
 
 		const char *vName = "resources/shade.vert",
 			  *fName = "resources/shade.frag";
-		if(link(vName, fName, progID = glCreateProgram())) {
-			transformID = glGetUniformLocation(progID, "transform");
-			projXYID = glGetUniformLocation(progID, "projXY");
-			projZWID = glGetUniformLocation(progID, "projZW");
-			glUseProgram(progID);
-		} else {
+		if(!link(vName, fName, progID = glCreateProgram())) {
 			done = true;
+			return;
 		}
+		transformID = glGetUniformLocation(progID, "transform");
+		projXYID = glGetUniformLocation(progID, "projXY");
+		projZWID = glGetUniformLocation(progID, "projZW");
+		glUseProgram(progID);
 	}
+
+	
 	view::~view(void) {
-		glDeleteProgram(progID);
-		done = true;
-		if(win.isOpen()) {
-			win.close();
+		if(progID != 0) {
+			glDeleteProgram(progID);
+		}
+		if(context != NULL) {
+			SDL_GL_DeleteContext(context);
+		}
+		if(win != NULL) {
+			SDL_DestroyWindow(win);
 		}
 	}
 }

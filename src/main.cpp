@@ -1,39 +1,35 @@
+#include <chrono>
+#include <iostream>
+#include <thread>
+
 #include "../inc/main.hpp"
 #include "../inc/model.hpp"
 #include "../inc/view.hpp"
 
-#include <X11/Xlib.h>
-#include <thread>
-#include <iostream>
-
-#include <SFML/System/Time.hpp>
-#include <SFML/System/Sleep.hpp>
-
 int main(int argc, const char **argv) {
-	XInitThreads();
+
 	View::view display(512, 512, "View");
 	
-	display.win.setActive(false);
-	auto runFrame = []{
-		// One view frame
-	};
-	auto runModel = [&display]{
-		display.win.setActive(false);
-		static int t = 0;
-		while(!display.done) {
-			std::cout << "Model: t = " << t++ << std::endl;
-			sf::sleep(sf::milliseconds(1000));
+	auto modelFn = [](void* data) {
+		// Update model
+		bool cond = true;
+		auto alive = (View::GateCond*) data;
+		while(cond) {
+			if(SDL_LockMutex(alive -> gate) == 0) {
+				cond = alive -> value;
+				SDL_UnlockMutex(alive -> gate);
+			}
+			if(cond) {
+				SDL_Delay(100);
+			}
 		}
+		std::cout << "Model shutting down." << std::endl;
+		return 0;
 	};
-	auto runView = [&display, &runFrame]{
-		display.run(runFrame, 60);
-	};
 
-	std::thread viewThread(runView), 
-		modelThread(runModel);
-
-	viewThread.join();
-	modelThread.join();
-
+	auto modelThread = SDL_CreateThread(
+			modelFn, "Model", &display.alive);
+	display.run([]{}, 60);
+	SDL_Delay(100);
 	return 0;
 }
