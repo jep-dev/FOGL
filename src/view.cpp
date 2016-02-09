@@ -12,14 +12,17 @@ namespace View {
 				once = true;
 			}
 			switch(err) {
-				case GL_INVALID_ENUM:
-					{std::cout << "invalid enum; ";} break;
-				case GL_INVALID_VALUE:
-					{std::cout << "invalid value; ";} break;
-				case GL_INVALID_OPERATION:
-					{std::cout << "invalid operation; ";} break;
-				default:
-					break;
+			case GL_INVALID_ENUM:
+				std::cout << "invalid enum; ";
+				break;
+			case GL_INVALID_VALUE:
+				std::cout << "invalid value; ";
+				break;
+			case GL_INVALID_OPERATION:
+				std::cout << "invalid operation; ";
+				break;
+			default:
+				break;
 			}
 		}
 		 
@@ -52,23 +55,9 @@ namespace View {
 
 		glUniformMatrix4fv(transformID, 1, 
 				GL_FALSE, transformData);
-		printErrors("glUniformMatrix4fv -> ");
-
 		glUniformMatrix2fv(projXYID, 1, GL_FALSE, xyData);
 		glUniformMatrix2fv(projZWID, 1, GL_FALSE, zwData);
-		printErrors("glUniformMatrix2fv -> ");
 	}
-	/*bool view::attach(const char *vPath, const char *fPath) {
-		if(!shader.loadFromFile(vPath, fPath)) {
-			return false;
-		}
-		sf::Shader::bind(&shader);
-		glGetIntegerv(GL_CURRENT_PROGRAM, (GLint*)(&progID));
-		transformID = glGetUniformLocation(progID, "transform");
-		projXYID = glGetUniformLocation(progID, "projXY");
-		projZWID = glGetUniformLocation(progID, "projZW");
-		return true;
-	}*/
 	
 	void view::redraw(void) {
 		if(!done) {
@@ -82,7 +71,6 @@ namespace View {
 			glDrawElements(GL_TRIANGLES, 12*3,
 					GL_UNSIGNED_INT, (void*) 0);
 			glDisableVertexAttribArray(0);
-			printErrors("Redraw -> ");
 			auto sz = win.getSize();
 			project(sz.x, sz.y);
 			win.display();
@@ -92,7 +80,6 @@ namespace View {
 	void view::run(void (*update)(void), int rate) {
 		sf::Event ev;
 		win.setActive(true);
-		//win.setVerticalSyncEnabled(true);
 		win.setFramerateLimit(rate);
 
 		while(!done) {
@@ -159,20 +146,22 @@ namespace View {
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(ibufData),
 				ibufData, GL_DYNAMIC_DRAW);
 
+		progID = glCreateProgram;
 		const char *vName = "resources/shade.vert",
 			  *fName = "resources/shade.frag";
-		if(link(vName, fName, progID = glCreateProgram())) {
-			transformID = glGetUniformLocation(progID, "transform");
-			projXYID = glGetUniformLocation(progID, "projXY");
-			projZWID = glGetUniformLocation(progID, "projZW");
-			glUseProgram(progID);
-		} else {
+		if(!link(vName, fName, progID)) {
 			done = true;
+			return;
 		}
+		transformID = glGetUniformLocation(progID, "transform");
+		projXYID = glGetUniformLocation(progID, "projXY");
+		projZWID = glGetUniformLocation(progID, "projZW");
+		glUseProgram(progID);
 	}
 	view::~view(void) {
-		glDeleteProgram(progID);
-		done = true;
+		if(progID != 0) {
+			glDeleteProgram(progID);
+		}
 		if(win.isOpen()) {
 			win.close();
 		}
