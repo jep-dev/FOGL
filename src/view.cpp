@@ -61,6 +61,7 @@ namespace View {
 	}
 	
 	void view::redraw(void) {
+		SDL_GL_MakeCurrent(win, context);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glEnableVertexAttribArray(0);
@@ -74,7 +75,7 @@ namespace View {
 		/*auto sz = win.getSize();
 		project(sz.x, sz.y);
 		win.display();*/
-		SDL_UpdateWindowSurface(win);
+		//SDL_UpdateWindowSurface(win);
 		SDL_GL_SwapWindow(win);
 	}
 
@@ -132,14 +133,20 @@ namespace View {
 		}
 
 		win = SDL_CreateWindow(title, 0, 0, w, h,
-				SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+				SDL_WINDOW_OPENGL 
+				| SDL_WINDOW_RESIZABLE
+				| SDL_WINDOW_SHOWN);
 		if(win == NULL) {
 			std::cout << "Could not create window;\r\n\t"
 				<< SDL_GetError() << std::endl;
 			done = true;
 			return;
 		}
-
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+		SDL_GL_SetSwapInterval(1);
 		context = SDL_GL_CreateContext(win);
 		if(context == NULL) {
 			std::cout << "Could not create GL context;\r\n\t"
@@ -148,7 +155,18 @@ namespace View {
 			return;
 		}
 		glewExperimental = GL_TRUE;
-		glewInit();
+		auto glewErr = glewInit();
+		if(glewErr != GLEW_OK) {
+			std::cout << "Could not initialize GLEW.\r\n\t"
+				<< glewGetErrorString(glewErr) << std::endl;
+			done = true;
+		}
+
+		int major, minor;
+		SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &major);
+		SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &minor);
+		std::cout << "Context " << major 
+			<< "." << minor << std::endl;
 
 		glClearColor(0,0,0,1);
 		glEnable(GL_DEPTH_TEST);
