@@ -10,7 +10,7 @@ int main(int argc, const char **argv) {
 
 	View::view display(512, 512, "View");
 	
-	auto modelFn = [](void* data) {
+/*	auto modelFn = [](void* data) {
 		// Update model
 		bool cond = true;
 		auto alive = (View::GateCond*) data;
@@ -28,7 +28,7 @@ int main(int argc, const char **argv) {
 	};
 
 	auto modelThread = SDL_CreateThread(
-			modelFn, "Model", &display.alive);
+			modelFn, "Model", &display.alive);*/
 	display.run([]{}, 60);
 	SDL_Delay(100);
 	return 0;
