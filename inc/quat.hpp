@@ -49,8 +49,6 @@ namespace Model {
 		quat<R> operator/=(R const& rhs);
 		quat<R> operator/=(quat<R> const& rhs);
 
-		/*quat(quat<R> const& rhs);
-		quat(quat<R> && rhs);*/
 		quat(void) = default;
 		quat(R w, R x = R(0), 
 				R y = R(0), R z = R(0));
@@ -125,11 +123,6 @@ namespace Model {
 		return *this * !rhs;
 	}
 
-	/*template<typename R>
-	quat<R> quat<R>::operator=(quat<R> const& rhs) {
-		w = rhs.w; x = rhs.x; y = rhs.y; z = rhs.z;
-		return *this;
-	}*/
 	template<typename R>
 	quat<R> quat<R>::operator+=(quat<R> const& rhs) {
 		w += rhs.w; x += rhs.x; y += rhs.y; z += rhs.z;
@@ -159,14 +152,6 @@ namespace Model {
 	quat<R> quat<R>::operator/=(quat<R> const& rhs) {
 		return *this = *this / rhs;
 	}
-
-	/*template<typename R>
-	quat<R>::quat(quat<R> const& src):
-		w(src.w), x(src.x), y(src.y), z(src.z) {}
-
-	template<typename R>
-	quat<R>::quat(quat<R> && src):
-		w(src.w), x(src.x), y(src.y), z(src.z) {}*/
 
 	template<typename R>
 	quat<R>::quat(R w, R x, R y, R z):

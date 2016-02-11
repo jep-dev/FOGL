@@ -41,7 +41,6 @@ namespace Model {
 		dual<R> operator*(dual<R> const& rhs) const;
 		dual<R> operator/(R const& rhs) const;
 		dual<R> operator/(quat<R> const& rhs) const;
-		dual<R> operator/(dual<R> const& rhs) const;
 
 		/* Binary assignment methods */
 		
@@ -54,7 +53,6 @@ namespace Model {
 		dual<R> operator*=(dual<R> const& rhs);
 		dual<R> operator/=(R const& rhs);
 		dual<R> operator/=(quat<R> const& rhs);
-		dual<R> operator/=(dual<R> const& rhs);
 
 		dual(void) = default;
 		dual(dual<R> const&) = default;
@@ -151,16 +149,7 @@ namespace Model {
 		auto inv = !rhs;
 		return {u*inv, v*inv};
 	}
-	template<typename R>
-	dual<R> dual<R>::operator/(dual<R> const& rhs) const {
-		return *this * !rhs;
-	}
-
-	/*template<typename R>
-	dual<R> dual<R>::operator=(dual<R> const& rhs) {
-		u = rhs.u; v = rhs.v;
-		return *this;
-	}*/
+	
 	template<typename R>
 	dual<R> dual<R>::operator+=(dual<R> const& rhs) {
 		u += rhs.u; v += rhs.v;
@@ -200,19 +189,6 @@ namespace Model {
 		u *= inv; v *= inv;
 		return *this;
 	}
-	template<typename R>
-	dual<R> dual<R>::operator/=(dual<R> const& rhs) {
-		return *this = *this * !rhs;
-	}
-
-	/*template<typename R>
-	dual<R>::dual(quat<R> const& re, quat<R> const& du):
-		u(re), v(du) {}*/
-
-	/*template<typename R>
-	dual<R>::dual(R uw, R ux, R uy, R uz,
-			R vw, R vx, R vy, R vz):
-		u(uw, ux, uy, uz), v(vw, vx, vy, vz) {}*/
 }
 
 #endif
