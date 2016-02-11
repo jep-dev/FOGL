@@ -23,28 +23,21 @@ namespace Model {
 		std::map<model<R>,dual<R>> subs;
 		model(void): uid(nextID++), subs{} {}
 	};
-	template<typename R = float>
-	std::ostream& operator<<(std::ostream& lhs, model<R> const& rhs) {
-		for(auto &entry : rhs.subs) {
-			lhs << entry.second << ": " << entry.first << "\r\n";
-		}
-		return lhs;
-	}
 	
 	template<typename R = float>
 	std::ostream& operator<<(std::ostream& lhs, 
 			quat<R> const& rhs) {
-		/*quat<R> singlet = rhs.w;
-		if(rhs == singlet) {return lhs << rhs.w;}
+		quat<R> mono = rhs.w;
+		if(rhs == mono) {return lhs << rhs.w;}
 		return lhs << "[" << rhs.w << ", " << rhs.x 
-			<< ", " << rhs.y << ", " << rhs.z << "]";*/
-		return lhs << "[" << rhs.w << ", " << rhs.x
 			<< ", " << rhs.y << ", " << rhs.z << "]";
 	}
 
 	template<typename R = float>
-	std::ostream& operator<<(std::ostream& lhs, dual<R> const& rhs) {
-		return lhs << "{" << rhs.u << ", " << rhs.v << "}";
+	std::ostream& operator<<(std::ostream& lhs, 
+			dual<R> const& rhs) {
+		return lhs << "{" << rhs.u << " + " 
+			<< rhs.v << "E}";
 	}
 }
 
