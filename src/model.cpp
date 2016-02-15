@@ -1,4 +1,4 @@
-#include "../inc/model.hpp"
+#include "model.hpp"
 
 namespace Model {
 
@@ -43,8 +43,8 @@ namespace Model {
 					}
 				} 
 			}
-			return false;
 		}
+		return false;
 	}
 
 }

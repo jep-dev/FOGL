@@ -16,16 +16,16 @@ TESTDIR=./test/
 vpath %.cpp $(SRCDIR)
 vpath %.hpp $(INCIDR)
 
-CXX=g++ 
+CXX=clang++ 
 CPPFLAGS?=-std=c++11 -pthread\
-		  -I$(GL3WINCDIR)
+		  -I$(INCDIR) -I$(GL3WINCDIR)
 
 EXE?=$(BINDIR)glomp
 TEST_EXE?=$(BINDIR)glomp_test
 
 LDFLAGS?=-lpthread \
-		-lGLU -lX11 \
-		-lglfw -lGL -ldl
+		-lglfw $(GL3WOBJS) \
+		-lX11 -lGL -lGLU -ldl
 
 TEST_LDFLAGS?=$(LDFLAGS) -lboost_unit_test_framework
 
@@ -56,7 +56,7 @@ $(TESTDIR)%.o:$(TESTDIR)%.cpp
 	$(CXX) $(CPPFLAGS) $(WFLAGS) -c -o $@ $<
 
 $(EXE):$(OBJS) 
-	$(CXX) $(OBJS) $(GL3WOBJS) -o $@ $(LDFLAGS)
+	$(CXX) $(OBJS) -o $@ $(LDFLAGS)
 
 $(TEST_EXE):$(TEST_OBJS)
 	$(CXX) $(TEST_OBJS) -o $@ $(TEST_LDFLAGS)

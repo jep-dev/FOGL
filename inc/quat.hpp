@@ -156,6 +156,16 @@ namespace Model {
 	template<typename R>
 	quat<R>::quat(R w, R x, R y, R z):
 		w(w), x(x), y(y), z(z) {}
+
+	template<typename R>
+	std::ostream& operator<<(std::ostream& lhs,
+			quat<R> const& rhs) {
+		if(rhs == quat<R>(rhs.w)) {
+			return lhs << rhs.w;
+		}
+		return lhs << rhs.w << ", " << rhs.x << ", " 
+			<< rhs.y << ", " << rhs.z;
+	}
 }
 
 #endif

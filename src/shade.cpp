@@ -1,4 +1,4 @@
-#include "../inc/shade.hpp"
+#include "shade.hpp"
 
 using std::string;
 

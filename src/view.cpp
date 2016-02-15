@@ -1,5 +1,5 @@
-#include "../inc/view.hpp"
-#include "../inc/shade.hpp"
+#include "view.hpp"
+#include "shade.hpp"
 
 namespace View {
 

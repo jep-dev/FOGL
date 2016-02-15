@@ -1,6 +1,6 @@
-#include "../inc/main.hpp"
-#include "../inc/model.hpp"
-#include "../inc/view.hpp"
+#include "main.hpp"
+#include "model.hpp"
+#include "view.hpp"
 
 #include <atomic>
 #include <chrono>

@@ -1,6 +1,3 @@
-#include <string>
-#include <iostream>
-
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE Model
 #include <boost/test/included/unit_test.hpp>

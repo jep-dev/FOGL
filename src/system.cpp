@@ -1,4 +1,4 @@
-#include "../inc/system.hpp"
+#include "system.hpp"
 
 namespace System {
 	bool readFile(const char *fname, std::string &lines) {

@@ -189,6 +189,13 @@ namespace Model {
 		u *= inv; v *= inv;
 		return *this;
 	}
+
+	template<typename R>
+	std::ostream& operator<<(std::ostream& lhs,
+			dual<R> const& rhs) {
+		return lhs << "{{" << rhs.u << "} + E{"
+			<< rhs.v << "}}";
+	}
 }
 
 #endif
