@@ -1,7 +1,7 @@
 #ifndef DUAL_HPP
 #define DUAL_HPP
 
-#include "../inc/quat.hpp"
+#include "quat.hpp"
 
 namespace Model {
 

@@ -1,7 +1,7 @@
 #ifndef QUAT_HPP
 #define QUAT_HPP
 
-#include "../inc/dual.hpp"
+#include "dual.hpp"
 
 namespace Model {
 
@@ -22,7 +22,7 @@ namespace Model {
 		/** Squared Euclidean norm */
 		R operator()(void) const;
 		/** Simple promotion */
-		explicit operator dual<R>(void) const;
+		//explicit operator dual<R>(void) const;
 
 		/* Constant binary methods (where lhs = *this) */
 
@@ -31,7 +31,7 @@ namespace Model {
 		/** Apply (lhs * rhs * ~lhs) */
 		quat<R> operator()(quat<R> const& rhs) const;
 		/** Apply (lhs * rhs * ~lhs) */
-		dual<R> operator()(dual<R> const& rhs) const;
+		//dual<R> operator()(dual<R> const& rhs) const;
 		quat<R> operator+(quat<R> const& rhs) const;
 		quat<R> operator-(quat<R> const& rhs) const;
 		quat<R> operator*(R const& rhs) const;
@@ -74,10 +74,10 @@ namespace Model {
 	R quat<R>::operator()(void) const {
 		return w*w + x*x + y*y + z*z;
 	}
-	template<typename R>
+	/*template<typename R>
 	quat<R>::operator dual<R>(void) const {
 		return {*this, 0};
-	}
+	}*/
 
 	template<typename R>
 	bool quat<R>::operator==(quat<R> const& rhs) const {
@@ -88,10 +88,10 @@ namespace Model {
 	quat<R> quat<R>::operator()(quat<R> const& rhs) const {
 		return *this * rhs * ~*this;
 	}
-	template<typename R>
+	/*template<typename R>
 	dual<R> quat<R>::operator()(dual<R> const& rhs) const {
 		return *this * rhs * ~*this;
-	}
+	}*/
 	template<typename R>
 	quat<R> quat<R>::operator+(quat<R> const& rhs) const {
 		return {w+rhs.w, x+rhs.x, y+rhs.y, z+rhs.z};

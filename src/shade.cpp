@@ -3,24 +3,11 @@
 using std::string;
 
 namespace View {
-	bool readFile(const char *fname, string &lines) {
-		std::ifstream file(fname);
-		if(file.is_open()) {
-			string line;
-			while(!file.eof() && std::getline(file, line)) {
-				lines.append(line + "\r\n");
-			}
-			file.close();
-			return true;
-		}
-		return false;
-	}
-
 	bool compile(const char *fname, GLuint &shader) {
 		int len;
 		GLint status = GL_FALSE;
 		string lines = "";
-		if(readFile(fname, lines)) {
+		if(System::readFile(fname, lines)) {
 			const char *cs = lines.c_str();
 			glShaderSource(shader, 1, (const GLchar **)&cs, NULL);
 			glCompileShader(shader);
