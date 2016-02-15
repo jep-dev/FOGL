@@ -2,38 +2,49 @@
 #include "../inc/model.hpp"
 #include "../inc/view.hpp"
 
-#include <X11/Xlib.h>
-#include <thread>
+#include <atomic>
+#include <chrono>
 #include <iostream>
+#include <thread>
 
-#include <SFML/System/Time.hpp>
-#include <SFML/System/Sleep.hpp>
+#include <X11/Xlib.h>
+#include <SFML/Graphics.hpp>
 
 int main(int argc, const char **argv) {
+	/*Model::model m;
+	Model::ply("resources/test.ply", m);*/
+
 	XInitThreads();
-	View::view display(512, 512, "View");
-	
-	display.win.setActive(false);
-	auto runFrame = []{
-		// One view frame
-	};
-	auto runModel = [&display]{
-		display.win.setActive(false);
+
+	std::atomic_bool alive(true);
+
+	sf::VideoMode mode(512, 512);
+	auto style = sf::Style::Default;
+	sf::ContextSettings ctx(24, 8, 0, 3, 3, 1);
+	sf::RenderWindow win(mode, "View", style, ctx);
+
+	auto viewCB = []{};
+	auto modelCB = [&alive]{
 		static int t = 0;
-		while(!display.done) {
-			std::cout << "Model: t = " << t++ << std::endl;
-			sf::sleep(sf::milliseconds(1000));
+		std::chrono::milliseconds ms(1000);
+		while(alive) {
+			std::cout << "Model update #" << t++ << std::endl;
+			if(t == 10) {
+				alive = false;
+				break;
+			}
+			std::this_thread::sleep_for(ms);
 		}
-	};
-	auto runView = [&display, &runFrame]{
-		display.run(runFrame, 60);
+		
 	};
 
-	std::thread viewThread(runView), 
-		modelThread(runModel);
-
-	viewThread.join();
-	modelThread.join();
+	win.setFramerateLimit(60);
+	View::view display(win, alive);
+	if(display.valid) {
+		std::thread modelThread(modelCB);
+		display.run(viewCB);
+		modelThread.join();
+	}
 
 	return 0;
 }

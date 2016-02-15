@@ -60,44 +60,48 @@ namespace View {
 	}
 	
 	void view::redraw(void) {
-		if(!done) {
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			glEnableVertexAttribArray(0);
-			glBindBuffer(GL_ARRAY_BUFFER, vbuf);
-			glVertexAttribPointer(0, 3, GL_FLOAT, 
-					GL_FALSE, 0, (void*) 0);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibuf);
-			glDrawElements(GL_TRIANGLES, 12*3,
-					GL_UNSIGNED_INT, (void*) 0);
-			glDisableVertexAttribArray(0);
-			auto sz = win.getSize();
-			project(sz.x, sz.y);
-			win.display();
-		}
+		glEnableVertexAttribArray(0);
+
+		glBindBuffer(GL_ARRAY_BUFFER, vbuf);
+		glVertexAttribPointer(0, 4, GL_FLOAT, 
+				GL_FALSE, 0, (void*) 0);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibuf);
+		glDrawElements(GL_TRIANGLES, 12*3,
+				GL_UNSIGNED_INT, (void*) 0);
+
+		glDisableVertexAttribArray(0);
+		auto sz = win.getSize();
+		project(sz.x, sz.y);
+		win.display();
 	}
 
-	void view::run(void (*update)(void), int rate) {
+	void view::run(void (*update)(void)) {
+		if(!valid) {
+			return;
+		}
 		sf::Event ev;
 		win.setActive(true);
-		win.setFramerateLimit(rate);
 
-		while(!done) {
+		bool done = false;
+		while(!done && alive) {
 			while(win.pollEvent(ev)) {
 				switch(ev.type) {
-					case sf::Event::Closed: {
-						done = true;
-						win.close();
-						break; }
-					case sf::Event::Resized: {
-						auto sz = ev.size;
-						glViewport(0, 0, sz.width, sz.height);
-						break; }
-					default:
-						break;
+				case sf::Event::Closed:
+					done = true;
+					break;
+				case sf::Event::Resized: {
+					auto sz = ev.size;
+					glViewport(0, 0, sz.width, sz.height);
+					} break;
+				default:
+					break;
 				}
 			}
 			if(done) {
+				alive = false;
 				break;
 			}
 			update();
@@ -105,10 +109,9 @@ namespace View {
 		}
 	}
 
-	view::view(int w, int h, const char *title):
-		win(sf::VideoMode(w,h), 
-			title, sf::Style::Default,
-			sf::ContextSettings(24, 8, 0, 3, 0)) {
+	view::view(sf::RenderWindow &win,
+			std::atomic_bool &alive):
+		win(win), alive(alive) {
 		
 		glewExperimental = GL_TRUE;
 		glewInit();
@@ -119,14 +122,14 @@ namespace View {
 		glBindVertexArray(vaID);
 
 		const GLfloat vbufData[] = {
-			+1,+1,+1, // 0  E U N 
-			+1,+1,-1, // 1  E U S
-			+1,-1,+1, // 2  E D N
-			+1,-1,-1, // 3  E D S
-			-1,+1,+1, // 4  W U N
-			-1,+1,-1, // 5  W U S
-			-1,-1,+1, // 6  W D N
-			-1,-1,-1, // 7  W D S
+			+1,+1,+1, 1, // 0  E U N 
+			+1,+1,-1, 1, // 1  E U S
+			+1,-1,+1, 1, // 2  E D N
+			+1,-1,-1, 1, // 3  E D S
+			-1,+1,+1, 1, // 4  W U N
+			-1,+1,-1, 1, // 5  W U S
+			-1,-1,+1, 1, // 6  W D N
+			-1,-1,-1, 1, // 7  W D S
 		};
 		const GLuint ibufData[] = {
 			1,0,2, 1,2,3, // E
@@ -139,24 +142,24 @@ namespace View {
 		glGenBuffers(1, &vbuf);
 		glBindBuffer(GL_ARRAY_BUFFER, vbuf);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(vbufData), 
-				vbufData, GL_DYNAMIC_DRAW);
+				vbufData, GL_STATIC_DRAW);
 
 		glGenBuffers(1, &ibuf);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibuf);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(ibufData),
-				ibufData, GL_DYNAMIC_DRAW);
+				ibufData, GL_STATIC_DRAW);
 
-		progID = glCreateProgram;
+		progID = glCreateProgram();
 		const char *vName = "resources/shade.vert",
 			  *fName = "resources/shade.frag";
 		if(!link(vName, fName, progID)) {
-			done = true;
 			return;
 		}
 		transformID = glGetUniformLocation(progID, "transform");
 		projXYID = glGetUniformLocation(progID, "projXY");
 		projZWID = glGetUniformLocation(progID, "projZW");
 		glUseProgram(progID);
+		valid = true;
 	}
 	view::~view(void) {
 		if(progID != 0) {

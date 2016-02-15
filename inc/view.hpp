@@ -1,23 +1,25 @@
 #ifndef VIEW_HPP
 #define VIEW_HPP
 
+#include <atomic>
 #include <iostream>
+
 #include <GL/glew.h>
 #include <SFML/Graphics.hpp>
 
 namespace View {
 
 	struct view {
-		bool initialized = false, done = false;
+		bool valid = false;
+		std::atomic_bool &alive;
 		GLuint progID, vaID, vbuf, ibuf, 
 			   transformID, projXYID, projZWID;
-		sf::RenderWindow win;
-		//sf::Shader shader;
+		sf::RenderWindow &win;
 		void project(int w, int h);
 		void redraw(void);
-		//bool attach(const char *vPath, const char *fPath);
-		void run(void (*)(void), int rate = 60);
-		view(int w, int h, const char *title);
+		void run(void (*)(void));
+		view(sf::RenderWindow &win,
+				std::atomic_bool &alive);
 		virtual ~view(void);
 	};
 }
