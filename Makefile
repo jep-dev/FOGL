@@ -1,17 +1,15 @@
 INCDIR=./inc/
 SRCDIR=./src/
 ASMDIR=./asm/
-OBJDIR=./obj/
 LIBDIR=./lib/
+BINDIR=./bin/
+TESTDIR=./test/
 
 GL3WDIR?=./gl3w/
 GL3WINCDIR?=$(GL3WDIR)include/
 GL3WSRCDIR?=$(GL3WDIR)src/
-GL3WLIBDIR?=$(GL3WDIR)lib/
-GL3WOBJS?=$(GL3WLIBDIR)gl3w.o
+GL3WOBJS?=$(GL3WDIR)gl3w.o
 
-BINDIR=./bin/
-TESTDIR=./test/
 
 vpath %.cpp $(SRCDIR)
 vpath %.hpp $(INCIDR)
@@ -24,8 +22,7 @@ EXE?=$(BINDIR)glomp
 TEST_EXE?=$(BINDIR)glomp_test
 
 LDFLAGS?=-lpthread \
-		-lglfw $(GL3WOBJS) \
-		-lX11 -lGL -lGLU -ldl
+		$(GL3WOBJS) -lglfw -lGL -ldl
 
 TEST_LDFLAGS?=$(LDFLAGS) -lboost_unit_test_framework
 
@@ -37,9 +34,9 @@ SRCS=$(wildcard $(SRCDIR)*.cpp)
 
 TEST_SRCS=$(wildcard $(TESTDIR)*.cpp)
 
-OBJS=$(patsubst $(SRCDIR)%.cpp,$(OBJDIR)%.o,$(SRCS))
+OBJS=$(patsubst $(SRCDIR)%.cpp,$(LIBDIR)%.o,$(SRCS))
 
-TEST_OBJS=$(filter-out $(OBJDIR)main.o,$(OBJS)) \
+TEST_OBJS=$(filter-out $(LIBDIR)main.o,$(OBJS)) \
 		  $(patsubst $(TESTDIR)%.cpp,$(TESTDIR)%.o,$(TEST_SRCS))
 
 ASMS=$(patsubst $(SRCDIR)%.cpp,$(ASMDIR)%.s,$(SRCS))
@@ -49,7 +46,7 @@ default: $(EXE)
 
 all:$(EXE) $(TEST_EXE)
 
-$(OBJDIR)%.o:$(SRCDIR)%.cpp $(INCDIR)%.hpp
+$(LIBDIR)%.o:$(SRCDIR)%.cpp $(INCDIR)%.hpp
 	$(CXX) $(CPPFLAGS) $(WFLAGS) -c -o $@ $<
 
 $(TESTDIR)%.o:$(TESTDIR)%.cpp
