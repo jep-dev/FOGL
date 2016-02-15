@@ -7,13 +7,13 @@
 #include <iostream>
 #include <thread>
 
-#include <X11/Xlib.h>
+//#include <X11/Xlib.h>
 
 int main(int argc, const char **argv) {
 	/*Model::model m;
 	Model::ply("resources/test.ply", m);*/
 
-	XInitThreads();
+	//XInitThreads();
 
 	if(!glfwInit()) {
 		std::cout << "Could not initialize GLFW." << std::endl;
