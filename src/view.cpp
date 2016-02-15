@@ -31,6 +31,10 @@ namespace View {
 		}
 	}
 
+	void view::resize(GLFWwindow *win, int w, int h) {
+		glViewport(0, 0, w, h);
+	}
+
 	void view::project(int w, int h) {
 		static float t = 0;
 		t += float(M_PI/180);
@@ -53,17 +57,22 @@ namespace View {
 			xyData[] = { x,  0.0, 0.0,   y},
 			zwData[] = {z1, -1.0,  z2, 0.0};
 
-		glUniformMatrix4fv(transformID, 1, 
+		glUniformMatrix4fv(transformID, 1,
 				GL_FALSE, transformData);
-		glUniformMatrix2fv(projXYID, 1, GL_FALSE, xyData);
-		glUniformMatrix2fv(projZWID, 1, GL_FALSE, zwData);
+		glUniformMatrix2fv(projXYID, 1,
+				GL_FALSE, xyData);
+		glUniformMatrix2fv(projZWID, 1,
+				GL_FALSE, zwData);
 	}
 	
 	void view::redraw(void) {
+		int w, h;
+		glfwGetFramebufferSize(win, &w, &h);
+		project(w, h);
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glEnableVertexAttribArray(0);
-
 		glBindBuffer(GL_ARRAY_BUFFER, vbuf);
 		glVertexAttribPointer(0, 4, GL_FLOAT, 
 				GL_FALSE, 0, (void*) 0);
@@ -71,50 +80,37 @@ namespace View {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibuf);
 		glDrawElements(GL_TRIANGLES, 12*3,
 				GL_UNSIGNED_INT, (void*) 0);
-
 		glDisableVertexAttribArray(0);
-		auto sz = win.getSize();
-		project(sz.x, sz.y);
-		win.display();
+
+		glfwSwapBuffers(win);
 	}
 
 	void view::run(void (*update)(void)) {
 		if(!valid) {
 			return;
 		}
-		sf::Event ev;
-		win.setActive(true);
 
-		bool done = false;
-		while(!done && alive) {
-			while(win.pollEvent(ev)) {
-				switch(ev.type) {
-				case sf::Event::Closed:
-					done = true;
-					break;
-				case sf::Event::Resized: {
-					auto sz = ev.size;
-					glViewport(0, 0, sz.width, sz.height);
-					} break;
-				default:
-					break;
-				}
-			}
-			if(done) {
+		glfwMakeContextCurrent(win);
+
+		while(alive) {
+			glfwPollEvents();
+			if(glfwWindowShouldClose(win)) {
 				alive = false;
 				break;
 			}
-			update();
-			redraw();
+			if(alive) {
+				update();
+				redraw();
+			}
 		}
 	}
 
-	view::view(sf::RenderWindow &win,
+	view::view(GLFWwindow *win,
 			std::atomic_bool &alive):
 		win(win), alive(alive) {
+
+		glfwSetWindowSizeCallback(win, resize);
 		
-		glewExperimental = GL_TRUE;
-		glewInit();
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 		
@@ -165,8 +161,6 @@ namespace View {
 		if(progID != 0) {
 			glDeleteProgram(progID);
 		}
-		if(win.isOpen()) {
-			win.close();
-		}
+		glfwDestroyWindow(win);
 	}
 }

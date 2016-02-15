@@ -3,6 +3,13 @@ SRCDIR=./src/
 ASMDIR=./asm/
 OBJDIR=./obj/
 LIBDIR=./lib/
+
+GL3WDIR?=./gl3w/
+GL3WINCDIR?=$(GL3WDIR)include/
+GL3WSRCDIR?=$(GL3WDIR)src/
+GL3WLIBDIR?=$(GL3WDIR)lib/
+GL3WOBJS?=$(GL3WLIBDIR)gl3w.o
+
 BINDIR=./bin/
 TESTDIR=./test/
 
@@ -10,14 +17,15 @@ vpath %.cpp $(SRCDIR)
 vpath %.hpp $(INCIDR)
 
 CXX=g++ 
-CPPFLAGS?=-std=c++11 -pthread
+CPPFLAGS?=-std=c++11 -pthread\
+		  -I$(GL3WINCDIR)
 
 EXE?=$(BINDIR)glomp
 TEST_EXE?=$(BINDIR)glomp_test
 
 LDFLAGS?=-lpthread \
-		-lGL -lGLU -lGLEW -lX11 \
-		-lsfml-graphics -lsfml-window -lsfml-system
+		-lGLU -lX11 \
+		-lglfw -lGL -ldl
 
 TEST_LDFLAGS?=$(LDFLAGS) -lboost_unit_test_framework
 
@@ -48,7 +56,7 @@ $(TESTDIR)%.o:$(TESTDIR)%.cpp
 	$(CXX) $(CPPFLAGS) $(WFLAGS) -c -o $@ $<
 
 $(EXE):$(OBJS) 
-	$(CXX) $(OBJS) -o $@ $(LDFLAGS)
+	$(CXX) $(OBJS) $(GL3WOBJS) -o $@ $(LDFLAGS)
 
 $(TEST_EXE):$(TEST_OBJS)
 	$(CXX) $(TEST_OBJS) -o $@ $(TEST_LDFLAGS)

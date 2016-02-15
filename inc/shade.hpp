@@ -1,9 +1,9 @@
 #ifndef SHADE_HPP
 #define SHADE_HPP
 
+#include "view.hpp"
 #include "system.hpp"
 #include <iostream>
-#include <GL/glew.h>
 
 namespace View {
 	bool compile(const char *fname, GLuint &shader);

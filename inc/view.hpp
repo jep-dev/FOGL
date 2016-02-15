@@ -4,8 +4,15 @@
 #include <atomic>
 #include <iostream>
 
-#include <GL/glew.h>
-#include <SFML/Graphics.hpp>
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
+#include <math.h>
+
+#include <GL/gl3w.h>
+#include <GL/glcorearb.h>
+#include <GLFW/glfw3.h>
+#include <GL/gl.h>
 
 namespace View {
 
@@ -14,11 +21,14 @@ namespace View {
 		std::atomic_bool &alive;
 		GLuint progID, vaID, vbuf, ibuf, 
 			   transformID, projXYID, projZWID;
-		sf::RenderWindow &win;
+		GLFWwindow *win;
+		
+		static void resize(GLFWwindow *win, int w, int h);
+
 		void project(int w, int h);
 		void redraw(void);
 		void run(void (*)(void));
-		view(sf::RenderWindow &win,
+		view(GLFWwindow *win,
 				std::atomic_bool &alive);
 		virtual ~view(void);
 	};

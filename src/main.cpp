@@ -8,7 +8,6 @@
 #include <thread>
 
 #include <X11/Xlib.h>
-#include <SFML/Graphics.hpp>
 
 int main(int argc, const char **argv) {
 	/*Model::model m;
@@ -16,13 +15,29 @@ int main(int argc, const char **argv) {
 
 	XInitThreads();
 
+	if(!glfwInit()) {
+		std::cout << "Could not initialize GLFW." << std::endl;
+		return -1;
+	}
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, 
+			GLFW_OPENGL_CORE_PROFILE);
+	GLFWwindow *win = glfwCreateWindow(512, 512, 
+			"View", NULL, NULL);
+
+	if(!win) {
+		std::cout << "Could not create window." << std::endl;
+		return -1;
+	}
+
+	glfwMakeContextCurrent(win);
+	if(gl3wInit()) {
+		std::cout << "Could not initialize gl3w." << std::endl;
+		return -1;
+	}
+
 	std::atomic_bool alive(true);
-
-	sf::VideoMode mode(512, 512);
-	auto style = sf::Style::Default;
-	sf::ContextSettings ctx(24, 8, 0, 3, 3, 1);
-	sf::RenderWindow win(mode, "View", style, ctx);
-
 	auto viewCB = []{};
 	auto modelCB = [&alive]{
 		static int t = 0;
@@ -38,13 +53,15 @@ int main(int argc, const char **argv) {
 		
 	};
 
-	win.setFramerateLimit(60);
+	//win.setFramerateLimit(60);
 	View::view display(win, alive);
 	if(display.valid) {
 		std::thread modelThread(modelCB);
 		display.run(viewCB);
 		modelThread.join();
 	}
+
+	glfwTerminate();
 
 	return 0;
 }
