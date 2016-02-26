@@ -14,9 +14,12 @@ GL3WOBJS?=$(GL3WDIR)gl3w.o
 vpath %.cpp $(SRCDIR)
 vpath %.hpp $(INCIDR)
 
-CXX=clang++ 
+CC=clang
+CXX=clang++
+CFLAGS?=-I$(INCDIR) -I$(GL3WINCDIR)
 CPPFLAGS?=-std=c++11 -pthread\
-		  -I$(INCDIR) -I$(GL3WINCDIR)
+		  $(CFLAGS)
+		  
 
 EXE?=$(BINDIR)glomp
 TEST_EXE?=$(BINDIR)glomp_test
@@ -46,16 +49,19 @@ default: $(EXE)
 
 all:$(EXE) $(TEST_EXE)
 
+$(GL3WDIR)%.o:$(GL3WSRCDIR)%.c
+	$(CC) $(CFLAGS) $(WFLAGS) -c -o $@ $<
+
 $(LIBDIR)%.o:$(SRCDIR)%.cpp $(INCDIR)%.hpp
 	$(CXX) $(CPPFLAGS) $(WFLAGS) -c -o $@ $<
 
 $(TESTDIR)%.o:$(TESTDIR)%.cpp
 	$(CXX) $(CPPFLAGS) $(WFLAGS) -c -o $@ $<
 
-$(EXE):$(OBJS) 
+$(EXE):$(OBJS) $(GL3WOBJS)
 	$(CXX) $(OBJS) -o $@ $(LDFLAGS)
 
-$(TEST_EXE):$(TEST_OBJS)
+$(TEST_EXE):$(TEST_OBJS) $(GL3WOBJS)
 	$(CXX) $(TEST_OBJS) -o $@ $(TEST_LDFLAGS)
 
 $(ASMDIR)%.s:$(SRCDIR)%.cpp
