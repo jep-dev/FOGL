@@ -107,7 +107,7 @@ namespace Model {
 	template<typename R>
 	quat<R> quat<R>::operator*(quat<R> const& rhs) const {
 		R rw = rhs.w, rx = rhs.x, 
-		  ry = rhs.y, rz = rhs.z;
+			ry = rhs.y, rz = rhs.z;
 		return {
 			w*rw - x*rx - y*ry - z*rz,
 			w*rx + x*rw + y*rz - z*ry,
