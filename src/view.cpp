@@ -123,7 +123,7 @@ namespace View {
 		glGenVertexArrays(1, &vaID);
 		glBindVertexArray(vaID);
 
-		Model::Ply::Header model("../models/bunny3.ply");
+		Model::Ply::Header model("./resources/bunny.ply");
 		if(!model.status) {
 			alive = false;
 			valid = false;
