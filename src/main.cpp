@@ -5,16 +5,10 @@
 #include <atomic>
 #include <chrono>
 #include <iostream>
+#include <string>
 #include <thread>
 
-//#include <X11/Xlib.h>
-
 int main(int argc, const char **argv) {
-	/*Model::model m;
-	Model::ply("resources/test.ply", m);*/
-
-	//XInitThreads();
-
 	if(!glfwInit()) {
 		std::cout << "Could not initialize GLFW." << std::endl;
 		return -1;
@@ -38,22 +32,17 @@ int main(int argc, const char **argv) {
 	}
 
 	std::atomic_bool alive(true);
+	std::chrono::milliseconds ms(1000);
 	auto viewCB = []{};
-	auto modelCB = [&alive]{
+	auto modelCB = [&alive, &ms]{
 		static int t = 0;
-		std::chrono::milliseconds ms(1000);
 		while(alive) {
 			std::cout << "Model update #" << t++ << std::endl;
-			if(t == 10) {
-				alive = false;
-				break;
-			}
 			std::this_thread::sleep_for(ms);
 		}
 		
 	};
 
-	//win.setFramerateLimit(60);
 	View::view display(win, alive);
 	if(display.valid) {
 		std::thread modelThread(modelCB);

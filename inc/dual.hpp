@@ -113,9 +113,9 @@ namespace Model {
 	dual<R> dual<R>::operator*(dual<R> const& rhs) const {
 		auto const& p = rhs.u, q = rhs.v;
 		R auw = u.w, aux = u.x, auy = u.y, auz = u.z,
-		  avw = v.w, avx = v.x, avy = v.y, avz = v.z,
-		  buw = p.w, bux = p.x, buy = p.y, buz = p.z,
-		  bvw = q.w, bvx = q.x, bvy = q.y, bvz = q.z;
+			avw = v.w, avx = v.x, avy = v.y, avz = v.z,
+			buw = p.w, bux = p.x, buy = p.y, buz = p.z,
+			bvw = q.w, bvx = q.x, bvy = q.y, bvz = q.z;
 		return {{
 			auw*buw - aux*bux - auy*buy - auz*buz,
 			auw*bux + aux*buw + auy*buz - auz*buy,

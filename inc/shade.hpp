@@ -6,9 +6,8 @@
 #include <iostream>
 
 namespace View {
-	bool compile(const char *fname, GLuint &shader);
-	bool link(const char *vertName, 
-			const char *fragName, GLuint &program);
+	bool compile(const char*, GLuint&);
+	bool link(const char*, const char*, GLuint&);
 }
 
 #endif

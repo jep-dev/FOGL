@@ -15,14 +15,14 @@
 #include <GL/gl.h>
 
 namespace View {
-
 	struct view {
 		bool valid = false;
 		std::atomic_bool &alive;
-		GLuint progID, vaID, vbuf, ibuf, 
-			   transformID, projXYID, projZWID;
+		GLuint progID, vaID, vbuf, nbuf, ibuf,
+				transformID, projXYID, projZWID;
+		int nTriangles;
 		GLFWwindow *win;
-		
+	
 		static void resize(GLFWwindow *win, int w, int h);
 
 		void project(int w, int h);
