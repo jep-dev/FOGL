@@ -33,53 +33,58 @@ namespace View {
 		}
 	}
 
-	void view::resize(GLFWwindow *win, int w, int h) {
-		glViewport(0, 0, w, h);
-	}
+	void view::setUniforms(void) {
+		int w, h;
+		glfwGetFramebufferSize(win, &w, &h);
 
-	void view::project(int w, int h) {
-
-		const float aspect = h/float(w),
-			fov = float(1/tan(45 * M_PI / 180)),
-			near = 1.0, far = 5.0,
+		float aspect = h/float(w),
+			fov = float(1/tan(25 * M_PI / 180)),
+			near = 1, far = 10,
 			x = fov*aspect, y = fov, 
 			z1 = (far+near)/(far-near),
 			z2 = 2*far*near/(far-near),
-			t[3]{0,-0.1,-2},
-			transformData[] = {
-				1.0, 0.0, 0.0, 0.0,
-				0.0, 1.0, 0.0, 0.0,
-				0.0, 0.0, 1.0, 0.0,
-				t[0], t[1], t[2], 1.0
-			}, 
-			xyData[] = { x,	 0.0, 0.0,	 y},
-			zwData[] = {z1, -1.0,	 z2, 0.0};
+			viewData[] = {
+				 1,  0,  0,  0,
+				 0,  1,  0,  0,
+				 0,  0,  1,  0,
+				 0,  0, -3,  1
+			},
+			projData[] = {
+				 x,  0,  0,  0,
+				 0,  y,  0,  0,
+				 0,  0, z1, -1,
+				 0,  0, z2,  0
+			};
+		
+		static float theta = 0;
+		theta += M_PI/180;
+		float c = cos(theta), 
+					s = sin(theta);
+		float modelData[]{
+				 c, 0,-s, 0,
+				 0, 1, 0, 0,
+				 s, 0, c, 0,
+				 0, 0, 0, 1
+		};
 
-		glUniformMatrix4fv(transformID, 1,
-				GL_FALSE, transformData);
-		glUniformMatrix2fv(projXYID, 1,
-				GL_FALSE, xyData);
-		glUniformMatrix2fv(projZWID, 1,
-				GL_FALSE, zwData);
+		glUniformMatrix4fv(modelID, 1, GL_TRUE,  modelData);
+		glUniformMatrix4fv(viewID, 1, GL_FALSE, viewData);
+		glUniformMatrix4fv(projID, 1, GL_FALSE, projData);
 	}
 	
 	void view::redraw(void) {
-		int w, h;
-		glfwGetFramebufferSize(win, &w, &h);
-		project(w, h);
-
+		setUniforms();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 
+		static long int offset = 3*sizeof(float), stride = 2*offset;
 		glBindBuffer(GL_ARRAY_BUFFER, vbuf);
 		glVertexAttribPointer(0, 3, GL_FLOAT, 
-				GL_FALSE, 0, (void*) 0);
-
-		glBindBuffer(GL_ARRAY_BUFFER, nbuf);
+				GL_FALSE, stride, (void*) 0);
 		glVertexAttribPointer(1, 3, GL_FLOAT,
-				GL_FALSE, 0, (void*) 0);
+				GL_FALSE, stride, (void*) offset);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibuf);
 		glDrawElements(GL_TRIANGLES, nTriangles*3,
@@ -91,31 +96,52 @@ namespace View {
 		glfwSwapBuffers(win);
 	}
 
-	void view::run(void (*update)(void)) {
-		if(!valid) {
-			return;
-		}
-
-		glfwMakeContextCurrent(win);
-
-		while(alive) {
-			glfwPollEvents();
-			if(glfwWindowShouldClose(win)) {
-				alive = false;
+	void view::run(std::function<bool()> update,
+			std::function<void()> quit) {
+		if(valid && win) {
+			glfwMakeContextCurrent(win);
+			while(valid) {
+				glfwPollEvents();
+				if(!glfwWindowShouldClose(win)
+						&& update()) {
+					redraw();
+					continue;
+				}
+				quit();
 				break;
-			}
-			if(alive) {
-				update();
-				redraw();
 			}
 		}
 	}
 
-	view::view(GLFWwindow *win,
-			std::atomic_bool &alive):
-		win(win), alive(alive) {
+	view::view(void) {
+		using Header = Model::Ply::Header;
+		using Element = Model::Ply::Element;
 
-		glfwSetWindowSizeCallback(win, resize);
+		if(!glfwInit()) {
+			std::cout << "Could not initialize GLFW." << std::endl;
+			return;
+		}
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+		win = glfwCreateWindow(512, 512, "View", NULL, NULL);
+
+		if(!win) {
+			std::cout << "Could not create window." << std::endl;
+			return;
+		}
+
+		glfwMakeContextCurrent(win);
+		if(gl3wInit()) {
+			std::cout << "Could not initialize gl3w." << std::endl;
+			return;
+		}
+		glfwSetWindowSizeCallback(win, 
+				[](GLFWwindow* win, int w, int h){
+					glfwMakeContextCurrent(win);
+					glViewport(0, 0, w, h);
+				}
+		);
 		
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
@@ -123,48 +149,45 @@ namespace View {
 		glGenVertexArrays(1, &vaID);
 		glBindVertexArray(vaID);
 
-		Model::Ply::Header model("./resources/bunny.ply");
+		Header model("./resources/bunny.ply");
 		if(!model.status) {
-			alive = false;
-			valid = false;
 			std::cout << model.status << std::endl;
 			return;
 		}
-
-		int f3 = sizeof(float)*3, i3 = sizeof(int)*3;
-		auto &vertices = model.elements[0], 
-				 &indices = model.elements[1];
-		int nVertices = vertices.instances, 
-				verticesSize = nVertices * f3,
-				nIndices = indices.instances,
-				indicesSize = nIndices * i3;
-		nTriangles = nIndices;
-
-		float vbufData[nVertices*3],
-					nbufData[nVertices*3];
-		for(int i = 0, j = 0; i < nVertices; ++i, j+=3) {
-			int pos = vertices.properties[0].indices[i];
-			std::memcpy(&vbufData[j], &vertices.data[pos], f3);
-			std::memcpy(&nbufData[j], &vertices.data[pos+f3], f3);
+		auto start = begin(model.elements), 
+				 stop = end(model.elements);
+		auto vertices = std::find_if(start, stop,
+			[](Element const& el) -> bool {
+				return el.name == "vertex" 
+					&& el.properties.size() == 6;
+			}), indices = std::find_if(start, stop,
+			[](Element const& el) -> bool {
+				return el.name == "face"
+					&& el.properties.size() == 1
+					&& el.has_list == true;
+			});
+		if(vertices == stop || indices == stop) {
+			valid = false;
+			std::cout << "The model is valid, but does not match "
+				"the anticipated structure." << std::endl;
+			return;
 		}
-		int ibufData[nIndices*3];
-		std::memcpy(ibufData, &indices.data[0], i3*nIndices);
+
+		int nVertices = vertices->instances,
+				vSize = nVertices*6*sizeof(float),
+				nIndices = indices->instances,
+				iSize = nIndices*3*sizeof(int);
+		nTriangles = nIndices;
 		
 		glGenBuffers(1, &vbuf);
 		glBindBuffer(GL_ARRAY_BUFFER, vbuf);
-		glBufferData(GL_ARRAY_BUFFER, verticesSize, 
-				vbufData, GL_STATIC_DRAW);
-
-		glGenBuffers(1, &nbuf);
-		glBindBuffer(GL_ARRAY_BUFFER, nbuf);
-		glBufferData(GL_ARRAY_BUFFER, verticesSize,
-				nbufData, GL_STATIC_DRAW);
-
+		glBufferData(GL_ARRAY_BUFFER, vertices->data.size(),
+				(void*)(&vertices->data[0]), GL_STATIC_DRAW);
 		glGenBuffers(1, &ibuf);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibuf);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesSize, 
-				ibufData, GL_STATIC_DRAW);
-
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices->data.size(),
+				(void*)(&indices->data[0]), GL_STATIC_DRAW);
+		
 		progID = glCreateProgram();
 		const char *vName = "resources/shade.vert",
 				*fName = "resources/shade.frag";
@@ -172,14 +195,16 @@ namespace View {
 			std::cout << "Could not compile/link shader(s)." << std::endl;
 			return;
 		}
-		transformID = glGetUniformLocation(progID, "transform");
-		projXYID = glGetUniformLocation(progID, "projXY");
-		projZWID = glGetUniformLocation(progID, "projZW");
+		modelID = glGetUniformLocation(progID, "model");
+		viewID = glGetUniformLocation(progID, "view");
+		projID = glGetUniformLocation(progID, "proj");
 		glUseProgram(progID);
+		/*std::cout << progID << ", " << modelID << ", " << viewID 
+			<< ", " << projID << "." << std::endl;*/
 		valid = true;
 	}
 	view::~view(void) {
-		if(progID != 0) {
+		if(progID) {
 			glDeleteProgram(progID);
 		}
 		glfwDestroyWindow(win);

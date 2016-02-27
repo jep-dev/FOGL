@@ -9,44 +9,38 @@
 #include <thread>
 
 int main(int argc, const char **argv) {
-	if(!glfwInit()) {
-		std::cout << "Could not initialize GLFW." << std::endl;
-		return -1;
-	}
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, 
-			GLFW_OPENGL_CORE_PROFILE);
-	GLFWwindow *win = glfwCreateWindow(512, 512, 
-			"View", NULL, NULL);
+	using msec=std::chrono::milliseconds;
 
-	if(!win) {
-		std::cout << "Could not create window." << std::endl;
-		return -1;
-	}
 
-	glfwMakeContextCurrent(win);
-	if(gl3wInit()) {
-		std::cout << "Could not initialize gl3w." << std::endl;
-		return -1;
-	}
-
+	// Shared state
 	std::atomic_bool alive(true);
-	std::chrono::milliseconds ms(1000);
-	auto viewCB = []{};
-	auto modelCB = [&alive, &ms]{
+
+	// Delay between model updates
+	msec delay(1000);
+
+
+	// Update view based on state
+	auto updateView = [&alive]() -> bool {
+		return alive;
+	};
+	auto quit = [&alive]() -> void {
+		alive = false;
+	};
+
+
+	// Update model based on state & delay
+	auto updateModel = [&alive, &delay]{
 		static int t = 0;
 		while(alive) {
 			std::cout << "Model update #" << t++ << std::endl;
-			std::this_thread::sleep_for(ms);
+			std::this_thread::sleep_for(delay);
 		}
-		
 	};
 
-	View::view display(win, alive);
+	View::view display;
 	if(display.valid) {
-		std::thread modelThread(modelCB);
-		display.run(viewCB);
+		std::thread modelThread(updateModel);
+		display.run(updateView, quit);
 		modelThread.join();
 	}
 

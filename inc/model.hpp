@@ -135,6 +135,11 @@ namespace Model {
 			unsigned int instances;
 
 			std::vector<Property> properties;
+			template<typename T>
+			bool readProperty(std::ifstream &file,
+					Property &prop, int n);
+			bool readProperty(std::ifstream &file,
+					Property &prop);
 
 			friend std::ostream& operator<<
 					(std::ostream& lhs, const Element& rhs) {
@@ -146,11 +151,6 @@ namespace Model {
 				return lhs;
 			}
 		};
-		template<typename T>
-		bool expectASCII(std::ifstream &file,
-				Element &el, Property &prop, int n);
-		bool expectASCII(std::ifstream &file,
-				Element &el, Property &prop);
 
 		struct Header {
 			Status status;

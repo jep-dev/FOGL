@@ -189,8 +189,7 @@ namespace Model {
 				for(int el_i = 0, el_n = el.instances;
 						status && el_i < el_n; ++el_i) {
 					for(auto &prop : el.properties) {
-						auto pos = file.tellg();
-						if(ascii && !expectASCII(file, el, prop)) {
+						if(ascii && !el.readProperty(file, prop)) {
 							status.id = Status::EARLY_EOF;
 							std::ostringstream oss;
 							oss << "while parsing " << el.name
@@ -212,30 +211,26 @@ namespace Model {
 		}
 
 		template<typename T>
-		bool expectASCII(std::ifstream &file, 
-				Element &el, Property &prop, int n) {
-			
-			auto &data = el.data;
+		bool Element::readProperty(
+				std::ifstream &file, Property &prop, int n) {
 			T value;
 			int size = data.size();
 			for(int i = 0; i < n; ++i) {
 				if(!(file >> value)) {
 					return false;
 				}
-				el.push_back(value);
+				push_back(value);
 			}
 			prop.indices.push_back(size);
 			return true;
 		}
-		bool expectASCII(std::ifstream &file,
-				Element &el, Property &prop) {
+		bool Element::readProperty(
+				std::ifstream &file, Property &prop) {
 			int n;
 			if(prop.is_list) {
 				if(file >> n) {
 					prop.counts.push_back(n);
 				} else {
-					std::cout << std::ios::boolalpha << file.is_open()
-						<< ", " << file.good() << ", " << file.peek() << std::endl;
 					return false;
 				}
 			} else {
@@ -243,21 +238,21 @@ namespace Model {
 			}
 			switch(prop.valueType) {
 				case Primitive::INT8:
-					return expectASCII<int8_t>(file, el, prop, n);
+					return readProperty<int8_t>(file, prop, n);
 				case Primitive::UINT8:
-					return expectASCII<uint8_t>(file, el, prop, n);
+					return readProperty<uint8_t>(file, prop, n);
 				case Primitive::INT16:
-					return expectASCII<int16_t>(file, el, prop, n);
+					return readProperty<int16_t>(file, prop, n);
 				case Primitive::UINT16:
-					return expectASCII<uint16_t>(file, el, prop, n);
+					return readProperty<uint16_t>(file, prop, n);
 				case Primitive::INT32:
-					return expectASCII<int32_t>(file, el, prop, n);
+					return readProperty<int32_t>(file, prop, n);
 				case Primitive::UINT32:
-					return expectASCII<uint32_t>(file, el, prop, n);
+					return readProperty<uint32_t>(file, prop, n);
 				case Primitive::FLOAT32:
-					return expectASCII<float>(file, el, prop, n);
+					return readProperty<float>(file, prop, n);
 				case Primitive::FLOAT64:
-					return expectASCII<double>(file, el, prop, n);
+					return readProperty<double>(file, prop, n);
 				default:
 					return false;
 			}

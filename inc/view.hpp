@@ -3,6 +3,7 @@
 
 #include <atomic>
 #include <iostream>
+#include <functional>
 
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
@@ -17,20 +18,19 @@
 namespace View {
 	struct view {
 		bool valid = false;
-		std::atomic_bool &alive;
-		GLuint progID, vaID, vbuf, nbuf, ibuf,
-				transformID, projXYID, projZWID;
+		GLuint progID, vaID, vbuf, ibuf,
+					 modelID, viewID, projID;
 		int nTriangles;
 		GLFWwindow *win;
 	
-		static void resize(GLFWwindow *win, int w, int h);
-
-		void project(int w, int h);
+		void setUniforms(void);
 		void redraw(void);
-		void run(void (*)(void));
-		view(GLFWwindow *win,
-				std::atomic_bool &alive);
+		void run(std::function<bool()>, std::function<void()>);
+		view();
 		virtual ~view(void);
+
+		//static void resize(GLFWwindow *win, int w, int h)
+
 	};
 }
 
