@@ -18,6 +18,7 @@
 namespace View {
 	struct view {
 		bool valid = false;
+		float near=1, far=10, fov=25;
 		GLuint progID, vaID, vbuf, ibuf,
 					 modelID, viewID, projID;
 		int nTriangles;
@@ -28,9 +29,6 @@ namespace View {
 		void run(std::function<bool()>, std::function<void()>);
 		view();
 		virtual ~view(void);
-
-		//static void resize(GLFWwindow *win, int w, int h)
-
 	};
 }
 

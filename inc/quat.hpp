@@ -22,7 +22,7 @@ namespace Model {
 		/** Squared Euclidean norm */
 		R operator()(void) const;
 		/** Simple promotion */
-		//explicit operator dual<R>(void) const;
+		explicit operator dual<R>(void) const;
 
 		/* Constant binary methods (where lhs = *this) */
 
@@ -31,27 +31,29 @@ namespace Model {
 		/** Apply (lhs * rhs * ~lhs) */
 		quat<R> operator()(quat<R> const& rhs) const;
 		/** Apply (lhs * rhs * ~lhs) */
-		//dual<R> operator()(dual<R> const& rhs) const;
+		dual<R> operator()(dual<R> const& rhs) const;
+		
 		quat<R> operator+(quat<R> const& rhs) const;
 		quat<R> operator-(quat<R> const& rhs) const;
-		quat<R> operator*(R const& rhs) const;
 		quat<R> operator*(quat<R> const& rhs) const;
-		quat<R> operator/(R const& rhs) const;
 		quat<R> operator/(quat<R> const& rhs) const;
+
+		quat<R> operator*(R const& rhs) const;
+		quat<R> operator/(R const& rhs) const;
 
 		/* Binary operators */
 
-		/*quat<R> operator=(quat<R> const& rhs);*/
-		quat<R> operator+=(quat<R> const& rhs);
-		quat<R> operator-=(quat<R> const& rhs);
-		quat<R> operator*=(R const& rhs);
-		quat<R> operator*=(quat<R> const& rhs);
-		quat<R> operator/=(R const& rhs);
-		quat<R> operator/=(quat<R> const& rhs);
+ 		//quat<R> operator=(quat<R> const& rhs);
+		quat<R>& operator+=(quat<R> const& rhs);
+		quat<R>& operator-=(quat<R> const& rhs);
+		quat<R>& operator*=(R const& rhs);
+		quat<R>& operator*=(quat<R> const& rhs);
+		quat<R>& operator/=(R const& rhs);
+		quat<R>& operator/=(quat<R> const& rhs);
 
 		quat(void) = default;
-		quat(R w, R x = R(0), 
-				R y = R(0), R z = R(0));
+		quat(const R w, const R x = 0, const R y = 0, const R z = 0):
+			w(w), x(x), y(y), z(z) {}
 	};
 
 	template<typename R>
@@ -74,10 +76,10 @@ namespace Model {
 	R quat<R>::operator()(void) const {
 		return w*w + x*x + y*y + z*z;
 	}
-	/*template<typename R>
+	template<typename R>
 	quat<R>::operator dual<R>(void) const {
 		return {*this, 0};
-	}*/
+	}
 
 	template<typename R>
 	bool quat<R>::operator==(quat<R> const& rhs) const {
@@ -124,38 +126,35 @@ namespace Model {
 	}
 
 	template<typename R>
-	quat<R> quat<R>::operator+=(quat<R> const& rhs) {
+	quat<R>& quat<R>::operator+=(quat<R> const& rhs) {
 		w += rhs.w; x += rhs.x; y += rhs.y; z += rhs.z;
 		return *this;
 	}
 	template<typename R>
-	quat<R> quat<R>::operator-=(quat<R> const& rhs) {
+	quat<R>& quat<R>::operator-=(quat<R> const& rhs) {
 		w -= rhs.w; x -= rhs.x; y -= rhs.y; z -= rhs.z;
 		return *this;
 	}
 	template<typename R>
-	quat<R> quat<R>::operator*=(R const& rhs) {
+	quat<R>& quat<R>::operator*=(R const& rhs) {
 		w *= rhs; x *= rhs;
 		y *= rhs; z *= rhs;
 		return *this;
 	}
 	template<typename R>
-	quat<R> quat<R>::operator*=(quat<R> const& rhs) {
+	quat<R>& quat<R>::operator*=(quat<R> const& rhs) {
 		return *this = *this * rhs;
 	}
 	template<typename R>
-	quat<R> quat<R>::operator/=(R const& rhs) {
+	quat<R>& quat<R>::operator/=(R const& rhs) {
 		w /= rhs; x /= rhs;
+		y /= rhs; z /= rhs;
 		return *this;
 	}
 	template<typename R>
-	quat<R> quat<R>::operator/=(quat<R> const& rhs) {
+	quat<R>& quat<R>::operator/=(quat<R> const& rhs) {
 		return *this = *this / rhs;
 	}
-
-	template<typename R>
-	quat<R>::quat(R w, R x, R y, R z):
-		w(w), x(x), y(y), z(z) {}
 
 	template<typename R>
 	std::ostream& operator<<(std::ostream& lhs,

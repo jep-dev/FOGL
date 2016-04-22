@@ -3,20 +3,6 @@
 namespace Model {
 	namespace Ply {
 
-		const std::map<Status::ID, std::string> Status::labels {
-			{Status::MISSING_FILE, "File not found"},
-			{Status::MISSING_PLY, "Expected 'ply'"},
-			{Status::MISSING_FORMAT, "Expected format"},
-			{Status::MISSING_END_HEADER, "Expected 'end_header'"},
-			{Status::INVALID_FORMAT, "Invalid format"},
-			{Status::INVALID_ELEMENT, "Invalid element"},
-			{Status::INVALID_PROPERTY, "Invalid property"},
-			{Status::INVALID_TYPE, "Invalid type"},
-			{Status::ORPHAN_PROPERTY, "Orphan property"},
-			{Status::UNEXPECTED, "Unexpected token"},
-			{Status::EARLY_EOF, "End of file"}
-		};
-
 		const std::vector<std::string> 
 		Primitive::NAMES {
 			"int8", "uint8", "int16", "uint16",
@@ -32,13 +18,10 @@ namespace Model {
 				*lendian = "format binary_little_endian 1.0",
 				*bendian = "format binary_bit_endian 1.0";
 
-			status.id = Status::OK;
-			status.filename = fname;
-
 			std::ifstream file;
 			file.open(fname, std::ios::in);
 			if(!file.is_open()) {
-				status.id = Status::MISSING_FILE;
+				status = NO_FILE;
 				return;
 			}
 			std::size_t end_header;
@@ -49,14 +32,14 @@ namespace Model {
 					 has_endh = false,
 					 is_element = false;
 			for(std::string word, line; 
-					status && std::getline(file, line);) {
+					!status && std::getline(file, line);) {
 
 				if(!has_ply) {
 					if(line == "ply") {
 						has_ply = true;
 						continue;
 					}
-					status.id = Status::MISSING_PLY;
+					status = NO_PLY;
 					break;
 				}
 
@@ -78,11 +61,11 @@ namespace Model {
 						is_ascii = false;
 						is_lendian = false;
 					} else if(word == "format") {
-						status.id = Status::INVALID_FORMAT;
-						status.context = line;
+						status = BAD_FMT;
+						statusContext = line;
 						break;
 					} else {
-						status.id = Status::MISSING_FORMAT;
+						status = NO_FMT;
 						break;
 					}
 					has_fmt = true;
@@ -104,15 +87,15 @@ namespace Model {
 						el.data.reserve(el.instances);
 						continue;
 					}
-					status.id = Status::INVALID_ELEMENT;
-					status.context = line;
+					status = BAD_ELEM;
+					statusContext = line;
 					break;
 				}
 
 				if(word == "property") {
 					if(!is_element) {
-						status.id = Status::ORPHAN_PROPERTY;
-						status.context = line;
+						status = NO_ELEM;
+						statusContext = line;
 						break;
 					}
 					if(iss >> word) {
@@ -121,15 +104,13 @@ namespace Model {
 							std::string t1, t2, name;
 							if(iss >> t1 >> t2 >> name) {
 								if(!Primitive::getID(t1, size)) {
-									status.id = Status::INVALID_TYPE;
-									status.details = t1;
-									status.context = line;
+									status = BAD_TYPE;
+									statusContext = t1;
 									break;
 								}
 								if(!Primitive::getID(t2, value)) {
-									status.id = Status::INVALID_TYPE;
-									status.details = t2;
-									status.context = line;
+									status = BAD_TYPE;
+									statusContext = t2;
 									break;
 								}
 								el.has_list = true;
@@ -141,9 +122,8 @@ namespace Model {
 							std::string name;
 							if(iss >> name) {
 								if(!Primitive::getID(word, value)) {
-									status.id = Status::INVALID_TYPE;
-									status.context = line;
-									status.details = word;
+									status = BAD_TYPE;
+									statusContext = word;
 									break;
 								}
 								el.properties.emplace_back(
@@ -152,27 +132,26 @@ namespace Model {
 							}
 						}
 					}
-					status.id = Status::INVALID_PROPERTY;
-					status.context = line;
+					status = BAD_PROP;
+					statusContext = line;
 					break;
 				}
-				status.id = Status::UNEXPECTED;
-				status.context = line;
-				status.details = word;
+				status = UNKNOWN;
+				statusContext = word;
 				break;
 			}
 			file.close();
 
-			if(status) {
+			if(!status) {
 				if(!has_ply) {
-					status.id = Status::MISSING_PLY;
+					status = NO_PLY;
 				} else if(!has_fmt) {
-					status.id = Status::MISSING_FORMAT;
+					status = NO_FMT;
 				} else if(!has_endh) {
-					status.id = Status::MISSING_END_HEADER;
+					status = NO_ENDH;
 				}
 			}
-			if(!status) {
+			if(status) {
 				return;
 			}
 
@@ -180,27 +159,27 @@ namespace Model {
 					(std::ios::in|std::ios::binary));
 
 			if(!file.is_open()) {
-				status.id = Status::MISSING_FILE;
+				status = NO_FILE;
 				return;
 			}
 			file.seekg(end_header);
 
 			for(auto &el : elements) {
 				for(int el_i = 0, el_n = el.instances;
-						status && el_i < el_n; ++el_i) {
+						!status && el_i < el_n; ++el_i) {
 					for(auto &prop : el.properties) {
 						if(ascii && !el.readProperty(file, prop)) {
-							status.id = Status::EARLY_EOF;
+							status = EARLY_EOF;
 							std::ostringstream oss;
 							oss << "while parsing " << el.name
 								<< "[" << el_i << "/" << el_n << "]." 
 								<< prop.name;
-							status.details = oss.str();
+							statusContext = oss.str();
 							break;
 						}
 					}
 				}
-				if(!status) {
+				if(status) {
 					break;
 				}
 			}

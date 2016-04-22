@@ -4,6 +4,8 @@ using std::string;
 
 namespace View {
 	bool compile(const char *fname, GLuint &shader) {
+		using string=std::string;
+
 		int len;
 		GLint status = GL_FALSE;
 		string lines = "";
@@ -25,6 +27,8 @@ namespace View {
 
 	bool link(const char *vertName, 
 			const char *fragName, GLuint &program) {
+		using string=std::string;
+
 		bool success = false;
 		GLint len, status;
 		GLuint vert = glCreateShader(GL_VERTEX_SHADER),

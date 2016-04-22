@@ -1,72 +1,44 @@
 #ifndef MODEL_HPP
 #define MODEL_HPP
 
+// Stuff
 #include <algorithm>
+#include <type_traits>
+#include <typeinfo>
+#include <unordered_map>
 #include <map>
 #include <vector>
 
+// Printing sutff
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <utility>
 
+// Threading stuff
+#include <future>
+
+// Mem
 #include <cstring>
 #include <cstdint>
 
+// Local
 #include "quat.hpp"
 #include "dual.hpp"
+#include "affine.hpp"
 #include "system.hpp"
 
 namespace Model {
-	namespace Ply {
 
-		struct Status {
-			enum ID {
-				OK=0,
-				MISSING_FILE,
-				MISSING_PLY, 
-				MISSING_FORMAT,
-				MISSING_END_HEADER,
-				INVALID_FORMAT,
-				INVALID_ELEMENT,
-				INVALID_PROPERTY,
-				INVALID_TYPE,
-				ORPHAN_PROPERTY,
-				UNEXPECTED,
-				EARLY_EOF,
-				UNKNOWN
-			};
-			operator bool(void) const {
-				return !id;
-			}
-			friend std::ostream& operator<<
-					(std::ostream& lhs, ID const& rhs) {
-				return lhs << (labels.count(rhs) ? 
-					labels.at(rhs) : "");
-			}
-			friend std::ostream& operator<<
-					(std::ostream& lhs, Status const& rhs) {
-				if(rhs) {
-					return lhs;
-				}
-				if(rhs.filename.size()) {
-					lhs << "In file '" << rhs.filename 
-						<< "'...\r\n";
-				}
-				if(rhs.context.size()) {
-					lhs << "At line '" << rhs.context 
-						<< "'...\r\n";
-				}
-				lhs << rhs.id;
-				if(rhs.details.size()) {
-					lhs << ": " << rhs.details;
-				}
-				return lhs;
-			}
-			ID id;
-			std::string filename, context, details;
-		private:
-			static const std::map<ID, std::string> labels;
+	namespace Ply {
+		enum STATUS {
+			OK=0,
+			NO_FILE,   NO_PLY,
+			NO_FMT,    NO_ELEM,
+			NO_ENDH,   BAD_FMT,
+			BAD_ELEM,  BAD_PROP,
+			BAD_TYPE,  EARLY_EOF,
+			UNKNOWN
 		};
 
 		struct Primitive {
@@ -77,8 +49,8 @@ namespace Model {
 				FLOAT32, FLOAT64
 			};
 
-			friend std::ostream& operator<<
-					(std::ostream& lhs, ID const& rhs) {
+			friend std::ostream&
+			operator<<(std::ostream& lhs, ID const& rhs) {
 				return lhs << NAMES[rhs];
 			}
 
@@ -153,7 +125,9 @@ namespace Model {
 		};
 
 		struct Header {
-			Status status;
+			STATUS status = OK;
+			std::string statusContext;
+
 			bool is_ascii, is_lendian;
 			std::vector<std::string> comments;
 			std::vector<Element> elements;

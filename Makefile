@@ -19,7 +19,6 @@ CXX=clang++
 CFLAGS?=-I$(INCDIR) -I$(GL3WINCDIR)
 CPPFLAGS?=-std=c++11 -pthread\
 		  $(CFLAGS)
-		  
 
 EXE?=$(BINDIR)glomp
 TEST_EXE?=$(BINDIR)glomp_test
@@ -32,15 +31,14 @@ TEST_LDFLAGS?=$(LDFLAGS) -lboost_unit_test_framework
 ASMFLAGS?=-fverbose-asm -g -masm=intel -S
 LSTFLAGS?=-alhnd
 
-INCS=$(wildcard $(INCDIR)*.hpp)
-SRCS=$(wildcard $(SRCDIR)*.cpp)
-
+INCS=$(filter-out $(INCDIR)main.hpp,\
+	 $(wildcard $(INCDIR)*.hpp))
+SRCS=$(filter-out $(SRCDIR)main.cpp,\
+	 $(wildcard $(SRCDIR)*.cpp))
 TEST_SRCS=$(wildcard $(TESTDIR)*.cpp)
 
 OBJS=$(patsubst $(SRCDIR)%.cpp,$(LIBDIR)%.o,$(SRCS))
-
-TEST_OBJS=$(filter-out $(LIBDIR)main.o,$(OBJS)) \
-		  $(patsubst $(TESTDIR)%.cpp,$(TESTDIR)%.o,$(TEST_SRCS))
+#TEST_OBJS=$(patsubst $(TESTDIR)%.cpp,$(TESTDIR)%.o,$(TEST_SRCS))
 
 ASMS=$(patsubst $(SRCDIR)%.cpp,$(ASMDIR)%.s,$(SRCS))
 LSTS=$(patsubst $(SRCDIR)%.cpp,$(ASMDIR)%.lst,$(SRCS))
@@ -55,14 +53,14 @@ $(GL3WDIR)%.o:$(GL3WSRCDIR)%.c
 $(LIBDIR)%.o:$(SRCDIR)%.cpp $(INCDIR)%.hpp
 	$(CXX) $(CPPFLAGS) $(WFLAGS) -c -o $@ $<
 
-$(TESTDIR)%.o:$(TESTDIR)%.cpp
-	$(CXX) $(CPPFLAGS) $(WFLAGS) -c -o $@ $<
+#$(TESTDIR)%.o:$(TESTDIR)%.cpp
+#	$(CXX) $(CPPFLAGS) $(WFLAGS) -c -o $@ $<
 
-$(EXE):$(OBJS) $(GL3WOBJS)
-	$(CXX) $(OBJS) -o $@ $(LDFLAGS)
+$(EXE):$(OBJS) $(GL3WOBJS) $(SRCDIR)main.cpp $(INCS)
+	$(CXX) $(LIBDIR)*.o -o $@ $(SRCDIR)main.cpp $(CPPFLAGS) $(LDFLAGS)
 
-$(TEST_EXE):$(TEST_OBJS) $(GL3WOBJS)
-	$(CXX) $(TEST_OBJS) -o $@ $(TEST_LDFLAGS)
+$(TEST_EXE):$(GL3WOBJS) $(TEST_SRCS)
+	$(CXX) -o $@ $(TEST_SRCS) $(CPPFLAGS) $(TEST_LDFLAGS)
 
 $(ASMDIR)%.s:$(SRCDIR)%.cpp
 	$(CXX) $(CPPFLAGS) $(ASMFLAGS) -o $@ $<
@@ -75,7 +73,7 @@ asm:$(LSTS) $(ASMS)
 	@rm a.out
 
 clean:
-	@rm -f $(EXE) $(OBJS) $(TEST_OBJS) $(ASMS) $(LSTS)
+	@rm -f $(EXE) $(OBJS) $(ASMS) $(LSTS)
 
 do:$(EXE)
 	@$(EXE)
