@@ -17,14 +17,15 @@ vpath %.hpp $(INCIDR)
 CC=clang
 CXX=clang++
 CFLAGS?=-I$(INCDIR) -I$(GL3WINCDIR)
-CPPFLAGS?=-std=c++11 -pthread\
+		#-I/usr/lib/gcc/x86_64-linux-gnu/5.3.1/include
+CPPFLAGS?=-std=c++11 -pthread -fopenmp=libomp\
 		  $(CFLAGS)
 
 EXE?=$(BINDIR)glomp
 TEST_EXE?=$(BINDIR)glomp_test
 
-LDFLAGS?=-lpthread \
-		$(GL3WOBJS) -lglfw -lGL -ldl
+LDFLAGS?=-lpthread\
+		$(GL3WOBJS) -lboost_system -lglfw -lGL -ldl
 
 TEST_LDFLAGS?=$(LDFLAGS) -lboost_unit_test_framework
 

@@ -4,6 +4,10 @@
 #include <cmath>
 #include <functional>
 #include <type_traits>
+#include <typeinfo>
+#include <typeindex>
+
+#include <iostream>
 
 #include <vector>
 #include <utility>
@@ -19,18 +23,25 @@
 #endif
 
 namespace Detail {
+
+
+	struct undef_t {};
+	struct delim_tag {};
+
 	template<typename... T> struct pack_t {};
 	template<int... N> struct pack_i {};
 
+	template<typename... T> struct set_t:
+		public decltype(prune(pack_t<T...>{})) {};
 
-	template<int I1, int I2, int... IN>
-	constexpr int sum_of(pack_i<I1, I2, IN...>)
-		{return I1 + I2 + sum_of(pack_i<IN...> {});}
-	template<int I1, int... IN>
-	constexpr int sum_of(pack_i<I1, IN...>)
-		{return I1 + sum_of(pack_i<IN...> {});}
-	constexpr int sum_of(pack_i<>)
-		{return 0;}
+
+	template<typename T>
+	constexpr auto inner_type (const T)
+		-> typename T::type {return {};}
+	template<typename T>
+	constexpr auto inner_value (const T)
+		-> decltype(T::value) {return T::value;}
+
 
 	template<typename T, int I = 0>
 	constexpr int index_of(pack_t<>, T t, pack_i<I> = pack_i<I>{})
@@ -44,65 +55,67 @@ namespace Detail {
 	constexpr auto indices_of(pack_t<S...> u, pack_t<T...> v)
 		-> pack_i<index_of(u, T{})...> {return {};}
 
-	template<typename CUR, typename PREV> struct pack_cat;
-	template<typename CUR, typename... PREV>
-	struct pack_cat<CUR, pack_t<PREV...>> {
+	template<int I1, int I2, int... IN>
+	constexpr int sum_of(pack_i<I1, I2, IN...>)
+		{return I1 + I2 + sum_of(pack_i<IN...> {});}
+	template<int I1, int... IN>
+	constexpr int sum_of(pack_i<I1, IN...>)
+		{return I1 + sum_of(pack_i<IN...> {});}
+	constexpr int sum_of(pack_i<>)
+		{return 0;}
+
+	template<typename PREV, typename CUR> struct pack_cat;
+	template<typename... PREV, typename CUR>
+	struct pack_cat<pack_t<PREV...>, CUR> {
 		typedef typename std::conditional<
 				index_of(pack_t<PREV...> {}, CUR {}) >= 0,
 				pack_t<PREV...>, pack_t<PREV..., CUR>>::type type;
 	};
 
-	template<typename CUR, typename PREV> struct pack_merge;
+	template<typename PREV, typename CUR>
+		struct pack_merge;
+
 	template<typename... PREV>
-	struct pack_merge<pack_t<>, pack_t<PREV...>> {
+	struct pack_merge<pack_t<PREV...>, pack_t<>> {
 		typedef pack_t<PREV...> type;
 	};
-	template<typename CUR, typename... NEXT, typename... PREV>
-	struct pack_merge<pack_t<CUR, NEXT...>, pack_t<PREV...>> {
-		typedef typename pack_merge<pack_t<NEXT...>,
-				typename std::conditional<
+	template<typename... PREV, typename CUR, typename... NEXT>
+	struct pack_merge<pack_t<PREV...>, pack_t<CUR, NEXT...>> {
+		typedef typename std::conditional<
 					index_of(pack_t<PREV...>{}, CUR{}) >= 0,
 					pack_t<PREV...>, pack_t<PREV..., CUR>
-				>::type>::type type;
+				>::type cond_type;
+		typedef typename pack_merge<cond_type, pack_t<NEXT...>>::type type;
 	};
 
-	template<typename DEL, typename PRE, typename POST>
+	template<typename PRE, typename DEL, typename POST>
 	struct pack_remove;
 	template<typename... PRE, typename... POST>
-	struct pack_remove<pack_t<>, pack_t<PRE...>, pack_t<POST...>> {
+	struct pack_remove<pack_t<PRE...>, pack_t<>, pack_t<POST...>> {
 		typedef pack_t<PRE..., POST...> type;
 	};
 	template<typename DEL_1, typename... DEL_N, typename... POST>
-	struct pack_remove<pack_t<DEL_1, DEL_N...>, pack_t<>, pack_t<POST...>> {
-		typedef typename pack_remove<pack_t<DEL_N...>,
-				pack_t<POST...>, pack_t<>>::type type;
+	struct pack_remove<pack_t<>, pack_t<DEL_1, DEL_N...>, pack_t<POST...>> {
+		typedef typename pack_remove<pack_t<POST...>,
+				pack_t<DEL_N...>, pack_t<>>::type type;
 	};
-	template<typename DEL_1, typename... DEL_N,
-		typename PRE_1, typename... PRE_N, typename... POST>
-	struct pack_remove<pack_t<DEL_1, DEL_N...>,
-			pack_t<PRE_1, PRE_N...>, pack_t<POST...>> {
+	template<typename PRE_1, typename... PRE_N,
+		typename DEL_1, typename... DEL_N, typename... POST>
+	struct pack_remove<pack_t<PRE_1, PRE_N...>,
+			pack_t<DEL_1, DEL_N...>, pack_t<POST...>> {
 		typedef typename std::conditional<std::is_same<DEL_1, PRE_1>::value,
 				pack_t<POST...>, pack_t<PRE_1, POST...>>::type rtype;
-		typedef typename pack_remove<pack_t<DEL_1, DEL_N...>,
-				pack_t<PRE_N...>, rtype>::type type;
+		typedef typename pack_remove<pack_t<PRE_N...>,
+				pack_t<DEL_1, DEL_N...>, rtype>::type type;
 	};
 
 
-	/* ------------------ Syntax sugar ----------------- */
-
-	template<typename T>
-	constexpr auto inner_type (const T)
-		-> typename T::type {return {};}
-	template<typename T>
-	constexpr auto inner_value (const T)
-		-> decltype(T::value) {return T::value;}
-
 	template<typename... A, typename... B, typename C = typename
-		pack_merge<pack_t<B...>, pack_t<A...>>::type>
+		pack_merge<pack_t<A...>, pack_t<B...>>::type>
 	constexpr C operator+(pack_t<A...>, pack_t<B...>) {return C {};}
 
 	template<typename... A, typename... B, typename C = typename
-		pack_remove<pack_t<B...>, pack_t<A...>, pack_t<>>::type>
+		pack_remove<pack_t<A...>, pack_t<B...>, pack_t<>>::type>
 	constexpr C operator-(pack_t<A...>, pack_t<B...>) {return C {};}
 
 	template<typename... A, typename... B,
@@ -115,17 +128,54 @@ namespace Detail {
 		typename E = decltype((C{}+D{})-(C{}^D{}))>
 	constexpr E operator&(C, D) {return E {};}
 
+	/* --------------------- Related functions ----------------------- */
+	
 	template<typename... A, typename B = typename
-		pack_merge<pack_t<A...>, pack_t<>>::type>
+		pack_merge<pack_t<>, pack_t<A...>>::type>
 	constexpr B prune(pack_t<A...>) {return B {};}
 
 	template<typename... A, typename... B,
 		typename C = pack_t<A...>, typename D = pack_t<B...>>
 	constexpr bool permutes(C c, D d) {
+		// TODO -- distinguish between perm. w/wo duplicates
 		return std::is_same<decltype(c^d), pack_t<>>::value;
 	}
 
-	struct undef_t{};
+	template<typename V, typename E>
+	struct graph;
+
+	template<typename U, typename V>
+	struct edge {};
+	template<typename T>
+	struct node {};
+
+	template<typename... V, typename... E>
+	struct graph<pack_t<V...>, pack_t<E...>> {
+		typedef pack_t<V...> vertices;
+		typedef pack_t<E...> edges;
+
+		template<typename T>
+		constexpr graph<decltype(prune(vertices{}
+			+ pack_t<node<T>>{})), edges>
+		operator+(node<T>) const {
+			return {};
+		}
+		template<typename S, typename T>
+		constexpr graph<vertices,
+			decltype(prune(edges{} + edge<S,T>{}))>
+		operator+(edge<S,T>) const {
+			return {};
+		}
+	};
+
+	template<typename T, int I>
+	struct pack_get;
+	template<typename T1, typename... TN, int I>
+	struct pack_get<pack_t<T1, TN...>, I> {
+		typedef typename std::conditional<I==0, T1,
+				typename pack_get<pack_t<TN...>, I-1>::type
+			>::type type;
+	};
 
 	template<template<typename...> class C,
 		typename A = undef_t, typename B = undef_t>
@@ -186,7 +236,6 @@ namespace Detail {
 		typedef R result_type;
 		typedef typename std::tuple<T...> args_type;
 	};
-	struct delim_tag {};
 
 	template<typename T>
 	struct Sized {};
@@ -333,6 +382,101 @@ void for_zip(FN fn, T1 (&t1)[N], TN (&...tn)[N]) {
 	using namespace Detail;
 	ForZip<N, N, FN, T1, TN...>::apply(fn,
 			FWD(T1(&)[N],t1), FWD(TN(&)[N],tn)...);
+}
+
+namespace test {
+	//typedef enum {disable=0, weak, strict} test_mode;
+
+	struct test_base {
+		static constexpr bool run(void);
+	};
+
+struct test_util {
+	static constexpr const bool run(long l) {
+		return false;
+	}
+	static bool run(int l) {
+		using namespace Detail;
+		// Base types
+		typedef pack_t<> T_void;
+		typedef pack_t<int> T_I;
+		typedef pack_t<float> T_F;
+		typedef pack_t<double> T_D;
+		typedef pack_t<int, float> T_IF;
+		typedef pack_t<int, float, double> T_IFD;
+		T_void V0;
+		T_I VI; T_F VF; T_D VD;
+		T_IF VIF; T_IFD VIFD;
+
+		// Types with duplicates
+		typedef pack_t<int,int> T_II;
+		typedef pack_t<float, double, float> T_FDF;
+		
+		
+		// Concatenation types
+		static_assert(std::is_same<typename
+				pack_cat<T_I, float>::type, T_IF>::value, "");
+		static_assert(std::is_same<typename
+				pack_cat<T_I, int>::type, T_I>::value, "");
+
+		// Union types
+		typedef typename pack_merge<T_IFD, T_void>::type T_u0;
+		typedef typename pack_merge<T_void, T_IFD>::type T_u1;
+		typedef typename pack_merge<T_I, T_FDF>::type T_u2;
+		static_assert(std::is_same<T_u0, T_IFD>::value, "");
+		static_assert(std::is_same<T_u1, T_IFD>::value, "");
+		static_assert(std::is_same<T_u2, T_IFD>::value, "");
+
+		// Index of first matching type (or -1)
+		static_assert(index_of(T_void {}, int {}) < 0, "");
+		static_assert(index_of(T_I {}, int {}) >= 0, "");
+
+		// Index of first matching type (or -1) for each type
+		static_assert(std::is_same<
+				decltype(indices_of(VIFD, VD + VI + pack_t<char>{})),
+				pack_i<2, 0, -1>>::value, "");
+
+		// Prune duplicates
+		static_assert(std::is_same<decltype(prune(VIFD)), T_IFD>::value, "");
+		static_assert(std::is_same<decltype(prune(T_FDF {})), decltype(VF+VD)>::value, "");
+		
+		// Or
+		static_assert(std::is_same<decltype(VI+VF+VD), T_IFD>::value, "");
+		static_assert(!std::is_same<decltype(VD+VF+VI), T_IFD>::value, "");
+		// Not
+		static_assert(std::is_same<decltype(VIF-VF), T_I>::value, "");
+		static_assert(std::is_same<decltype(VIF-VF-VI), T_void>::value, "");
+		// Xor
+		static_assert(std::is_same<decltype(VI^VI), decltype(VI-VI)>::value, "");
+		static_assert(std::is_same<decltype(VI^VF), decltype(VI+VF)>::value, "");
+		// And
+		static_assert(std::is_same<decltype(VI & VI), T_I>::value, "");
+		static_assert(std::is_same<decltype(VIF & VI), T_I>::value, "");
+
+		// Permutations
+		static_assert(!std::is_same<decltype(VI+VF), decltype(VF+VI)>::value, "");
+		static_assert(permutes(VI+VF, VF+VI), "");
+		static_assert(!permutes(VI+VF, VI), "");
+
+		// Infix operators/types/etc.
+		infix_t<pack_t> pack_with;
+		infix_t<pack_merge> merge_with;
+		infix_t<std::is_same> same_as;
+
+		auto packed1 = 1 <pack_with> 2;
+		static_assert(!inner_value((packed1 <same_as> VI)), "");
+		static_assert(inner_value((prune(packed1) <same_as> VI)), "");
+
+		auto packed2 = 3 <pack_with> 4.0f;
+		static_assert(inner_value(packed2 <same_as> VIF), "");
+	
+		graph<T_void, T_void> G_void;
+		auto G_if = G_void + node<int>{} + node<float>{};
+		static_assert(inner_value(G_if <same_as> G_if), "");
+		return true;
+	}
+};
+
 }
 
 #endif
