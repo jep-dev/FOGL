@@ -1,10 +1,15 @@
+#ifndef BOOST_TEST_DYN_LINK
 #define BOOST_TEST_DYN_LINK
+#endif
+#ifndef BOOST_TEST_MODULE
 #define BOOST_TEST_MODULE Model
+#endif
+
 #include <boost/test/included/unit_test.hpp>
 
-#include "../inc/quat.hpp"
-#include "../inc/dual.hpp"
-#include "../inc/model.hpp"
+#include "math/quat.hpp"
+#include "math/dual.hpp"
+#include "model.hpp"
 
 using namespace Model;
 

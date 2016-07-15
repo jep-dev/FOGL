@@ -1,5 +1,5 @@
-#ifndef MODEL_HPP
-#define MODEL_HPP
+#ifndef PLY_HPP
+#define PLY_HPP
 
 // Stuff
 #include <algorithm>
@@ -23,13 +23,14 @@
 #include <cstdint>
 
 // Local
-#include "quat.hpp"
-#include "dual.hpp"
-#include "affine.hpp"
+#include "util.hpp"
+#include "math.hpp"
+#include "math/quat.hpp"
+#include "math/dual.hpp"
+#include "math/affine.hpp"
 #include "system.hpp"
 
 namespace Model {
-
 	namespace Ply {
 		enum STATUS {
 			OK=0,

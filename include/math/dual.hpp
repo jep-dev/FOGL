@@ -2,7 +2,8 @@
 #define DUAL_HPP
 
 #include "util.hpp"
-#include "quat.hpp"
+#include "math.hpp"
+#include "math/quat.hpp"
 
 #include <algorithm>
 #include <functional>
@@ -13,14 +14,11 @@
 #include <boost/operators.hpp>
 
 namespace Model {
-
-	template<typename> struct quat;
+	template<typename>
+		struct quat;
 
 	template<typename R = float>
-	struct dual:
-			boost::additive<dual<R>,
-			boost::multipliable<dual<R>,
-			boost::multipliable<quat<R>>>> {
+	struct dual: boost::operators<dual<R>> {
 		quat<R> u, v;
 
 		/** Additive inverse */
@@ -33,10 +31,8 @@ namespace Model {
 		explicit operator R(void) const;
 		/** Squared Euclidean norm */
 		R operator()(void) const;
-
 		/** Distributes equality test */
 		bool operator==(dual<R> const &rhs) const;
-
 		/** Apply (lhs * rhs * ~lhs) */
 		dual<R> operator()(quat<R> const &rhs) const;
 		dual<R> operator()(dual<R> const &rhs) const;
@@ -223,6 +219,7 @@ namespace Model {
 
 	template<typename R> std::ostream&
 	operator<<(std::ostream &lhs, const dual<R> rhs) {
+		using namespace Model;
 		static std::string start = "\e[38;5;215m",
 			stop = "\e[0m", eps = "\u0190",
 			labels[] {

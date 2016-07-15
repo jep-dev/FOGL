@@ -6,16 +6,18 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/system/error_code.hpp>
 #include <boost/optional.hpp>
+#include <boost/operators.hpp>
 
 #include <algorithm>
 #include <chrono>
 #include <iostream>
 #include <memory>
 #include <string>
-#include <thread>
+//#include <thread>
 #include <utility>
 
 #include "util.hpp"
+#include "util/types.hpp"
 
 namespace net {
 	typedef std::integral_constant<short, 512> page_size;
@@ -44,24 +46,8 @@ namespace net {
 		dt.wait();
 	}
 
-
-	struct co_event {
-		typedef enum : uint8_t {
-			evt_onEnter=0, evt_onWait, evt_onPass, evt_onFail, _events
-		} e_evt;
-	private:
-		static constexpr uint8_t
-			// Shifts: offsets from LSB
-			shift_id_hi  =  24u, shift_id_lo  =  16u,
-			shift_cat_hi =  14u, shift_cat_lo =  12u,
-			shift_evt_hi =  10u, shift_evt_lo =   8u,
-			shift_msg_hi =   4u, shift_msg_lo =   0u,
-			// Masks: mask all but LSB through LSB + 2^size
-			mask_id_hi   = 255u, mask_id_lo   = 255u,
-			mask_cat_hi  =   3u, mask_cat_lo  =   3u,
-			mask_evt_hi  =   3u, mask_evt_lo  =   3u,
-			mask_msg_hi  =  15u, mask_msg_lo  =  15u;
-	};
+	// TODO
+	struct cotask;
 
 	struct channel:
 	std::enable_shared_from_this<channel>,
@@ -106,12 +92,6 @@ namespace net {
 		TCP::socket sock;
 		io_service &svc;
 		std::deque<std::string> lines;
-	};
-
-	struct vc_buffer {
-		std::deque<page>
-			loc_inbox, loc_outbox,
-			rem_inbox, rem_outbox;
 	};
 
 	struct server:

@@ -1,11 +1,20 @@
 #ifndef MATH_HPP
 #define MATH_HPP
-#include "model.hpp"
-#include "util.hpp"
+
+#include <math.h>
 #include <iostream>
 
 namespace Model {
+	template<typename T = double, int E = -6>
+	bool near(T u, T v) {
+		return std::abs(u-v) <= pow(2.0, E);
+	};
+}
 
+#include "util.hpp"
+#include "model.hpp"
+
+namespace Model {
 	template<typename T>
 	struct var {};
 	template<typename T, T V>

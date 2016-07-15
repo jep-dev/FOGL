@@ -9,8 +9,9 @@
 #include <stack>
 
 #include "util.hpp"
-#include "quat.hpp"
-#include "dual.hpp"
+#include "math.hpp"
+#include "math/quat.hpp"
+#include "math/dual.hpp"
 
 #include <boost/operators.hpp>
 

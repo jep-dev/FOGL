@@ -1,7 +1,9 @@
 #ifndef QUAT_HPP
 #define QUAT_HPP
 
-#include "dual.hpp"
+#include "util.hpp"
+#include "math.hpp"
+#include "math/dual.hpp"
 
 namespace Model {
 

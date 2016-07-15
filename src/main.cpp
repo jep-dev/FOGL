@@ -1,12 +1,20 @@
-
 #include "util.hpp"      // TMP, functional, algorithms
-// #include "model.hpp" // Deserializes .ply model data
-#include "view.hpp" // Windowed model viewer (GLFW)
+//#include "util/types.hpp"
+
 #include "system.hpp" // Files, I/O, term adaptor; needs term cap
+//#include "system/net.hpp"  // Net adaptor & services for I/O
+
+#include "model.hpp" // Deserializes .ply model data
+//#include "model/ply.hpp"
+
 #include "math.hpp"  // Quaternions, duals, transforms
-#include "net.hpp"  // Net adaptor & services for I/O
-using namespace System;
-using PB = Printer_Base;
+//#include "math/quat.hpp"
+//#include "math/dual.hpp"
+//#include "math/affine.hpp"
+
+#include "view.hpp" // Windowed model viewer (GLFW)
+//#include "view/shade.hpp"
+
 
 #include <atomic>
 #include <chrono>
@@ -26,6 +34,9 @@ using std::cout;
 using std::ostream;
 using std::endl;
 
+using namespace System;
+using PB = Printer_Base;
+
 int main(int argc, const char **argv) {
 	
 	const short port = 5000;
@@ -39,7 +50,6 @@ int main(int argc, const char **argv) {
 	{
 		//switch(omp_get_thread_num()) {}
 	}*/
-
 
 	std::atomic_bool alive(true);
 	auto delay = std::chrono::milliseconds(150);

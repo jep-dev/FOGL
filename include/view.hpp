@@ -8,14 +8,19 @@
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
 #endif
-#include <math.h>
 
 #include <GL/gl3w.h>
 #include <GL/glcorearb.h>
 #include <GLFW/glfw3.h>
 #include <GL/gl.h>
 
+#include <math.h>
+#include "model.hpp"
+//#include "view.hpp"
+//#include "view/shade.hpp"
+
 namespace View {
+	void printErrors(const char *prefix);
 	struct view {
 		bool valid = false;
 		float near=1, far=10, fov=25;

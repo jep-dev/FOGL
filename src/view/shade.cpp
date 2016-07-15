@@ -1,8 +1,9 @@
-#include "shade.hpp"
+#include "view.hpp"
+#include "view/shade.hpp"
 
-using std::string;
 
 namespace View {
+	using std::string;
 	bool compile(const char *fname, GLuint &shader) {
 		using string=std::string;
 

@@ -1,7 +1,8 @@
 #include "model.hpp"
+#include "model/ply.hpp"
 
 namespace Model {
-	/*namespace Ply {
+	namespace Ply {
 
 		const std::vector<std::string> 
 		Primitive::NAMES {
@@ -59,7 +60,6 @@ namespace Model {
 						is_lendian = true;
 					} else if(line == bendian) {
 						is_ascii = false;
-						is_lendian = false;
 					} else if(word == "format") {
 						status = BAD_FMT;
 						statusContext = line;
@@ -236,5 +236,5 @@ namespace Model {
 					return false;
 			}
 		}
-	}*/
+	}
 }

@@ -1,7 +1,6 @@
-#include "view.hpp"
-#include "shade.hpp"
 
-#include "model.hpp"
+#include "view.hpp"
+#include "view/shade.hpp"
 
 namespace View {
 
@@ -131,6 +130,7 @@ namespace View {
 	view::view(void) {
 		using Header = Model::Ply::Header;
 		using Element = Model::Ply::Element;
+
 		static constexpr const char 
 			*vpath = "resources/shade.vert",
 			*fpath = "resources/shade.frag",
