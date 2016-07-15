@@ -1,5 +1,5 @@
 # GLOMP
-Asynchronous model/view/controller engine; under construction.
+Asynchronous model/view/controller engine/framework; under construction.
 
 #### Requirements:
 * OpenGL 3.30 Core or better
@@ -8,8 +8,14 @@ Asynchronous model/view/controller engine; under construction.
 * [Boost](https://github.com/boostorg/boost) -- version 1.60 or greater for unit testing
 
 #### Building:
-1. Create directories bin, lib, and gl3w
+1. Create directory `gl3w`
+
 2. In gl3w...
+
  a. Clone from the GL3W repository
+
  b. Run `gl3w_gen.py`
-3. Make: `make`
+
+ c. Return to parent directory
+
+3. Run `make`

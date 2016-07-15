@@ -1,5 +1,6 @@
-CC:=clang
-CXX:=clang++
+CC=clang
+CXX=clang++
+MKDIR=@mkdir -p $(@D)
 
 DIR_ROOT?=
 DIR_TEST?=$(DIR_ROOT)test/
@@ -73,19 +74,25 @@ vpath %.cpp $(DIR_ROOT_SRC)
 %.hpp$(PCH_EXT):%.hpp
 	$(COMPILE_HPP)
 $(RELEASE_EXE): $(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS) $(MAIN_PCHS)
+	$(MKDIR)
 	$(LINK_CXX) $(GL3W_OBJS) $(MAIN_OBJS) $(RELEASE_LDFLAGS)
 # --log_level=error
 $(TEST_EXE): $(TEST_OBJ) $(MAIN_OBJS) $(GL3W_OBJS)
+	$(MKDIR)
 	$(LINK_CXX) $(GL3W_OBJS) $(MAIN_OBJS) $(TEST_LDFLAGS)
 #$(DEBUG_EXE): $(DEBUG_OBJ) $(MAIN_OBJS) $(GL3W_OBJS)
 #	$(LINK_CXX) $(GL3W_OBJS) $(MAIN_OBJS) $(TEST_LDFLAGS)
 $(DIR_GL3W)%.o: $(DIR_GL3W)$(DIR_SRC)*.c
+	$(MKDIR)
 	$(COMPILE_CC)
 $(TEST_OBJ): $(DIR_TEST)$(DIR_SRC)*.cpp
+	$(MKDIR)
 	$(COMPILE_CXX)
 $(DIR_ROOT_LIB)%.o: $(DIR_ROOT_SRC)%.cpp
+	$(MKDIR)
 	$(COMPILE_CXX)
 $(DIR_ROOT_LIB)*/%.o: $(DIR_ROOT_SRC)*/%.cpp
+	$(MKDIR)
 	$(COMPILE_CXX)
 
 clean:
