@@ -1,6 +1,6 @@
 CC=clang
 CXX=clang++
-MKDIR=@mkdir -p $(@D)
+MKDIR=@mkdir -p
 
 DIR_ROOT?=
 DIR_TEST?=$(DIR_ROOT)test/
@@ -66,36 +66,35 @@ LINK_CC=$(CC) $(CFLAGS) $(WFLAGS) $(LDFLAGS) -o $@ $<
 LINK_CXX=$(CXX) $(CPPFLAGS) $(WFLAGS) $(LDFLAGS) -o $@ $<
 ###############################################################################
 
-default:$(MAIN_PCHS) $(RELEASE_EXE)
-all:$(EXES)
+default:.sentinel $(MAIN_PCHS) $(RELEASE_EXE)
+all:.sentinel $(EXES)
 vpath %.hpp $(DIR_ROOT_INCLUDE)
 vpath %.cpp $(DIR_ROOT_SRC)
 
 %.hpp$(PCH_EXT):%.hpp
 	$(COMPILE_HPP)
 $(RELEASE_EXE): $(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS) $(MAIN_PCHS)
-	$(MKDIR)
 	$(LINK_CXX) $(GL3W_OBJS) $(MAIN_OBJS) $(RELEASE_LDFLAGS)
 # --log_level=error
 $(TEST_EXE): $(TEST_OBJ) $(MAIN_OBJS) $(GL3W_OBJS)
-	$(MKDIR)
 	$(LINK_CXX) $(GL3W_OBJS) $(MAIN_OBJS) $(TEST_LDFLAGS)
 #$(DEBUG_EXE): $(DEBUG_OBJ) $(MAIN_OBJS) $(GL3W_OBJS)
 #	$(LINK_CXX) $(GL3W_OBJS) $(MAIN_OBJS) $(TEST_LDFLAGS)
 $(DIR_GL3W)%.o: $(DIR_GL3W)$(DIR_SRC)*.c
-	$(MKDIR)
 	$(COMPILE_CC)
 $(TEST_OBJ): $(DIR_TEST)$(DIR_SRC)*.cpp
-	$(MKDIR)
 	$(COMPILE_CXX)
 $(DIR_ROOT_LIB)%.o: $(DIR_ROOT_SRC)%.cpp
-	$(MKDIR)
 	$(COMPILE_CXX)
 $(DIR_ROOT_LIB)*/%.o: $(DIR_ROOT_SRC)*/%.cpp
-	$(MKDIR)
 	$(COMPILE_CXX)
 
+.sentinel:
+	$(MKDIR) $(foreach target,$(EXES) $(EXE_OBJS) $(MAIN_OBJS),\
+		$(dir $(target)))
+	@touch .sentinel
+
 clean:
-	@rm -f $(EXES) $(EXE_OBJS) $(MAIN_OBJS) $(MAIN_PCHS)
+	@rm -f $(EXES) $(EXE_OBJS) $(MAIN_OBJS) $(MAIN_PCHS) .sentinel
 
 .PHONY: all $(MAIN_MODULES) clean
