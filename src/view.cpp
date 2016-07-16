@@ -131,6 +131,7 @@ namespace View {
 		using Header = Model::Ply::Header;
 		using Element = Model::Ply::Element;
 
+		// TODO - safe model and shader loading at runtime
 		static constexpr const char 
 			*vpath = "resources/shade.vert",
 			*fpath = "resources/shade.frag",
