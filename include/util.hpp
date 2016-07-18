@@ -1,19 +1,10 @@
 #ifndef UTIL_HPP
 #define UTIL_HPP
 
-#include <cmath>
-#include <functional>
 #include <type_traits>
 #include <typeinfo>
 #include <typeindex>
-
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <vector>
-#include <utility>
-
-#include "boost/operators.hpp"
+#include <functional>
 
 #ifndef FWD
 #define FWD(X,Y) std::forward<X>(Y)

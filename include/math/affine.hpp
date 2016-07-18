@@ -1,18 +1,10 @@
 #ifndef MATH_AFFINE_HPP
 #define MATH_AFFINE_HPP
 
-#include <cmath>
-#include <string>
-#include <sstream>
-#include <iostream>
-#include <vector>
-#include <stack>
-
-#include "util.hpp"
 #include "math.hpp"
 #include "math/quat.hpp"
 #include "math/dual.hpp"
-
+#include <cmath>
 #include <boost/operators.hpp>
 
 namespace Math {
@@ -115,54 +107,6 @@ namespace Math {
 			translation(offset), rotation(rotor),
 			dual<R> ((~dual<R>(offset))(rotor)) {}
 	};
-
-	template<typename R>
-	struct DualStack: public std::stack<dual<R>> {
-		typedef typename std::stack<dual<R>> SUP;
-		using typename SUP::stack;
-		operator dual<R>(void) const {
-			return state;
-		}
-		void push(const dual<R>& d) {
-			state = d*state;
-			SUP::push(d);
-		}
-		void pop(void) {
-			auto size(SUP::size());
-			if(size) {
-				auto q = SUP::back();
-				state = (size-1) ? (~q)*state : dual<R>{{1}};
-				SUP::pop();
-			}
-		}
-	protected:
-		dual<R> state = {{1}};
-	};
-
-	template<typename R> std::ostream&
-	operator<<(std::ostream &lhs, const Unit<R> &rhs) {
-		return lhs << "<" << rhs.x << ", " << rhs.y
-			<< ", " << rhs.z << ">";
-	}
-	template<typename R> std::ostream&
-	operator<<(std::ostream &lhs, const Ray<R> &rhs) {
-		return lhs << rhs.r << " * " << rhs.n;
-	}
-	template<typename R> std::ostream&
-	operator<<(std::ostream& lhs, const Rotor<R> &rhs) {
-		return lhs << (rhs.theta/M_PI) 
-			<< "pi; " << rhs.n;
-	}
-	template<typename R> std::ostream&
-	operator<<(std::ostream& lhs, const Point<R> &rhs) {
-		return lhs << "{" << rhs.x << ", " << rhs.y
-			<< ", " << rhs.z << "}";
-	}
-	template<typename R> std::ostream&
-	operator<<(std::ostream& lhs, const Pivot<R> &rhs) {
-		return lhs << "Pivot: {" << rhs.rotation << "} "
-			"from center <" << rhs.translation << ">";
-	}
 }
 
 #endif

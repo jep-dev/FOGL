@@ -1,9 +1,7 @@
 #ifndef MATH_QUAT_HPP
 #define MATH_QUAT_HPP
 
-#include "util.hpp"
 #include "math.hpp"
-#include "math/dual.hpp"
 
 namespace Math {
 
@@ -57,7 +55,6 @@ namespace Math {
 		quat(const R w, const R x = 0, const R y = 0, const R z = 0):
 			w(w), x(x), y(y), z(z) {}
 	};
-
 	template<typename R>
 	quat<R> quat<R>::operator-(void) const {
 		return {-w,-x,-y,-z};
@@ -92,10 +89,6 @@ namespace Math {
 	quat<R> quat<R>::operator()(quat<R> const& rhs) const {
 		return *this * rhs * ~*this;
 	}
-	/*template<typename R>
-	dual<R> quat<R>::operator()(dual<R> const& rhs) const {
-		return *this * rhs * ~*this;
-	}*/
 	template<typename R>
 	quat<R> quat<R>::operator+(quat<R> const& rhs) const {
 		return {w+rhs.w, x+rhs.x, y+rhs.y, z+rhs.z};
@@ -156,16 +149,6 @@ namespace Math {
 	template<typename R>
 	quat<R>& quat<R>::operator/=(quat<R> const& rhs) {
 		return *this = *this / rhs;
-	}
-
-	template<typename R>
-	std::ostream& operator<<(std::ostream& lhs,
-			quat<R> const& rhs) {
-		if(rhs == quat<R>(rhs.w)) {
-			return lhs << rhs.w;
-		}
-		return lhs << rhs.w << ", " << rhs.x << ", " 
-			<< rhs.y << ", " << rhs.z;
 	}
 }
 

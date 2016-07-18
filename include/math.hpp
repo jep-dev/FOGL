@@ -1,21 +1,31 @@
 #ifndef MATH_HPP
 #define MATH_HPP
 
-#include <math.h>
+//#include "util.hpp"
+
+#include <cmath>
+#include <cstdlib>
 #include <iostream>
+//#include <ostream>
+#include <sstream>
 
 namespace Math {
+	template<typename R> struct quat;
+	template<typename R> struct dual;
+	template<typename R> std::ostream&
+	operator<<(std::ostream&, quat<R> const&);
+	template<typename R> std::ostream&
+	operator<<(std::ostream&, dual<R> const&);
+
 	template<typename T = double, int E = -6>
 	bool near(T u, T v) {
 		return std::abs(u-v) <= pow(2.0, E);
 	};
 }
 
-#include "util.hpp"
 #include "math/quat.hpp"
 #include "math/dual.hpp"
 #include "math/affine.hpp"
-#include "model.hpp"
 
 namespace Math {
 	// TODO expression tree from this and util/types
@@ -23,6 +33,57 @@ namespace Math {
 	struct var;
 	template<typename T, T V>
 	struct val;
+
+	template<typename R> std::ostream&
+	operator<<(std::ostream& lhs, quat<R> const& rhs) {
+		if(rhs == quat<R>(rhs.w)) {
+			return lhs << rhs.w;
+		}
+		return lhs << rhs.w << ", " << rhs.x << ", " 
+			<< rhs.y << ", " << rhs.z;
+	}
+	template<typename R> std::ostream&
+	operator<<(std::ostream &lhs, dual<R> const& rhs) {
+		static std::string start = "\e[38;5;215m",
+			stop = "\e[0m", eps = "\u0190",
+			labels[] {
+				"1",
+				start + "i" + stop,
+				start + "j" + stop,
+				start + "k" + stop,
+				start + eps + stop,
+				start + "i" + eps + stop,
+				start + "j" + eps + stop,
+				start + "k" + eps + stop
+			};
+		std::ostringstream oss;
+		const quat<R> &u = rhs.u, v = rhs.v;
+		const R flat[] {
+			u.w, u.x, u.y, u.z, 
+			v.w, v.x, v.y, v.z
+		};
+
+		bool any = false;
+		for(int i = 0; i < 8; ++i) {
+			R val(flat[i]), vabs(std::abs(val));
+			if(!near<R>(vabs,0)) {
+				bool pos = val > 0,
+				 	 unit = near<R>(vabs, 1);
+				oss << (any ? 
+					(pos ? " + " : " - ") :
+					(pos ? "" : "-"));
+				if(!unit) {
+					oss << vabs;
+				}
+				if(i || unit) {
+					oss << labels[i];
+				}
+				any = true;
+			}
+		}
+		return lhs << (any ? oss.str() : "0");
+	}
+	
 
 	
 	/*---------------------------------------------------------------------*/

@@ -1,5 +1,11 @@
 #include "view.hpp"
 #include "view/shade.hpp"
+#include "system.hpp"
+#include "model/ply.hpp"
+
+#include <iostream>
+#include <sstream>
+#include <math.h>
 
 namespace View {
 

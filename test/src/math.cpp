@@ -5,12 +5,14 @@
 #define BOOST_TEST_MODULE Math
 #endif
 
-#include <boost/test/included/unit_test.hpp>
-
 #include "math.hpp"
 #include "math/quat.hpp"
 #include "math/dual.hpp"
-#include "model.hpp"
+
+#include <iostream>
+#include <ostream>
+#include <sstream>
+#include <boost/test/included/unit_test.hpp>
 
 using namespace Math;
 

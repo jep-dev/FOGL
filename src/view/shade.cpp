@@ -1,6 +1,9 @@
+
+#include "system.hpp"
 #include "view.hpp"
 #include "view/shade.hpp"
 
+#include <iostream>
 
 namespace View {
 	using std::string;

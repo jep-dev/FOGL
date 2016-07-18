@@ -31,8 +31,9 @@ DEBUG_EXT?=-debug
 RELEASE_EXT?=
 
 MODULE_DIRS?=util/ system/ math/ model/ view/
-MAIN_MODULES?=util system/net system math model/ply model view view/shade
-MAIN_H_ONLY?=util/types math/quat math/dual math/affine
+MAIN_MODULES?=util system/net system math math/affine math/quat math/dual\
+			  model/ply model view view/shade
+MAIN_H_ONLY?=util/types math/quat math/dual
 MAIN_INCLUDES?=$(foreach inc,$(MAIN_H_ONLY) $(MAIN_MODULES),\
 			   $(inc:%=%.hpp))
 MAIN_PCHS?=$(DIR_ROOT_INCLUDE)util.hpp$(PCH_EXT)
@@ -63,14 +64,14 @@ TEST_LDFLAGS=$(LDFLAGS) -lboost_unit_test_framework -lGL -lglfw -ldl
 ###############################################################################
 LINK_CC=$(CC) $(CFLAGS) $(WFLAGS)
 LINK_CXX=$(CXX) $(CPPFLAGS) $(WFLAGS)
-COMPILE_CC=$(LINK_CC) -include $(DIR_ROOT_INCLUDE)util.hpp -c
+COMPILE_CC=$(LINK_CC) -c
 COMPILE_CXX=$(LINK_CXX) -include $(DIR_ROOT_INCLUDE)util.hpp -c
-DEPEND_CXX=$(LINK_CXX) -c -M
-COMPILE_HPP=$(LINK_CXX) -c -x c++-header
+DEPEND_CXX=$(LINK_CXX) -M
+COMPILE_HPP=$(LINK_CXX) -x c++-header
 ###############################################################################
 
 default:.sentinel $(MAIN_PCHS) $(RELEASE_EXE)
-all:.sentinel $(EXES)
+all:.sentinel $(MAIN_PCHS) $(EXES)
 vpath %.hpp $(DIR_ROOT_INCLUDE)
 vpath %.cpp $(DIR_ROOT_SRC)
 

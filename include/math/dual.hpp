@@ -1,12 +1,9 @@
 #ifndef MATH_DUAL_HPP
 #define MATH_DUAL_HPP
 
-#include "util.hpp"
 #include "math.hpp"
 #include "math/quat.hpp"
 
-#include <iostream>
-#include <string>
 #include <boost/operators.hpp>
 
 namespace Math {
@@ -212,50 +209,6 @@ namespace Math {
 		u *= inv; v *= inv;
 		return *this;
 	}*/
-
-	template<typename R> std::ostream&
-	operator<<(std::ostream &lhs, const dual<R> rhs) {
-		static std::string start = "\e[38;5;215m",
-			stop = "\e[0m", eps = "\u0190",
-			labels[] {
-				"1",
-				start + "i" + stop,
-				start + "j" + stop,
-				start + "k" + stop,
-				start + eps + stop,
-				start + "i" + eps + stop,
-				start + "j" + eps + stop,
-				start + "k" + eps + stop
-			};
-		std::ostringstream oss;
-		const quat<R> &u = rhs.u, v = rhs.v;
-		const R flat[] {
-			u.w, u.x, u.y, u.z, 
-			v.w, v.x, v.y, v.z
-		};
-
-		bool any = false;
-		for(int i = 0; i < 8; ++i) {
-			R val(flat[i]), vabs(std::abs(val));
-			if(!near<R>(vabs,0)) {
-				bool pos = val > 0,
-					 unit = near<R>(vabs, 1);
-				oss << (any ? 
-					(pos ? " + " : " - ") :
-					(pos ? "" : "-"));
-				if(!unit) {
-					oss << vabs;
-				}
-				if(i || unit) {
-					oss << labels[i];
-				}
-				any = true;
-			}
-		}
-		return lhs << (any ? oss.str() : "0");
-	}
-	/*return lhs << "{ {" << rhs.u 
-		<< "} + \u0190*{" << rhs.v << "} }";*/
 }
 
 #endif
