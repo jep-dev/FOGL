@@ -1,7 +1,6 @@
 CC=clang
 CXX=clang++
 MKDIR=@mkdir -p
-SUPPRESS=>/dev/null
 
 DIR_ROOT?=
 #DIR_DEBUG?=$(DIR_ROOT)debug/
