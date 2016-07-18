@@ -1,19 +1,15 @@
-#ifndef DUAL_HPP
-#define DUAL_HPP
+#ifndef MATH_DUAL_HPP
+#define MATH_DUAL_HPP
 
 #include "util.hpp"
 #include "math.hpp"
 #include "math/quat.hpp"
 
-#include <algorithm>
-#include <functional>
+#include <iostream>
 #include <string>
-#include <utility>
-#include <vector>
-
 #include <boost/operators.hpp>
 
-namespace Model {
+namespace Math {
 	template<typename>
 		struct quat;
 
@@ -219,7 +215,6 @@ namespace Model {
 
 	template<typename R> std::ostream&
 	operator<<(std::ostream &lhs, const dual<R> rhs) {
-		using namespace Model;
 		static std::string start = "\e[38;5;215m",
 			stop = "\e[0m", eps = "\u0190",
 			labels[] {

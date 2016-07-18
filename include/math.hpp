@@ -4,7 +4,7 @@
 #include <math.h>
 #include <iostream>
 
-namespace Model {
+namespace Math {
 	template<typename T = double, int E = -6>
 	bool near(T u, T v) {
 		return std::abs(u-v) <= pow(2.0, E);
@@ -12,13 +12,17 @@ namespace Model {
 }
 
 #include "util.hpp"
+#include "math/quat.hpp"
+#include "math/dual.hpp"
+#include "math/affine.hpp"
 #include "model.hpp"
 
-namespace Model {
+namespace Math {
+	// TODO expression tree from this and util/types
 	template<typename T>
-	struct var {};
+	struct var;
 	template<typename T, T V>
-	struct val {};
+	struct val;
 
 	
 	/*---------------------------------------------------------------------*/

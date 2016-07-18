@@ -1,4 +1,3 @@
-
 #include "view.hpp"
 #include "view/shade.hpp"
 

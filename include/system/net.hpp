@@ -1,5 +1,5 @@
-#ifndef NET_HPP
-#define NET_HPP
+#ifndef SYSTEM_NET_HPP
+#define SYSTEM_NET_HPP
 
 #include <boost/asio.hpp>
 #include <boost/asio/yield.hpp>

@@ -8,11 +8,12 @@
 #include <typeindex>
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <vector>
 #include <utility>
 
 #include "boost/operators.hpp"
-
 
 #ifndef FWD
 #define FWD(X,Y) std::forward<X>(Y)
@@ -23,22 +24,23 @@
 #endif
 
 namespace Detail {
+	// util/types
 	struct undef_t;
 	struct delim_tag;
-
-	template<typename... T> struct pack_t;
-	template<int... N> struct pack_i;
-	template<typename... T> struct set_t;
-
+	template<typename...> struct pack_t;
+	template<int...> struct pack_i;
+	template<typename...> struct set_t;
 	template<typename T> struct node;
 	template<typename U, typename V> struct edge;
 	template<typename V, typename E> struct graph;
-	/*
-	template<typename T> struct Sized;
-	template<typename T, int N> struct Sized;
-	template<typename T1, typename... TN> struct Sizes;
-	template<typename... TN> struct Sizes;
-	*/
+
+	// util/functional
+	template<typename T> struct Signature;
+	template<int, int, typename...> struct ForSeq;
+	template<int, typename...> struct ForAll;
+	template<int SEQ, typename FN, typename T1, typename... TN>
+	struct TransformForAll;
+	template<int, int, typename...> struct ForZip;
 
 }
 #include "util/types.hpp"
@@ -89,8 +91,6 @@ namespace Detail {
 		typedef typename std::tuple<T...> args_type;
 	};
 	
-	template<int SEQ, int CUR, typename FN, 
-		typename T1, typename... TN> struct ForSeq;
 
 	template<int SEQ, int CUR, typename FN, 
 		typename T1, int N1, typename... TN>
@@ -113,7 +113,7 @@ namespace Detail {
 	};
 
 	template<int SEQ, typename FN, typename T1, typename... TN>
-	struct ForAll {
+	struct ForAll<SEQ, FN, T1, TN...> {
 		typedef ForAll<SEQ-1, FN, T1, TN...> NEXT;
 		typedef ForSeq<SEQ-1, 1+sizeof...(TN), FN, T1, TN...> THIS;
 		static void apply(FN fn, T1 && t1, TN &&... tn) {
@@ -127,16 +127,15 @@ namespace Detail {
 	};
 
 	template<int SEQ, typename FN, typename T1, typename... TN>
-	struct TransformForAll;
-
-	template<int SEQ, typename FN, typename T1, typename... TN>
 	struct TransformForAll {
 		static constexpr int SIZE = Sizes<T1, TN..., delim_tag>::SIZE;
 		typedef TransformForAll<SEQ-1, FN, T1, TN...> NEXT;
 		typedef ForSeq<SEQ-1, 1+sizeof...(TN), FN, T1, TN...> THIS;
 		typedef typename THIS::result_type result_type;
-		static void apply(FN fn, result_type (&out)[SIZE], T1 && t1, TN &&... tn) {
-			NEXT::apply(fn, FWD(result_type (&)[SIZE], out), FWD(T1,t1), FWD(TN,tn)...);
+		static void apply(FN fn, result_type (&out)[SIZE],
+				T1 && t1, TN &&... tn) {
+			NEXT::apply(fn, FWD(result_type (&)[SIZE], out), 
+					FWD(T1,t1), FWD(TN,tn)...);
 			out[SEQ-1] = THIS::apply(fn, FWD(T1,t1), FWD(TN,tn)...);
 		}
 	};
@@ -148,7 +147,7 @@ namespace Detail {
 	};
 
 	template<int SEQ, int N, typename FN, typename T1, typename... TN>
-	struct ForZip {
+	struct ForZip<SEQ, N, FN, T1, TN...> {
 		typedef ForZip<SEQ-1, N, FN, T1, TN...> NEXT;
 		static void apply(FN fn, T1 (&t1)[N], TN (&...tn)[N]) {
 			NEXT::apply(fn, FWD(T1 (&)[N],t1), FWD(TN(&)[N],tn)...);
@@ -189,8 +188,8 @@ void for_all(FN fn, T1 && t1, TN &&... tn) {
 			FWD(T1,t1), FWD(TN,tn)...);
 }
 
-template<typename FN0, typename FN1, typename... FN, typename T1, typename... TN,
-	int N = Detail::Sizes<T1, TN..., Detail::delim_tag>::SIZE>
+template<typename FN0, typename FN1, typename... FN, typename T1,
+	typename... TN, int N = Detail::Sizes<T1, TN..., Detail::delim_tag>::SIZE>
 void for_all(FN0 fn0, FN1 fn1, FN... fn, T1 && t1, TN &&... tn) {
 	for_all(fn0, SELF(t1), SELF(tn)...);
 	for_all(SELF(fn1), SELF(fn)..., SELF(t1), SELF(tn)...);
@@ -217,16 +216,7 @@ void for_zip(FN fn, T1 (&t1)[N], TN (&...tn)[N]) {
 }
 
 namespace test {
-	//typedef enum {disable=0, weak, strict} test_mode;
-
-	/*struct test_base {
-		static constexpr bool run(void);
-	};*/
-
 struct test_util {
-	/*static constexpr const bool run(long l) {
-		return false;
-	}*/
 	static bool run(void) {
 		using namespace Detail;
 		// Base types
@@ -270,7 +260,8 @@ struct test_util {
 
 		// Prune duplicates
 		static_assert(std::is_same<decltype(prune(VIFD)), T_IFD>::value, "");
-		static_assert(std::is_same<decltype(prune(T_FDF {})), decltype(VF+VD)>::value, "");
+		static_assert(std::is_same<decltype(prune(T_FDF {})),
+				decltype(VF+VD)>::value, "");
 		
 		// Or
 		static_assert(std::is_same<decltype(VI+VF+VD), T_IFD>::value, "");
@@ -279,14 +270,17 @@ struct test_util {
 		static_assert(std::is_same<decltype(VIF-VF), T_I>::value, "");
 		static_assert(std::is_same<decltype(VIF-VF-VI), T_void>::value, "");
 		// Xor
-		static_assert(std::is_same<decltype(VI^VI), decltype(VI-VI)>::value, "");
-		static_assert(std::is_same<decltype(VI^VF), decltype(VI+VF)>::value, "");
+		static_assert(std::is_same<decltype(VI^VI),
+				decltype(VI-VI)>::value, "");
+		static_assert(std::is_same<decltype(VI^VF),
+				decltype(VI+VF)>::value, "");
 		// And
 		static_assert(std::is_same<decltype(VI & VI), T_I>::value, "");
 		static_assert(std::is_same<decltype(VIF & VI), T_I>::value, "");
 
 		// Permutations
-		static_assert(!std::is_same<decltype(VI+VF), decltype(VF+VI)>::value, "");
+		static_assert(!std::is_same<decltype(VI+VF),
+				decltype(VF+VI)>::value, "");
 		static_assert(permutes(VI+VF, VF+VI), "");
 		static_assert(!permutes(VI+VF, VI), "");
 

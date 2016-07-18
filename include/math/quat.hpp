@@ -1,11 +1,11 @@
-#ifndef QUAT_HPP
-#define QUAT_HPP
+#ifndef MATH_QUAT_HPP
+#define MATH_QUAT_HPP
 
 #include "util.hpp"
 #include "math.hpp"
 #include "math/dual.hpp"
 
-namespace Model {
+namespace Math {
 
 	template<typename R = float>
 	struct quat {

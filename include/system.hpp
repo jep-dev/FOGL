@@ -2,20 +2,19 @@
 #define SYSTEM_HPP
 
 #include <algorithm>
+#include <fstream>
 #include <functional>
+#include <iomanip>
 #include <numeric>
 #include <map>
-#include <vector>
-
+#include <sstream>
+#include <string>
 #include <type_traits>
 #include <typeindex>
+#include <vector>
 
-#include <fstream>
-#include <string>
-#include <iomanip>
-#include <sstream>
-#include "model.hpp"
 #include "util.hpp"
+#include "model.hpp"
 
 namespace System {
 

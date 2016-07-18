@@ -4,6 +4,7 @@
 #include <atomic>
 #include <iostream>
 #include <functional>
+#include <math.h>
 
 #ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
@@ -14,10 +15,9 @@
 #include <GLFW/glfw3.h>
 #include <GL/gl.h>
 
-#include <math.h>
+#include "math.hpp"
 #include "model.hpp"
-//#include "view.hpp"
-//#include "view/shade.hpp"
+#include "view/shade.hpp"
 
 namespace View {
 	void printErrors(const char *prefix);

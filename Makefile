@@ -1,8 +1,10 @@
 CC=clang
 CXX=clang++
 MKDIR=@mkdir -p
+SUPPRESS=>/dev/null
 
 DIR_ROOT?=
+#DIR_DEBUG?=$(DIR_ROOT)debug/
 DIR_TEST?=$(DIR_ROOT)test/
 DIR_BOOST?=$(DIR_ROOT)../boost/
 DIR_GL3W?=$(DIR_ROOT)gl3w/
@@ -33,10 +35,11 @@ MODULE_DIRS?=util/ system/ math/ model/ view/
 MAIN_MODULES?=util system/net system math model/ply model view view/shade
 MAIN_H_ONLY?=util/types math/quat math/dual math/affine
 MAIN_INCLUDES?=$(foreach inc,$(MAIN_H_ONLY) $(MAIN_MODULES),\
-			   $(inc:%=$(DIR_ROOT)$(DIR_INCLUDE)%.hpp))
+			   $(inc:%=%.hpp))
 MAIN_PCHS?=$(DIR_ROOT_INCLUDE)util.hpp$(PCH_EXT)
 MAIN_SRCS?=$(foreach mod,$(MAIN_MODULES) main,$(DIR_ROOT_SRC)$(mod).cpp)
 MAIN_OBJS=$(foreach mod,$(MAIN_MODULES),$(mod:%=$(DIR_ROOT_LIB)%.o))
+MAIN_DEPS=$(MAIN_OBJS:%.o=%.d)
 
 TEST_EXE?=$(DIR_ROOT_BIN)$(EXE_BASE)$(TEST_EXT)$(EXE_EXT)
 #DEBUG_EXE?=$(DIR_ROOT)$(DIR_BIN)$(EXE_BASE)$(DEBUG_EXT)$(EXE_EXT)
@@ -52,18 +55,19 @@ EXE_OBJS?=$(TEST_OBJ) $(RELEASE_OBJ)
 ###############################################################################
 WFLAGS+=-Winvalid-pch
 CFLAGS=-I$(DIR_BOOST) -I$(DIR_GL3W_INCLUDE)
-CPPFLAGS=-std=c++11 -pthread -fopenmp=libomp $(CFLAGS) -I$(DIR_ROOT_INCLUDE)\
-		 -include $(DIR_ROOT_INCLUDE)util.hpp
+CPPFLAGS=-std=c++11 -pthread -fopenmp=libomp $(CFLAGS)\
+		 -I$(DIR_ROOT_INCLUDE)
 LDFLAGS=-L$(DIR_BOOST_LIB) -lpthread -lboost_system
-RELEASE_LDFLAGS=-lGL -lglfw -ldl
-DEBUG_LDFLAGS=$(RELEASE_LDFLAGS)
-TEST_LDFLAGS=-lboost_unit_test_framework $(RELEASE_LDFLAGS)
+RELEASE_LDFLAGS=$(LDFLAGS) -lGL -lglfw -ldl
+#DEBUG_LDFLAGS=$(LDFLAGS)
+TEST_LDFLAGS=$(LDFLAGS) -lboost_unit_test_framework -lGL -lglfw -ldl
 ###############################################################################
-COMPILE_CC=$(CC) $(CFLAGS) $(WFLAGS) -c -o $@ $<
-COMPILE_CXX=$(CXX) $(CPPFLAGS) $(WFLAGS) -c -o $@ $<
-COMPILE_HPP=$(CXX) $(CPPFLAGS) $(WFLAGS) -x c++-header -o $@ $<
-LINK_CC=$(CC) $(CFLAGS) $(WFLAGS) $(LDFLAGS) -o $@ $<
-LINK_CXX=$(CXX) $(CPPFLAGS) $(WFLAGS) $(LDFLAGS) -o $@ $<
+LINK_CC=$(CC) $(CFLAGS) $(WFLAGS)
+LINK_CXX=$(CXX) $(CPPFLAGS) $(WFLAGS)
+COMPILE_CC=$(LINK_CC) -include $(DIR_ROOT_INCLUDE)util.hpp -c
+COMPILE_CXX=$(LINK_CXX) -include $(DIR_ROOT_INCLUDE)util.hpp -c
+DEPEND_CXX=$(LINK_CXX) -c -M
+COMPILE_HPP=$(LINK_CXX) -c -x c++-header
 ###############################################################################
 
 default:.sentinel $(MAIN_PCHS) $(RELEASE_EXE)
@@ -71,30 +75,43 @@ all:.sentinel $(EXES)
 vpath %.hpp $(DIR_ROOT_INCLUDE)
 vpath %.cpp $(DIR_ROOT_SRC)
 
-%.hpp$(PCH_EXT):%.hpp
-	$(COMPILE_HPP)
+-include $(MAIN_DEPS)
+
 $(RELEASE_EXE): $(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS) $(MAIN_PCHS)
-	$(LINK_CXX) $(GL3W_OBJS) $(MAIN_OBJS) $(RELEASE_LDFLAGS)
-# --log_level=error
+	$(LINK_CXX) $(RELEASE_LDFLAGS) $< $(GL3W_OBJS) $(MAIN_OBJS) -o $@
 $(TEST_EXE): $(TEST_OBJ) $(MAIN_OBJS) $(GL3W_OBJS)
-	$(LINK_CXX) $(GL3W_OBJS) $(MAIN_OBJS) $(TEST_LDFLAGS)
-#$(DEBUG_EXE): $(DEBUG_OBJ) $(MAIN_OBJS) $(GL3W_OBJS)
-#	$(LINK_CXX) $(GL3W_OBJS) $(MAIN_OBJS) $(TEST_LDFLAGS)
-$(DIR_GL3W)%.o: $(DIR_GL3W)$(DIR_SRC)*.c
-	$(COMPILE_CC)
+	$(LINK_CXX) $(TEST_LDFLAGS) $< $(MAIN_OBJS) $(GL3W_OBJS) -o $@
+
+$(RELEASE_OBJ): $(DIR_ROOT_SRC)main.cpp $(MAIN_PCHS) $(MAIN_INCLUDES)
+	$(COMPILE_CXX) $< -o $@
+	$(DEPEND_CXX) $< -o $(@:%.o=%.d)
+# --log_level=error
 $(TEST_OBJ): $(DIR_TEST)$(DIR_SRC)*.cpp
-	$(COMPILE_CXX)
-$(DIR_ROOT_LIB)%.o: $(DIR_ROOT_SRC)%.cpp
-	$(COMPILE_CXX)
+	$(COMPILE_CXX) $< -o $@
+	$(DEPEND_CXX) $< -o $(@:%.o=%.d)
+
+
+$(DIR_GL3W)%.o: $(DIR_GL3W)$(DIR_SRC)*.c ; $(COMPILE_CC) -o $@ $<
+$(DIR_ROOT_LIB)%.o: $(DIR_ROOT_SRC)%.cpp $(DIR_ROOT_INCLUDE)%.hpp
+	$(COMPILE_CXX) $< -o $@
+	$(DEPEND_CXX) $< -o $(@:%.o=%.d)
 $(DIR_ROOT_LIB)*/%.o: $(DIR_ROOT_SRC)*/%.cpp
-	$(COMPILE_CXX)
+	$(COMPILE_CXX) $< -o $@
+	$(DEPEND_CXX) $< -o $(@:%.o=%.d)
+
+%.hpp$(PCH_EXT): %.hpp
+	$(COMPILE_HPP) $< -o $@
 
 .sentinel:
 	$(MKDIR) $(foreach target,$(EXES) $(EXE_OBJS) $(MAIN_OBJS),\
 		$(dir $(target)))
 	@touch .sentinel
 
-clean:
-	@rm -f $(EXES) $(EXE_OBJS) $(MAIN_OBJS) $(MAIN_PCHS) .sentinel
+clean-depends:
+	@rm -f $(MAIN_DEPS)
 
-.PHONY: all $(MAIN_MODULES) clean
+clean:
+	@rm -f $(EXES) $(EXE_OBJS) $(MAIN_OBJS)\
+		$(MAIN_PCHS) $(EXE_OBJS:.o=.d) $(MAIN_OBJS:.o=.d) .sentinel
+
+.PHONY: all depends depends-clean clean

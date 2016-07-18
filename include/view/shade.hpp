@@ -1,11 +1,13 @@
-#ifndef SHADE_HPP
-#define SHADE_HPP
+#ifndef VIEW_SHADE_HPP
+#define VIEW_SHADE_HPP
 
-#include <iostream>
+#include "view.hpp"
+
+/*#include <iostream>
 #include <GL/gl3w.h>
 #include <GL/glcorearb.h>
 #include <GLFW/glfw3.h>
-#include "GL/gl.h"
+#include "GL/gl.h"*/
 
 namespace View {
 	bool compile(const char*, GLuint&);

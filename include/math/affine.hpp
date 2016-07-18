@@ -1,5 +1,5 @@
-#ifndef AFFINE_HPP
-#define AFFINE_HPP
+#ifndef MATH_AFFINE_HPP
+#define MATH_AFFINE_HPP
 
 #include <cmath>
 #include <string>
@@ -15,7 +15,7 @@
 
 #include <boost/operators.hpp>
 
-namespace Model {
+namespace Math {
 
 	template<typename R>
 	struct Point:
