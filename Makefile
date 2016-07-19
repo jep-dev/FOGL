@@ -1,6 +1,7 @@
 CC=clang
 CXX=clang++
 MKDIR=@mkdir -p
+RM=@rm -f
 
 DIR_ROOT?=
 #DIR_DEBUG?=$(DIR_ROOT)debug/
@@ -53,7 +54,7 @@ RELEASE_OBJ?=$(DIR_ROOT_LIB)main$(RELEASE_EXT).o
 EXE_OBJS?=$(TEST_OBJ) $(RELEASE_OBJ)
 
 ###############################################################################
-WFLAGS+=-Winvalid-pch
+WFLAGS+=-Winvalid-pch -Werror
 CFLAGS=-I$(DIR_BOOST) -I$(DIR_GL3W_INCLUDE)
 CPPFLAGS=-std=c++11 -pthread -fopenmp=libomp $(CFLAGS)\
 		 -I$(DIR_ROOT_INCLUDE)
@@ -62,12 +63,12 @@ RELEASE_LDFLAGS=$(LDFLAGS) -lGL -lglfw -ldl
 #DEBUG_LDFLAGS=$(LDFLAGS)
 TEST_LDFLAGS=$(LDFLAGS) -lboost_unit_test_framework -lGL -lglfw -ldl
 ###############################################################################
-LINK_CC=$(CC) $(CFLAGS) $(WFLAGS)
-LINK_CXX=$(CXX) $(CPPFLAGS) $(WFLAGS)
-COMPILE_CC=$(LINK_CC) -c
-COMPILE_CXX=$(LINK_CXX) -include $(DIR_ROOT_INCLUDE)util.hpp -c
-DEPEND_CXX=$(LINK_CXX) -M
-COMPILE_HPP=$(LINK_CXX) -x c++-header
+LINK_CC=$(CC) $(WFLAGS)
+LINK_CXX=$(CXX) $(WFLAGS)
+COMPILE_CC=$(LINK_CC) $(CFLAGS) -c
+COMPILE_CXX=$(LINK_CXX) $(CPPFLAGS) -include $(DIR_ROOT_INCLUDE)util.hpp -c
+DEPEND_CXX=$(LINK_CXX) $(CPPFLAGS) -M
+COMPILE_HPP=$(LINK_CXX) $(CPPFLAGS) -x c++-header
 ###############################################################################
 
 default:.sentinel $(MAIN_PCHS) $(RELEASE_EXE)
@@ -107,11 +108,15 @@ $(DIR_ROOT_LIB)*/%.o: $(DIR_ROOT_SRC)*/%.cpp
 		$(dir $(target)))
 	@touch .sentinel
 
-clean-depends:
-	@rm -f $(MAIN_DEPS)
+clean-deps:; $(RM) $(EXE_OBJS:.o=.d) $(MAIN_OBJS:.o=.d) 
+clean-pchs:; $(RM) $(MAIN_PCHS)
+clean-objs:; $(RM) $(EXE_OBJS) $(MAIN_OBJS)
+clean-exes:; $(RM) $(EXES)
+clean-sentinels:; $(RM) .sentinel
+clean: clean-exes clean-objs clean-pchs clean-deps;
 
-clean:
-	@rm -f $(EXES) $(EXE_OBJS) $(MAIN_OBJS)\
-		$(MAIN_PCHS) $(EXE_OBJS:.o=.d) $(MAIN_OBJS:.o=.d) .sentinel
+env:; @echo "$(foreach var,CPPFLAGS WFLAGS RELEASE_LDFLAGS,\
+		\r$(var) = ${$(var)}\n)"
 
-.PHONY: all depends depends-clean clean
+.PHONY: all depends env \
+	clean clean-exes clean-deps clean-objs clean-sentinels

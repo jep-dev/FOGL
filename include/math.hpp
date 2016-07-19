@@ -9,18 +9,28 @@
 //#include <ostream>
 #include <sstream>
 
-namespace Math {
-	template<typename R> struct quat;
-	template<typename R> struct dual;
-	template<typename R> std::ostream&
-	operator<<(std::ostream&, quat<R> const&);
-	template<typename R> std::ostream&
-	operator<<(std::ostream&, dual<R> const&);
+/* TODO 
+ * Improve generics; at least fixed- vs. floating-point
+ * Replace quat/dual with abstract CT logic applied to RT primitives
+ * Integrate util (graph -> expression tree, etc.) */
 
+namespace Math {
+	/** True if and only if u and v are at most 1/2^E apart */
 	template<typename T = double, int E = -6>
-	bool near(T u, T v) {
-		return std::abs(u-v) <= pow(2.0, E);
+	bool near(T u, T v, int e = E) {
+		return std::abs(u-v) <= pow(2.0, e);
 	};
+
+	// math/quat
+	template<typename R> struct quat;
+	// math/dual
+	template<typename R> struct dual;
+	// math/affine
+	template<typename R> struct Point;
+	template<typename R> struct Unit;
+	template<typename R> struct Ray;
+	template<typename R> struct Rotor;
+	template<typename R> struct Pivot;
 }
 
 #include "math/quat.hpp"
@@ -28,11 +38,8 @@ namespace Math {
 #include "math/affine.hpp"
 
 namespace Math {
-	// TODO expression tree from this and util/types
-	template<typename T>
-	struct var;
-	template<typename T, T V>
-	struct val;
+	/* template<typename T> struct var;
+	template<typename T, T V> struct val;*/
 
 	template<typename R> std::ostream&
 	operator<<(std::ostream& lhs, quat<R> const& rhs) {
@@ -44,19 +51,11 @@ namespace Math {
 	}
 	template<typename R> std::ostream&
 	operator<<(std::ostream &lhs, dual<R> const& rhs) {
-		static std::string start = "\e[38;5;215m",
-			stop = "\e[0m", eps = "\u0190",
-			labels[] {
-				"1",
-				start + "i" + stop,
-				start + "j" + stop,
-				start + "k" + stop,
-				start + eps + stop,
-				start + "i" + eps + stop,
-				start + "j" + eps + stop,
-				start + "k" + eps + stop
-			};
-		std::ostringstream oss;
+		static constexpr const char *labels[]{
+			"1", "i", "j", "k",
+			_E_of(), _E_of("i"),
+			_E_of("j"), _E_of("k")
+		};
 		const quat<R> &u = rhs.u, v = rhs.v;
 		const R flat[] {
 			u.w, u.x, u.y, u.z, 
@@ -64,14 +63,14 @@ namespace Math {
 		};
 
 		bool any = false;
+		std::ostringstream oss;
 		for(int i = 0; i < 8; ++i) {
 			R val(flat[i]), vabs(std::abs(val));
 			if(!near<R>(vabs,0)) {
 				bool pos = val > 0,
-				 	 unit = near<R>(vabs, 1);
-				oss << (any ? 
-					(pos ? " + " : " - ") :
-					(pos ? "" : "-"));
+					 unit = near<R>(vabs, 1);
+				oss << (any ? pos ? " + " : " - "
+					: pos ? "" : "-");
 				if(!unit) {
 					oss << vabs;
 				}

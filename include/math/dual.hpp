@@ -1,6 +1,10 @@
 #ifndef MATH_DUAL_HPP
 #define MATH_DUAL_HPP
 
+#ifndef _E_of
+#define _E_of(X) X "\u0190"
+#endif
+
 #include "math.hpp"
 #include "math/quat.hpp"
 

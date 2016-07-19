@@ -9,15 +9,11 @@
 //#include <iostream>
 #include <iosfwd>
 #include <functional>
-//#include <math.h>
 
 #include <GL/gl3w.h>
 #include <GL/glcorearb.h>
 #include <GLFW/glfw3.h>
 #include <GL/gl.h>
-
-//#include "math.hpp"
-//#include "model.hpp"
 
 namespace View {
 	void printErrors(const char *prefix);

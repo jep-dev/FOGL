@@ -204,6 +204,8 @@ namespace Detail {
 	
 	template<template<typename...> class C, typename A>
 	constexpr infix_t<C, A> operator<(A, infix_t<C>) {return {};}
+
+
 }
 
 #endif
