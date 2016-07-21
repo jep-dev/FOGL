@@ -6,15 +6,15 @@
 namespace Detail {
 
 	struct undef_t {};
-
-	struct delim_tag {};
+	struct delim_t {};
 	
-	template<typename T>
-	struct Sized {};
-
 	template<typename T, int N>
 	struct Sized<T (&) [N]> {
 		static constexpr int SIZE = N;
+	};
+	template<typename T>
+	struct Sized<T, int> {
+		static constexpr int SIZE = 1;
 	};
 
 	template<typename T1, typename... TN>
@@ -22,7 +22,6 @@ namespace Detail {
 		static constexpr int SIZE = Sized<T1>::SIZE
 			* Sizes<TN...>::SIZE;
 	};
-
 	template<typename... TN>
 	struct Sizes<delim_tag, TN...> {
 		static constexpr int SIZE = 1;
@@ -37,7 +36,6 @@ namespace Detail {
 	template<typename... T>
 	struct set_t:
 		public decltype(prune(pack_t<T...>{})) {};
-
 
 	template<typename T> constexpr typename T::type
 	inner_type (const T) { return {}; }
@@ -59,7 +57,6 @@ namespace Detail {
 			I : index_of(pack_t<SN...> {},
 				t, pack_i<I+1> {});
 	}
-
 	template<typename... S, typename... T>
 	constexpr auto indices_of(pack_t<S...> u, pack_t<T...> v)
 	-> pack_i<index_of(u, T {})...> {
@@ -70,12 +67,10 @@ namespace Detail {
 	constexpr int sum_of(pack_i<I1, I2, IN...>) {
 		return I1 + I2 + sum_of(pack_i<IN...> {});
 	}
-
 	template<int I1, int... IN>
 	constexpr int sum_of(pack_i<I1, IN...>) {
 		return I1 + sum_of(pack_i<IN...> {});
 	}
-
 	constexpr int sum_of(pack_i<>) {
 		return 0;
 	}

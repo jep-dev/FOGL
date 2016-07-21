@@ -18,6 +18,8 @@ namespace Detail {
 	// util/types
 	struct undef_t;
 	struct delim_tag;
+	template<class, class...> struct Sized;
+	template<class, class...> struct Sizes;
 	template<class...> struct pack_t;
 	template<int...> struct pack_i;
 	template<class...> struct set_t;
