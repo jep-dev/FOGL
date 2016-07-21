@@ -168,7 +168,7 @@ namespace Net {
 			}
 		}
 		client(io_service &svc, short port):
-		agent(svc), res(svc), port(port) {}
+		agent(svc), port(port), res(svc) {}
 	private:
 		void send(const char *msg) {
 			std::copy(msg, msg+strlen(msg), obuf);
