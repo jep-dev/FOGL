@@ -132,15 +132,12 @@ namespace View {
 		}
 	}
 
-	view::view(void) {
+	view::view(const char *vert, const char *frag) {
 		using Header = Model::Ply::Header;
 		using Element = Model::Ply::Element;
 
 		// TODO - safe model and shader loading at runtime
-		static constexpr const char 
-			*vpath = "resources/shade.vert",
-			*fpath = "resources/shade.frag",
-			*mpath = "resources/bunny.ply";
+		static constexpr const char *mpath = "share/bunny.ply";
 
 		Header model(mpath);
 		if(!glfwInit()) {
@@ -210,7 +207,7 @@ namespace View {
 		nTriangles = indices -> instances;
 		
 		progID = glCreateProgram();
-		if(!link(vpath, fpath, progID)) {
+		if(!link(vert, frag, progID)) {
 			std::cout << "Could not compile/link shader(s)." << std::endl;
 			return;
 		}

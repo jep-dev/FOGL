@@ -19,7 +19,7 @@ namespace View {
 	void printErrors(const char *prefix);
 	struct view {
 		bool valid = false;
-		float near=1, far=10, fov=25;
+		float near = 1, far = 10, fov = 25;
 		GLuint progID, vaID, vbuf, ibuf,
 					 modelID, viewID, projID;
 		int nTriangles;
@@ -28,7 +28,7 @@ namespace View {
 		void setUniforms(void);
 		void redraw(void);
 		void run(std::function<bool()>, std::function<void()>);
-		view();
+		view(const char *vert, const char *frag);
 		virtual ~view(void);
 	};
 }
