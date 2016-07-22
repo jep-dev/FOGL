@@ -9,21 +9,25 @@ namespace Detail {
 	struct delim_t {};
 	
 	template<typename T, int N>
-	struct Sized<T (&) [N]> {
+	struct sized_t<T (&) [N]> {
 		static constexpr int SIZE = N;
 	};
+	template<template<typename...> class C, typename... T>
+	struct sized_t<C<T...>> {
+		static constexpr int SIZE = C<T...>::size;
+	};
 	template<typename T>
-	struct Sized<T, int> {
+	struct sized_t {
 		static constexpr int SIZE = 1;
 	};
 
 	template<typename T1, typename... TN>
-	struct Sizes {
-		static constexpr int SIZE = Sized<T1>::SIZE
-			* Sizes<TN...>::SIZE;
+	struct sizes_t {
+		static constexpr int SIZE = sized_t<T1>::SIZE
+			* sizes_t<TN...>::SIZE;
 	};
 	template<typename... TN>
-	struct Sizes<delim_tag, TN...> {
+	struct sizes_t<delim_t, TN...> {
 		static constexpr int SIZE = 1;
 	};
 
@@ -53,9 +57,8 @@ namespace Detail {
 		typename T, int I = 0>
 	constexpr int index_of (pack_t<S1, SN...>, T t,
 			pack_i<I> = pack_i<I>{}) {
-		return std::is_same<T,S1>::value ?
-			I : index_of(pack_t<SN...> {},
-				t, pack_i<I+1> {});
+		return std::is_same<T,S1>::value ? I :
+			index_of(pack_t<SN...> {}, t, pack_i<I+1> {});
 	}
 	template<typename... S, typename... T>
 	constexpr auto indices_of(pack_t<S...> u, pack_t<T...> v)
@@ -140,8 +143,6 @@ namespace Detail {
 	constexpr E operator&(C, D) {return E {};}
 
 
-	/* --------------------- Related functions ----------------------- */
-	
 	template<typename... A, typename B = typename
 		pack_merge<pack_t<>, pack_t<A...>>::type>
 	constexpr B prune(pack_t<A...>) {return B {};}
@@ -153,30 +154,27 @@ namespace Detail {
 		return std::is_same<decltype(c^d), pack_t<>>::value;
 	}
 
-	/*template<typename V, typename E>
-	struct graph;*/
-
 	template<typename U, typename V>
-	struct edge {};
+	struct edge_t {};
 	template<typename T>
-	struct node {};
+	struct node_t {};
 
 	template<typename... V, typename... E>
-	struct graph<pack_t<V...>, pack_t<E...>> {
+	struct graph_t<pack_t<V...>, pack_t<E...>> {
 		typedef pack_t<V...> vertices;
 		typedef pack_t<E...> edges;
 
 		template<typename T>
-		constexpr graph<
+		constexpr graph_t<
 			decltype(prune(vertices {}
-				+ pack_t<node<T>> {})), edges>
-		operator+(node<T>) const {
+				+ pack_t<node_t<T>> {})), edges>
+		operator+(node_t<T>) const {
 			return {};
 		}
 		template<typename S, typename T>
-		constexpr graph<vertices, decltype(
-				prune(edges {} + edge<S,T> {}))>
-		operator+(edge<S,T>) const {
+		constexpr graph_t<vertices, decltype(
+				prune(edges {} + edge_t<S,T> {}))>
+		operator+(edge_t<S,T>) const {
 			return {};
 		}
 	};
