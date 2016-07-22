@@ -139,7 +139,6 @@ void zipper(FN<void(S1, SN...)> fn,
 	fn(SELF(s1), SELF(sn)...);
 	zipper(fn, SELF(t1), SELF(tn)...);
 }
-
 template<typename FN, int N, typename T1, typename... TN>
 void for_zip(FN fn, T1 (&t1)[N], TN (&...tn)[N]) {
 	using namespace Detail;
