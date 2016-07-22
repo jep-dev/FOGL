@@ -1,21 +1,21 @@
-//#include "main.hpp"
+#include "main.hpp"
 
-#include "util.hpp"      // TMP, functional, algorithms
+#include "util.hpp"
 #include "util/types.hpp"
 #include "util/functional.hpp"
 
-#include "system.hpp" // Files, I/O, term adaptor; needs term cap
-#include "system/net.hpp"  // Net adaptor & services for I/O
+#include "system.hpp"
+#include "system/net.hpp"
 
-#include "math.hpp"  // Quaternions, duals, transforms
+#include "math.hpp"
 #include "math/quat.hpp"
 #include "math/dual.hpp"
 #include "math/affine.hpp"
 
-#include "model.hpp" // Deserializes .ply model data
+#include "model.hpp"
 #include "model/ply.hpp"
 
-#include "view.hpp" // Windowed model viewer (GLFW)
+#include "view.hpp"
 #include "view/shade.hpp"
 
 #include <atomic>
@@ -32,13 +32,6 @@
 #include <boost/asio.hpp>
 #include <boost/asio/yield.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-
-//using namespace Model;
-//using namespace Detail;
-
-/*using std::cout;
-using std::ostream;
-using std::endl;*/
 
 using namespace System;
 using PB = Printer_Base;
@@ -75,7 +68,7 @@ int main(int argc, const char **argv) {
 		}
 	};
 
-	View::view display;
+	View::view display("share/shade.vert", "share/shade.frag");
 	if(display.valid) {
 		std::thread modelThread(updateModel);
 		display.run(updateView, quit);

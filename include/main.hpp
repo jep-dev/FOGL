@@ -1,4 +1,7 @@
-/** Entry point of the program
- * argc Number of args
- * argv Array of args (starting with self) */
+/**
+ * @brief Entry point of the program
+ * @param argc Number of args (1+)
+ * @param argv Array of args (starting with self)
+ * @return Zero if and only if exiting without failure
+ */
 int main(int argc, const char **argv);
