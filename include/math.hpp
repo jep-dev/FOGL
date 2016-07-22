@@ -1,19 +1,15 @@
 #ifndef MATH_HPP
 #define MATH_HPP
 
-//#include "util.hpp"
-
 #include <cmath>
 #include <cstdlib>
-#include <iostream>
-//#include <ostream>
+#include <iosfwd>
 #include <sstream>
 
 /* TODO 
  * Improve generics; at least fixed- vs. floating-point
  * Replace quat/dual with abstract CT logic applied to RT primitives
  * Integrate util (graph -> expression tree, etc.) */
-
 namespace Math {
 	/** True if and only if u and v are at most 1/2^E apart */
 	template<typename T = double, int E = -6>
@@ -21,11 +17,10 @@ namespace Math {
 		return std::abs(u-v) <= pow(2.0, e);
 	};
 
-	// math/quat
-	template<typename R> struct quat;
-	// math/dual
-	template<typename R> struct dual;
-	// math/affine
+	template<typename R> struct quat; // --> math/quat
+	template<typename R> struct dual; // --> math/dual
+
+	// --> math/affine
 	template<typename R> struct Point;
 	template<typename R> struct Unit;
 	template<typename R> struct Ray;
