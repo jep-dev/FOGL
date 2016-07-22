@@ -1,5 +1,6 @@
-#include "model.hpp"
 #include "model/ply.hpp"
+#include "model.hpp"
+#include <iostream>
 
 namespace Model {
 	namespace Ply {
@@ -12,6 +13,42 @@ namespace Model {
 			"char", "uchar", "short", "ushort", 
 				"int", "uint", "float", "double"
 		};
+
+		bool Primitive::getID(const std::string &from, ID &to) {
+			for(int i = 0; i < 8; ++i) {
+				auto name = NAMES[i], alias = ALIASES[i];
+				if(from == name || from == alias) {
+					to = (ID) i;
+					return true;
+				}
+			}
+			return false;
+		}
+
+		std::ostream& operator<<(std::ostream& lhs,
+				Primitive::ID const& rhs) {
+			return lhs << Primitive::NAMES[rhs];
+		}
+
+		std::ostream& operator<<(std::ostream& lhs,
+				Property const& rhs) {
+			lhs << "property ";
+			if(rhs.is_list) {
+				lhs << "list " << rhs.sizeType << " ";
+			}
+			return lhs << rhs.valueType << " " 
+				<< rhs.name;
+		}
+
+		std::ostream& operator<<(std::ostream& lhs,
+				Element const& rhs) {
+			lhs << "element " << rhs.name << " " 
+				<< rhs.instances;
+			for(auto property : rhs.properties) {
+				lhs << "\r\n" << property;
+			}
+			return lhs;
+		}
 
 		Header::Header(const char *fname) {
 			static constexpr const char 
@@ -28,10 +65,8 @@ namespace Model {
 			std::size_t end_header;
 
 			Element el;
-			bool has_ply = false,
-					 has_fmt = false,
-					 has_endh = false,
-					 is_element = false;
+			bool has_ply = false, has_fmt = false,
+					 has_endh = false, is_element = false;
 			for(std::string word, line; 
 					!status && std::getline(file, line);) {
 
