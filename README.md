@@ -21,6 +21,14 @@ Asynchronous model/view/controller engine/framework; under construction.
 
 5. In `./`, Update `Makefile` as necessary, then run `make`
 
+6. Run one of the following:
+
+ a. `ln -s ../gl3w/libgl3w.so your_path` where `your_path` is a directory in your `LD_LIBRARY_PATH`
+
+ b. Add `:../gl3w/` to the tail of your `LD_LIBRARY_PATH`
+
+The application must then be run from the project root directory: `bin/glomp`
+
 The Makefile targets gl3w for convenience, but building gl3w separately is always an option. OpenGL and GLU are not provided by gl3w; Boost and other dependencies are not targeted and must be met or made independently.
 
 All of the requirements support Linux, Windows, and OS X. This project only supports Linux, but will support Windows XP or better before release. 
