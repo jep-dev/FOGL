@@ -209,7 +209,7 @@ struct test_util {
 		T_IF VIF; T_IFD VIFD;
 
 		// Types with duplicates
-		typedef pack_t<int,int> T_II;
+		typedef pack_t<int, int> T_II;
 		typedef pack_t<float, double, float> T_FDF;
 		
 		
