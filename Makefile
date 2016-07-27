@@ -19,7 +19,7 @@ DIR_ROOT_SRC?=$(DIR_ROOT)$(DIR_SRC)
 DIR_ROOT_LIB?=$(DIR_ROOT)$(DIR_LIB)
 DIR_ROOT_BIN?=$(DIR_ROOT)$(DIR_BIN)
 DIR_BOOST_INCLUDE?=$(DIR_BOOST)
-DIR_BOOST_LIB?=$(realpath $(DIR_BOOST)stage/lib/)
+DIR_BOOST_LIB?=$(DIR_BOOST)stage/lib/
 DIR_GL3W_INCLUDE?=$(DIR_GL3W)$(DIR_INCLUDE)
 DIR_GL3W_SRC?=$(DIR_GL3W)$(DIR_SRC)
 DIR_GL3W_LIB?=$(DIR_GL3W)
@@ -32,7 +32,8 @@ DEBUG_EXT?=-debug
 RELEASE_EXT?=
 
 MODULE_DIRS?=util/ system/ math/ model/ view/
-MAIN_MODULES?=util system/net system math math/affine math/quat math/dual\
+MAIN_MODULES?=util system/net system\
+			  math math/affine math/quat math/dual\
 			  model/ply model view view/shade
 MAIN_H_ONLY?=util/types math/quat math/dual
 MAIN_INCLUDES?=$(foreach inc,$(MAIN_H_ONLY) $(MAIN_MODULES),\
@@ -41,6 +42,9 @@ MAIN_PCHS?=$(DIR_ROOT_INCLUDE)util.hpp$(PCH_EXT)
 MAIN_SRCS?=$(foreach mod,$(MAIN_MODULES) main,$(DIR_ROOT_SRC)$(mod).cpp)
 MAIN_OBJS=$(foreach mod,$(MAIN_MODULES),$(mod:%=$(DIR_ROOT_LIB)%.o))
 MAIN_DEPS=$(MAIN_OBJS:%.o=%.d)
+
+SENTINEL_DIRS?=$(DIR_BIN) $(foreach outer,$(DIR_LIB),\
+			   $(foreach inner,. $(MODULE_DIRS),$(outer)$(inner)))
 
 TEST_EXE?=$(DIR_ROOT_BIN)$(EXE_BASE)$(TEST_EXT)$(EXE_EXT)
 #DEBUG_EXE?=$(DIR_ROOT)$(DIR_BIN)$(EXE_BASE)$(DEBUG_EXT)$(EXE_EXT)
@@ -55,27 +59,32 @@ EXE_OBJS?=$(TEST_OBJ) $(RELEASE_OBJ)
 
 ###############################################################################
 WFLAGS+=-Wall -Wno-unused
-CFLAGS=-isystem $(DIR_GL3W_INCLUDE) -fdata-sections
-CPPFLAGS=$(CFLAGS) -std=c++11 -pthread -fopenmp=libomp\
-		 -isystem $(DIR_BOOST_INCLUDE) -I$(DIR_ROOT_INCLUDE)
-LDFLAGS=-L$(DIR_BOOST_LIB) -lpthread -Wl,--gc-sections\
-		-Wl,-rpath,$(DIR_BOOST_LIB) -lboost_system
-RELEASE_LDFLAGS=$(LDFLAGS) -lGL -lglfw -ldl
+CFLAGS=-fPIC -fdata-sections -isystem $(DIR_GL3W_INCLUDE)
+CPPFLAGS:=$(CFLAGS) \
+		 -I $(DIR_GL3W_INCLUDE) \
+		 -I $(DIR_BOOST_INCLUDE) \
+		 -I $(DIR_ROOT_INCLUDE) \
+		 -std=c++11 -pthread -fopenmp=libomp
+LD_LIBRARY_PATH:=$(LD_LIBRARY_PATH):$(DIR_GL3W_LIB)
+LDFLAGS:=-L$(DIR_BOOST_LIB) -L$(DIR_GL3W_LIB) \
+	-lpthread -Wl,--gc-sections\
+	-Wl,-rpath,$(DIR_BOOST_LIB):$(DIR_GL3W_LIB)\
+	-lboost_system
+RELEASE_LDFLAGS:=$(LDFLAGS) -lGL -lglfw -ldl
 #DEBUG_LDFLAGS=$(LDFLAGS) -lboost_system
-TEST_LDFLAGS=$(LDFLAGS) -lboost_unit_test_framework -lGL -lglfw -ldl
+TEST_LDFLAGS:=$(LDFLAGS) -lboost_unit_test_framework -lGL -lglfw -ldl
 ###############################################################################
-LINK_CC=$(CC) $(WFLAGS)
-LINK_CXX=$(CXX) $(WFLAGS)
-COMPILE_CC=$(LINK_CC) $(CFLAGS) -c
-COMPILE_CXX=$(LINK_CXX) $(CPPFLAGS)\
-			-include $(DIR_ROOT_INCLUDE)util.hpp -c
-DEPEND_CC=$(LINK_CC) $(CFLAGS) -M
-DEPEND_CXX=$(LINK_CXX) $(CPPFLAGS) -M
-
-COMPILE_HPP=$(LINK_CXX) $(CPPFLAGS) -x c++-header
+LINK_CC=$(CC) $(CFLAGS) $(WFLAGS)
+LINK_CXX=$(CXX) $(CPPFLAGS) $(WFLAGS)
+COMPILE_CC=$(LINK_CC) -c
+COMPILE_CXX=$(LINK_CXX) -include $(DIR_ROOT_INCLUDE)util.hpp -c
+DEPEND_CC=$(LINK_CC) -M
+DEPEND_CXX=$(LINK_CXX) -M
+COMPILE_HPP=$(LINK_CXX) -x c++-header
 ###############################################################################
 
-default:.sentinel $(MAIN_PCHS) release #$(RELEASE_EXE)
+default:.sentinel \
+	$(MAIN_PCHS) release #$(RELEASE_EXE)
 all:.sentinel $(MAIN_PCHS) release test #debug
 vpath %.hpp $(DIR_ROOT_INCLUDE)
 vpath %.cpp $(DIR_ROOT_SRC)
@@ -84,11 +93,15 @@ vpath %.cpp $(DIR_ROOT_SRC)
 
 release: $(RELEASE_EXE) ;
 $(RELEASE_EXE): $(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS) $(MAIN_PCHS)
-	$(LINK_CXX) $< $(GL3W_OBJS) $(MAIN_OBJS) -o $@ $(RELEASE_LDFLAGS)
+	$(LINK_CXX) $< -lgl3w $(MAIN_OBJS) -o $@ $(RELEASE_LDFLAGS)
+#$(LINK_CXX) -shared $< $(GL3W_OBJS) $(MAIN_OBJS) \
+#	-o $(@:%.o=lib%.so) $(RELEASE_LDFLAGS)
 
 test: $(TEST_EXE) ; # use --log_level=error
 $(TEST_EXE): $(TEST_OBJ) $(MAIN_OBJS) $(GL3W_OBJS)
 	$(LINK_CXX) $< $(MAIN_OBJS) $(GL3W_OBJS) -o $@ $(TEST_LDFLAGS)
+#$(LINK_CXX) -shared $< $(MAIN_OBJS) $(GL3W_OBJS) \
+#	-o $(@:%.o=lib%.so) $(TEST_LDFLAGS)
 
 $(RELEASE_OBJ): $(DIR_ROOT_SRC)main.cpp $(MAIN_PCHS) $(MAIN_INCLUDES)
 	$(COMPILE_CXX) $< -o $@
@@ -98,21 +111,24 @@ $(TEST_OBJ): $(DIR_TEST)$(DIR_SRC)*.cpp
 	$(DEPEND_CXX) $< -o $(@:%.o=%.d)
 
 
-$(DIR_GL3W)%.o: $(DIR_GL3W)$(DIR_SRC)*.c ; $(COMPILE_CC) -o $@ $<
+$(DIR_GL3W)%.o: $(DIR_GL3W)$(DIR_SRC)*.c
+	$(COMPILE_CC) -fPIC -o $@ $<
+	$(LINK_CC) $(CFLAGS) -shared $< \
+		-o $(@:$(DIR_GL3W_LIB)%.o=$(DIR_GL3W_LIB)lib%.so)
 $(DIR_ROOT_LIB)%.o: $(DIR_ROOT_SRC)%.cpp $(DIR_ROOT_INCLUDE)%.hpp
 	$(COMPILE_CXX) $< -o $@
+	$(LINK_CXX) -I$(DIR_ROOT_INCLUDE) -shared $< -o $@
 	$(DEPEND_CXX) $< -o $(@:%.o=%.d)
 $(DIR_ROOT_LIB)*/%.o: $(DIR_ROOT_SRC)*/%.cpp
 	$(COMPILE_CXX) $< -o $@
+	$(LINK_CXX) -shared $< -o $@
 	$(DEPEND_CXX) $< -o $(@:%.o=%.d)
 
 %.hpp$(PCH_EXT): %.hpp
 	$(COMPILE_HPP) $< -o $@
 
 .sentinel:
-	$(MKDIR) $(foreach target,\
-		$(EXES) $(EXE_OBJS) $(MAIN_OBJS),\
-		$(dir $(target)))
+	$(MKDIR) $(SENTINEL_DIRS)
 	@touch .sentinel
 
 clean-deps:; $(RM) $(EXE_OBJS:.o=.d) $(MAIN_OBJS:.o=.d) 
