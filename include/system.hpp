@@ -1,20 +1,21 @@
 #ifndef SYSTEM_HPP
 #define SYSTEM_HPP
 
-#include <algorithm>
-#include <fstream>
-#include <functional>
-#include <iomanip>
-#include <numeric>
-#include <map>
-#include <sstream>
-#include <string>
-#include <type_traits>
-#include <typeindex>
-#include <vector>
-
 #include "util.hpp"
-#include "model.hpp"
+#include <iomanip>
+
+#include <fstream>
+#include <sstream>
+
+#include <string>
+//#include <type_traits>
+
+// Forward-declaration
+template<typename...> struct vector;
+
+
+/* --> source */
+#include <algorithm>
 
 namespace System {
 
@@ -32,63 +33,16 @@ namespace System {
 			padding_nw=border_n, padding_w=space, padding_sw=border_s,
 			padding_ne=border_n, padding_e=space, padding_se=border_s;
 
-		static bool uni_special(char ch) {
-			return (ch & 0xc0) == 0x80;
-		}
-		static int uni_strlen(const std::string &word) {
-			return uni_strlen(word.c_str());
-		}
-		static int uni_strlen(const char *word) {
-			int len = 0;
-			for(; *word; word++) {
-				if(!uni_special(*word)) {
-					len++;
-				}
-			}
-			return len;
-		}
-
-		static int strlen(const char *word) {
-			int len = 0;
-			bool escape = false, bracket = false;
-			for(; *word; word++) {
-				char ch = *word;
-				if(!uni_special(ch)) {
-					if(bracket) {
-						if(ch == 'm') {
-							bracket = escape = false;
-						}
-					} else if(escape) {
-						if(ch == '[') {
-							bracket = true;
-						}
-					} else if(ch == '\e') {
-						escape = true;
-					} else {
-						len++;
-					}
-				}
-			}
-			return len;
-		}
+		static bool uni_special(char ch);
+		static int uni_strlen(const char *word);
+		static int uni_strlen(const std::string &word);
+		static int strlen(const char *word);
 		
-		static string repeat(int N, char C = ' ') {
-			OSS oss;
-			oss << std::setw(N)
-				<< std::setfill(C) << "";
-			return oss.str();
-		}
-
-		template<typename T>
-		static std::string stringify(const T &t) {
-			OSS oss;
-			oss << t;
-			return oss.str();
-		}
+		static string repeat(int N, char C = ' ');
+		template<typename T> static std::string
+		stringify(const T &t);
 		template<typename T1, typename T2, typename... TN>
-		static string stringify(const T1 &t1, const T2 &t2, const TN &... tn) {
-			return stringify(t1) + " " + stringify(t2, tn...);
-		}
+		static string stringify(const T1 &t1, const T2 &t2, const TN &... tn);
 
 		template<typename R>
 		static string align(const R &value, int width, 
