@@ -5,28 +5,28 @@ RM=@rm -f
 
 DIR_ROOT?=
 #DIR_DEBUG?=$(DIR_ROOT)debug/
-DIR_TEST?=$(DIR_ROOT)test/
-DIR_BOOST?=$(DIR_ROOT)../boost/
-DIR_GL3W?=$(DIR_ROOT)../gl3w/
+DIR_TEST?=$(abspath $(DIR_ROOT)test)/
+DIR_BOOST?=$(abspath $(DIR_ROOT)../boost)/
+DIR_GL3W?=$(abspath $(DIR_ROOT)../gl3w)/
 
 DIR_INCLUDE=include/
 DIR_SRC?=src/
+DIR_BIN?=
 DIR_LIB?=lib/
-DIR_BIN?=bin/
 
 DIR_ROOT_INCLUDE?=$(DIR_ROOT)$(DIR_INCLUDE)
 DIR_ROOT_SRC?=$(DIR_ROOT)$(DIR_SRC)
 DIR_ROOT_LIB?=$(DIR_ROOT)$(DIR_LIB)
 DIR_ROOT_BIN?=$(DIR_ROOT)$(DIR_BIN)
-DIR_BOOST_INCLUDE?=$(DIR_BOOST)
+DIR_BOOST_INCLUDE?=$(abspath $(DIR_BOOST))/
 DIR_BOOST_LIB?=$(DIR_BOOST)stage/lib/
-DIR_GL3W_INCLUDE?=$(DIR_GL3W)$(DIR_INCLUDE)
-DIR_GL3W_SRC?=$(DIR_GL3W)$(DIR_SRC)
-DIR_GL3W_LIB?=$(DIR_GL3W)
+DIR_GL3W_INCLUDE?=$(abspath $(DIR_GL3W)$(DIR_INCLUDE))/
+DIR_GL3W_SRC?=$(abspath $(DIR_GL3W)$(DIR_SRC))/
+DIR_GL3W_LIB?=$(abspath $(DIR_GL3W))/
 
 EXE_EXT?=
 PCH_EXT?=.pch
-EXE_BASE?=glomp
+EXE_BASE?=fogl
 TEST_EXT?=-test
 DEBUG_EXT?=-debug
 RELEASE_EXT?=
@@ -60,10 +60,9 @@ EXE_OBJS?=$(TEST_OBJ) $(RELEASE_OBJ)
 ###############################################################################
 WFLAGS+=-Wall -Wno-unused
 CFLAGS=-fPIC -fdata-sections -isystem $(DIR_GL3W_INCLUDE)
-CPPFLAGS:=$(CFLAGS) \
+CPPFLAGS:=$(CFLAGS) -I $(DIR_ROOT_INCLUDE) \
 		 -I $(DIR_GL3W_INCLUDE) \
 		 -I $(DIR_BOOST_INCLUDE) \
-		 -I $(DIR_ROOT_INCLUDE) \
 		 -std=c++11 -pthread -fopenmp=libomp
 LD_LIBRARY_PATH:=$(LD_LIBRARY_PATH):$(DIR_GL3W_LIB)
 LDFLAGS:=-L$(DIR_BOOST_LIB) -L$(DIR_GL3W_LIB) \
@@ -93,13 +92,13 @@ vpath %.cpp $(DIR_ROOT_SRC)
 
 release: $(RELEASE_EXE) ;
 $(RELEASE_EXE): $(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS) $(MAIN_PCHS)
-	$(LINK_CXX) $< -lgl3w $(MAIN_OBJS) -o $@ $(RELEASE_LDFLAGS)
+	$(LINK_CXX) -fPIE $< -lgl3w $(MAIN_OBJS) -o $@ $(RELEASE_LDFLAGS)
 #$(LINK_CXX) -shared $< $(GL3W_OBJS) $(MAIN_OBJS) \
 #	-o $(@:%.o=lib%.so) $(RELEASE_LDFLAGS)
 
 test: $(TEST_EXE) ; # use --log_level=error
 $(TEST_EXE): $(TEST_OBJ) $(MAIN_OBJS) $(GL3W_OBJS)
-	$(LINK_CXX) $< $(MAIN_OBJS) $(GL3W_OBJS) -o $@ $(TEST_LDFLAGS)
+	$(LINK_CXX) -fPIE $< $(MAIN_OBJS) $(GL3W_OBJS) -o $@ $(TEST_LDFLAGS)
 #$(LINK_CXX) -shared $< $(MAIN_OBJS) $(GL3W_OBJS) \
 #	-o $(@:%.o=lib%.so) $(TEST_LDFLAGS)
 
