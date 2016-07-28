@@ -19,16 +19,6 @@
 
 
 namespace Net {
-	template<typename T> struct counted {
-		const int instance_id;
-		counted(void): instance_id(next_id()) {}
-		static int peek(void) {return next_id(true);}
-	private:
-		static int next_id(bool peek=false) {
-			static int ctr = 0;
-			return peek ? ctr : ctr++;
-		}
-	};
 
 	static void sleep_for(deadline_timer &dt, short ms_wait = 500) {
 		static const auto delay =
@@ -41,8 +31,7 @@ namespace Net {
 	struct cotask;
 	
 	struct channel:
-	std::enable_shared_from_this<channel>,
-	public counted<channel> {
+	std::enable_shared_from_this<channel> {
 		TCP::socket sock;
 		template<typename T>
 		channel& read(T &t) {
@@ -74,8 +63,7 @@ namespace Net {
 
 
 	template<typename T>
-	struct agent:
-	public counted<agent<T>> {
+	struct agent {
 		agent(io_service &svc):
 			sock(svc), svc(svc) {}
 	protected:
@@ -87,7 +75,6 @@ namespace Net {
 	
 	struct server:
 	public agent<server>,
-	public counted<server>,
 	std::enable_shared_from_this<server> {
 		server(io_service &svc, short port): agent(svc),
 			acc(svc, std::move(TCP::endpoint(TCP::v4(), port))) {}
@@ -124,7 +111,6 @@ namespace Net {
 
 	struct client:
 	public agent<client>,
-	public counted<client>,
 	std::enable_shared_from_this<client> {
 		void read(void) {
 			auto scoped = shared_from_this();

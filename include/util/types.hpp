@@ -31,6 +31,17 @@ namespace Detail {
 		static constexpr int SIZE = 1;
 	};
 
+	template<typename T> struct counted {
+		const int instance_id;
+		counted(void): instance_id(next_id()) {}
+		static int peek(void) {return next_id(true);}
+	private:
+		static int next_id(bool peek=false) {
+			static int ctr = 0;
+			return peek ? ctr : ctr++;
+		}
+	};
+
 	template<typename... T>
 	struct pack_t {};
 
@@ -77,7 +88,11 @@ namespace Detail {
 	constexpr int sum_of(pack_i<>) {
 		return 0;
 	}
-
+	template<typename T1, typename... TN>
+	constexpr auto rotate(pack_t<T1, TN...>)
+	-> pack_t<TN..., T1> {
+		return {};
+	}
 	
 	template<typename PREV, typename CUR> struct pack_cat;
 	template<typename... PREV, typename CUR>
@@ -154,27 +169,39 @@ namespace Detail {
 		return std::is_same<decltype(c^d), pack_t<>>::value;
 	}
 
-	template<typename U, typename V>
-	struct edge_t {};
-	template<typename T>
-	struct node_t {};
+	template<typename S, typename T1, typename... TN>
+	constexpr bool contains(pack_t<T1, TN...>, S && s) {
+		return contains(pack_t<TN...>{}, FWD(S,s));
+	}
+	template<typename S, typename... TN>
+	constexpr bool contains(pack_t<S, TN...>, S) {
+		return true;
+	}
+	template<typename S>
+	constexpr bool contains(pack_t<>, S) {
+		return false;
+	}
 
-	template<typename... V, typename... E>
-	struct graph_t<pack_t<V...>, pack_t<E...>> {
+	template<int U, int V>
+	struct edge_t: pack_i<U,V> {};
+	template<typename T>
+	struct node_t: pack_t<T> {};
+
+	template<typename... V, typename... E, bool BIDI>
+	struct graph_t<pack_t<V...>, pack_t<E...>, BIDI> {
 		typedef pack_t<V...> vertices;
 		typedef pack_t<E...> edges;
 
 		template<typename T>
-		constexpr graph_t<
-			decltype(prune(vertices {}
-				+ pack_t<node_t<T>> {})), edges>
+		constexpr graph_t<decltype(vertices {}
+				+ node_t<T> {}), edges>
 		operator+(node_t<T>) const {
 			return {};
 		}
-		template<typename S, typename T>
+		template<int S, int D>
 		constexpr graph_t<vertices, decltype(
-				prune(edges {} + edge_t<S,T> {}))>
-		operator+(edge_t<S,T>) const {
+				prune(edges {} + pack_t<edge_t<S, D>> {}))>
+		operator+(edge_t<S, D>) const {
 			return {};
 		}
 	};

@@ -16,7 +16,6 @@ namespace Net {
 	typedef ip::udp UDP;
 	typedef boost::system::error_code error_code;
 
-	template<typename T> struct counted;
 	struct cotask;
 	struct channel;
 	template<typename> struct agent;
