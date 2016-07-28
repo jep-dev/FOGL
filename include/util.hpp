@@ -36,6 +36,12 @@ namespace Detail { // --> util/types.hpp
 	template<class T1, class... TN> struct sizes_t;
 
 	/**
+	 * @brief Assigns each instance a unique sequential ID
+	 * @tparam T The type of the instances to count
+	 */
+	template<typename T> struct counted_t;
+
+	/**
 	 * @brief A tag type storing types with duplicates
 	 * @tparam T The unordered list of types
 	 */
@@ -61,17 +67,17 @@ namespace Detail { // --> util/types.hpp
 
 	/**
 	 * @brief A tag representing an edge between two nodes in a graph
-	 * @tparam U The source of the edge, or both
-	 * @tparam V The destination of the edge, or both
+	 * @tparam U The ID of the source of the edge, or both
+	 * @tparam V The ID of the destination of the edge, or both
 	 */
-	template<class U, class V = U> struct edge_t;
+	template<int U, int V> struct edge_t;
 
 	/**
 	 * @brief A tag representing a graph
 	 * @tparam V The pack of types containing the vertex endpoints
-	 * @tparam E The pack of integers containing the endpoint indices
+	 * @tparam E The pack of integer pairs containing the endpoint indices
 	 */
-	template<class V, class E> struct graph_t;
+	template<class V, class E, bool BIDI=false> struct graph_t;
 }
 #include "util/types.hpp"
 
@@ -204,6 +210,7 @@ struct test_util {
 		typedef pack_t<double> T_D;
 		typedef pack_t<int, float> T_IF;
 		typedef pack_t<int, float, double> T_IFD;
+		typedef pack_t<float, double, int> T_FDI;
 		T_void V0;
 		T_I VI; T_F VF; T_D VD;
 		T_IF VIF; T_IFD VIFD;
@@ -232,8 +239,8 @@ struct test_util {
 		static_assert(index_of(T_I {}, int {}) >= 0, "");
 
 		// Index of first matching type (or -1) for each type
-		static_assert(std::is_same<
-				decltype(indices_of(VIFD, VD + VI + pack_t<char>{})),
+		static_assert(std::is_same<decltype(
+					indices_of(VIFD, VD + VI + pack_t<char>{})),
 				pack_i<2, 0, -1>>::value, "");
 
 		// Prune duplicates
@@ -273,10 +280,17 @@ struct test_util {
 
 		auto packed2 = 3 <pack_with> 4.0f;
 		static_assert(inner_value(packed2 <same_as> VIF), "");
+
+		static_assert(inner_value(rotate(T_IFD{}) <same_as> T_FDI{}), "");
 	
 		graph_t<T_void, T_void> G_void;
-		auto G_if = G_void + node_t<int>{} + node_t<float>{};
-		static_assert(inner_value(G_if <same_as> G_if), "");
+		typedef decltype(G_void + node_t<T_void>{}
+			+ node_t<T_I>{} + node_t<T_F>{}) G_verts;
+		typedef decltype(G_verts {} + edge_t<0,1>{}) G_e01;
+		static_assert(!contains(G_verts::edges{}, edge_t<0, 1>{}), "");
+		static_assert(contains(G_e01::edges{}, edge_t<0, 1>{}), "");
+		static_assert(!contains(G_e01::edges{}, edge_t<1, 2>{}), "");
+
 		return true;
 	}
 };
