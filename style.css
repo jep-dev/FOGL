@@ -1,0 +1,14 @@
+/* Custom section - night mode + bg tweak */
+body, div.ah {
+	background-color:black !important;
+	filter:invert(100%) hue-rotate(180deg);
+	-webkit-filter:invert(100%) hue-rotate(180deg);
+}
+td a.el{
+	/*white-space: pre-wrap !important;*/
+	font-size: small;
+}
+.contents table {
+	table-layout: fixed;
+	white-space: break-word !important;
+}
