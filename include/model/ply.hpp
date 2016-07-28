@@ -8,10 +8,6 @@
 
 namespace Model {
 	namespace Ply {
-
-		//template<typename...> class vector;
-		//template<typename...> class ifstream;
-
 		enum STATUS {
 			OK=0,
 			NO_FILE,   NO_PLY,
