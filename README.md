@@ -27,8 +27,6 @@ Asynchronous model/view/controller engine/framework; under construction.
 
  b. Add `:../gl3w/` to the tail of your `LD_LIBRARY_PATH`
 
-The application must then be run from the project root directory: `bin/fogl`
-
 The Makefile targets gl3w for convenience, but building gl3w separately is always an option. OpenGL and GLU are not provided by gl3w; Boost and other dependencies are not targeted and must be met or made independently.
 
 All of the requirements support Linux, Windows, and OS X. This project only supports Linux, but will support Windows XP or better before release. 
