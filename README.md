@@ -8,6 +8,10 @@ Asynchronous model/view/controller engine/framework; under construction.
 * [GL3W](https://github.com/skaslev/gl3w) -- OpenGL extension loading
 * [GLFW](https://github.com/glfw/glfw) -- windows with OpenGL and event handling
 * [Boost](https://github.com/boostorg/boost) -- versatile C++ support library
+* [Doxygen](https://github.com/doxygen/doxygen) (optional) -- see Documentation section
+
+#### Documentation
+Comments for declarations are kept in the project headers, and use the QT variant of Doxygen formatting. To generate HTML and/or LaTex from these comments, simply run `doxygen` from the `doc` directory, with or without modifying the Doxyfile to your liking.
 
 #### Building:
 

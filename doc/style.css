@@ -1,12 +1,13 @@
 /* Custom section - night mode + bg tweak */
 body, div.ah {
-	background-color:#151515 !important;
+	background-color:#000 !important;
 	filter:invert(100%) hue-rotate(180deg);
 	-webkit-filter:invert(100%) hue-rotate(180deg);
 }
 div.ah {
-	box-shadow: 2px 2px 3px #000;
-	-webkit-box-shadow: 2px 2px 3px #000;
+	border: 0px;
+	box-shadow: 0px 0px 2px #fff;
+	-webkit-box-shadow: 0px 0px 2px #fff;
 }
 .contents table td a.el{
 	white-space: pre-line !important;
