@@ -1,14 +1,26 @@
 /* Custom section - night mode + bg tweak */
 body, div.ah {
-	background-color:black !important;
+	background-color:#151515 !important;
 	filter:invert(100%) hue-rotate(180deg);
 	-webkit-filter:invert(100%) hue-rotate(180deg);
 }
-td a.el{
-	/*white-space: pre-wrap !important;*/
-	font-size: small;
+div.ah {
+	box-shadow: 2px 2px 3px #000;
+	-webkit-box-shadow: 2px 2px 3px #000;
 }
-.contents table {
-	table-layout: fixed;
-	white-space: break-word !important;
+.contents table td a.el{
+	white-space: pre-line !important;
+	font-size: small;
+	font-weight: bold;
+	/*width: 1% !important;*/
+}
+.contents table td {
+	width: 10% !important;
+}
+.contents table td td {
+	width: unset !important;
+}
+table {
+	overflow-wrap: break-word;
+	white-space: pre-line !important;
 }

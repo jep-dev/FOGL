@@ -16,11 +16,25 @@
 
 namespace Detail { // --> util/types.hpp
 
-	/** @brief A tag type representing no type */
-	struct undef_t;
+	/**
+	 * @brief A tag type representing no type
+	 */
+	struct undef_t {};
 
-	/** @brief A tag type representing a list delimiter */
-	struct delim_t;
+	/**
+ 	 * @brief A tag type representing a list delimiter
+ 	 */
+	struct delim_t {};
+
+	/**
+	 * @brief A type that allows a binary template to be infixed
+	 * @tparam C The binary template type
+	 * @tparam A The left hand side, used as the first template argument
+	 * @tparam B The right hand side, used as the second template argument
+	 */
+	template<template<typename... TN> class C,
+		class A = undef_t, class B = undef_t>
+	struct infix_t;
 
 	/**
 	 * @brief A type used to find the static dimension of a type
@@ -78,6 +92,29 @@ namespace Detail { // --> util/types.hpp
 	 * @tparam E The pack of integer pairs containing the endpoint indices
 	 */
 	template<class V, class E, bool BIDI=false> struct graph_t;
+
+	/**
+	 * @brief A type used to select a member of a type pack
+	 * @tparam T The pack of types
+	 * @tparam I The index into the pack
+	 */
+	template<class T, int I> struct pack_get_t;
+
+	/**
+	 * @brief A structure that merges two type packs without introducing
+	 * duplicates; does not prevent duplicates in general
+	 * @tparam U The left operand, an unordered pack of types
+	 * @tparam V The right operand, an unordered pack of types
+	 */
+	template<typename U, typename V> struct pack_merge;
+
+	/**
+	 * @brief A structure that removes the types in one pack from another
+	 * @tparam U The subtrahend pack of types
+	 * @tparam V The minuend pack of types
+	 * @tparam W The partial difference of the preceding packs
+	 */
+	template<typename U, typename V, typename W> struct pack_remove;
 }
 #include "util/types.hpp"
 
@@ -220,12 +257,6 @@ struct test_util {
 		typedef pack_t<float, double, float> T_FDF;
 		
 		
-		// Concatenation types
-		static_assert(std::is_same<typename
-				pack_cat<T_I, float>::type, T_IF>::value, "");
-		static_assert(std::is_same<typename
-				pack_cat<T_I, int>::type, T_I>::value, "");
-
 		// Union types
 		typedef typename pack_merge<T_IFD, T_void>::type T_u0;
 		typedef typename pack_merge<T_void, T_IFD>::type T_u1;

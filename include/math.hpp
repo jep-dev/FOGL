@@ -17,15 +17,46 @@ namespace Math {
 		return std::abs(u-v) <= pow(2.0, e);
 	};
 
+	/**
+	 * @brief A quaternion (real, i, j, k)
+	 * @tparam R The type of each dimension
+	 */
 	template<typename R> struct quat; // --> math/quat
+	/**
+	 * @brief A dual quaternion (real, dual)
+	 * @tparam R The type of each dimension
+	 */
 	template<typename R> struct dual; // --> math/dual
+	
+	/**
+	 * @brief A Cartesian triplet (i, j, k)
+	 * @tparam R The type of each dimension
+	 */
+	template<typename R> struct Point; // --> math/affine
 
-	// --> math/affine
-	template<typename R> struct Point;
-	template<typename R> struct Unit;
-	template<typename R> struct Ray;
-	template<typename R> struct Rotor;
-	template<typename R> struct Pivot;
+	/**
+	 * @brief A Cartesian triplet (i, j, k) normalized to radius 1
+	 * @tparam R The type of each dimension
+	 */
+	template<typename R> struct Unit; // --> math/affine
+
+	/**
+	 * @brief A Cartesian triplet (i, j, k) representing a directed vector
+	 * @tparam R The type of each dimension
+	 */
+	template<typename R> struct Ray; // --> math/affine
+
+	/**
+	 * @brief Rotation about an arbitrary axis
+	 * @tparam R The type of each dimension
+	 */
+	template<typename R> struct Rotor; // --> math/affine
+
+	/**
+	 * @brief Rotation about an offset
+	 * @tparam R The type of each dimension
+	 */
+	template<typename R> struct Pivot; // --> math/affine
 }
 
 #include "math/quat.hpp"
@@ -33,8 +64,6 @@ namespace Math {
 #include "math/affine.hpp"
 
 namespace Math {
-	/* template<typename T> struct var;
-	template<typename T, T V> struct val;*/
 
 	template<typename R> std::ostream&
 	operator<<(std::ostream& lhs, quat<R> const& rhs) {
@@ -44,6 +73,7 @@ namespace Math {
 		return lhs << rhs.w << ", " << rhs.x << ", " 
 			<< rhs.y << ", " << rhs.z;
 	}
+
 	template<typename R> std::ostream&
 	operator<<(std::ostream &lhs, dual<R> const& rhs) {
 		static constexpr const char *labels[]{

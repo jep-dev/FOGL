@@ -5,9 +5,6 @@
 
 namespace Detail {
 
-	struct undef_t {};
-	struct delim_t {};
-	
 	template<typename T, int N>
 	struct sized_t<T (&) [N]> {
 		static constexpr int SIZE = N;
@@ -31,9 +28,9 @@ namespace Detail {
 		static constexpr int SIZE = 1;
 	};
 
-	template<typename T> struct counted {
+	template<typename T> struct counted_t {
 		const int instance_id;
-		counted(void): instance_id(next_id()) {}
+		counted_t(void): instance_id(next_id()) {}
 		static int peek(void) {return next_id(true);}
 	private:
 		static int next_id(bool peek=false) {
@@ -94,17 +91,6 @@ namespace Detail {
 		return {};
 	}
 	
-	template<typename PREV, typename CUR> struct pack_cat;
-	template<typename... PREV, typename CUR>
-	struct pack_cat<pack_t<PREV...>, CUR> {
-		typedef typename std::conditional<
-				index_of(pack_t<PREV...> {}, CUR {}) >= 0,
-				pack_t<PREV...>, pack_t<PREV..., CUR>>::type type;
-	};
-
-	template<typename PREV, typename CUR>
-		struct pack_merge;
-
 	template<typename... PREV>
 	struct pack_merge<pack_t<PREV...>, pack_t<>> {
 		typedef pack_t<PREV...> type;
@@ -139,8 +125,8 @@ namespace Detail {
 				pack_t<DEL_1, DEL_N...>, rtype>::type type;
 	};
 
-	template<typename... A, typename... B, typename C = typename
-		pack_merge<pack_t<A...>, pack_t<B...>>::type>
+	template<typename... A, typename... B, typename C = 
+		typename pack_merge<pack_t<A...>, pack_t<B...>>::type>
 	constexpr C operator+(pack_t<A...>, pack_t<B...>) {return C {};}
 
 	template<typename... A, typename... B, typename C = typename
@@ -206,17 +192,15 @@ namespace Detail {
 		}
 	};
 
-	template<typename T, int I>
-	struct pack_get;
 	template<typename T1, typename... TN, int I>
-	struct pack_get<pack_t<T1, TN...>, I> {
+	struct pack_get_t<pack_t<T1, TN...>, I> {
 		typedef typename std::conditional<I==0, T1,
-				typename pack_get<pack_t<TN...>, I-1>::type
+				typename pack_get_t<pack_t<TN...>, I-1>::type
 			>::type type;
 	};
 
 	template<template<typename...> class C,
-		typename A = undef_t, typename B = undef_t>
+		typename A, typename B>
 	struct infix_t {typedef C<A, B> type;};
 	
 	template<template<typename...> class C, typename A, typename B>
