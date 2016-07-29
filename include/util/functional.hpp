@@ -1,7 +1,7 @@
 #ifndef UTIL_FUNCTION_HPP
 #define UTIL_FUNCTION_HPP
 
-namespace Detail {
+namespace Util {
 	template<typename T>
 	struct sig_t {
 		typedef decltype(&T::operator()) call_type;

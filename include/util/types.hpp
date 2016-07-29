@@ -3,7 +3,7 @@
 
 #include "util.hpp"
 
-namespace Detail {
+namespace Util {
 
 	template<typename T, int N>
 	struct sized_t<T (&) [N]> {
