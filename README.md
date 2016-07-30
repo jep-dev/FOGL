@@ -10,6 +10,7 @@ Asynchronous model/view/controller engine/framework; under construction.
 * [Boost](https://github.com/boostorg/boost) -- versatile C++ support library
 * [Doxygen](https://github.com/doxygen/doxygen) (optional) -- see Documentation section
 
+
 #### Documentation
 Comments for declarations are kept in the project headers, and use the QT variant of Doxygen formatting. To generate HTML and/or LaTex from these comments, simply run `doxygen` from the `doc` directory, with or without modifying the Doxyfile to your liking.
 
