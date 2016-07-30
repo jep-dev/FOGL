@@ -18,42 +18,42 @@ namespace Math {
 	};
 
 	/**
-	 * @brief A quaternion (real, i, j, k)
+	 * A quaternion (real, i, j, k)
 	 * @tparam R The type of each dimension
 	 */
 	template<typename R> struct quat; // --> math/quat
 	/**
-	 * @brief A dual quaternion (real, dual)
+	 * A dual quaternion (real, dual)
 	 * @tparam R The type of each dimension
 	 */
 	template<typename R> struct dual; // --> math/dual
 	
 	/**
-	 * @brief A Cartesian triplet (i, j, k)
+	 * A Cartesian triplet (i, j, k)
 	 * @tparam R The type of each dimension
 	 */
 	template<typename R> struct Point; // --> math/affine
 
 	/**
-	 * @brief A Cartesian triplet (i, j, k) normalized to radius 1
+	 * A Cartesian triplet (i, j, k) normalized to radius 1
 	 * @tparam R The type of each dimension
 	 */
 	template<typename R> struct Unit; // --> math/affine
 
 	/**
-	 * @brief A Cartesian triplet (i, j, k) representing a directed vector
+	 * A Cartesian triplet (i, j, k) representing a directed vector
 	 * @tparam R The type of each dimension
 	 */
 	template<typename R> struct Ray; // --> math/affine
 
 	/**
-	 * @brief Rotation about an arbitrary axis
+	 * Rotation about an arbitrary axis
 	 * @tparam R The type of each dimension
 	 */
 	template<typename R> struct Rotor; // --> math/affine
 
 	/**
-	 * @brief Rotation about an offset
+	 * Rotation about an offset
 	 * @tparam R The type of each dimension
 	 */
 	template<typename R> struct Pivot; // --> math/affine

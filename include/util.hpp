@@ -16,92 +16,87 @@
 
 namespace Util { // --> util/types.hpp
 
-	/**
-	 * @brief A tag type representing no type
-	 */
-	struct undef_t {};
+	/// A type representing no type
+	struct undef_t {}; 
+	/// A type delimiting a type pack
+	struct delim_t {}; 
 
 	/**
- 	 * @brief A tag type representing a list delimiter
- 	 */
-	struct delim_t {};
-
-	/**
-	 * @brief A type that allows a binary template to be infixed
+	 * A type that allows a binary template to be infixed
 	 * @tparam C The binary template type
 	 * @tparam A The left hand side, used as the first template argument
 	 * @tparam B The right hand side, used as the second template argument
 	 */
-	template<template<typename... TN> class C,
+	template<template<class... TN> class C,
 		class A = undef_t, class B = undef_t>
 	struct infix_t;
 
 	/**
-	 * @brief A type used to find the static dimension of a type
+	 * A type used to find the static dimension of a type
 	 * @tparam T A statically-sized type
 	 */
 	template<class T> struct sized_t;
 
 	/**
-	 * @brief Reduces a variadic list of types to the sum of their sizes
+	 * Reduces a variadic list of types to the sum of their sizes
 	 * @tparam T1 The head of the argument types
 	 * @tparam TN The remainder of the template arguments
 	 */
 	template<class T1, class... TN> struct sizes_t;
 
 	/**
-	 * @brief Assigns each instance a unique sequential ID
+	 * Assigns each instance a unique sequential ID
 	 * @tparam T The type of the instances to count
 	 */
 	template<typename T> struct counted_t;
 
 	/**
-	 * @brief A tag type storing types with duplicates
+	 * A tag type storing types with duplicates
 	 * @tparam T The unordered list of types
 	 */
 	template<class... T> struct pack_t;
 
 	/**
-	 * @brief A tag type storing integers with duplicates
+	 * A tag type storing integers with duplicates
 	 * @tparam I The unordered list of integers
 	 */
 	template<int... I> struct pack_i;
 
 	/**
-	 * @brief A tag type storing types without duplicates
+	 * A tag type storing types without duplicates
 	 * @tparam T The unordered list of unique types
 	 */
 	template<class... T> struct set_t;
 
 	/**
-	 * @brief A tag representing a node in a graph
+	 * A tag representing a node in a graph
 	 * @tparam T The type corresponding to the node
 	 */
 	template<class T> struct node_t;
 
 	/**
-	 * @brief A tag representing an edge between two nodes in a graph
+	 * A tag representing an edge between two nodes in a graph
 	 * @tparam U The ID of the source of the edge, or both
 	 * @tparam V The ID of the destination of the edge, or both
 	 */
 	template<int U, int V> struct edge_t;
 
 	/**
-	 * @brief A tag representing a graph
+	 * A tag representing a graph
 	 * @tparam V The pack of types containing the vertex endpoints
 	 * @tparam E The pack of integer pairs containing the endpoint indices
 	 */
 	template<class V, class E, bool BIDI=false> struct graph_t;
 
 	/**
-	 * @brief A type used to select a member of a type pack
+	 * A type used to select a member of a type pack
 	 * @tparam T The pack of types
 	 * @tparam I The index into the pack
 	 */
 	template<class T, int I> struct pack_get_t;
 
 	/**
-	 * @brief A structure that merges two type packs without introducing
+	 * A structure that merges two type packs without introducing
 	 * duplicates; does not prevent duplicates in general
 	 * @tparam U The left operand, an unordered pack of types
 	 * @tparam V The right operand, an unordered pack of types
@@ -109,7 +104,7 @@ namespace Util { // --> util/types.hpp
 	template<typename U, typename V> struct pack_merge;
 
 	/**
-	 * @brief A structure that removes the types in one pack from another
+	 * A structure that removes the types in one pack from another
 	 * @tparam U The subtrahend pack of types
 	 * @tparam V The minuend pack of types
 	 * @tparam W The partial difference of the preceding packs
@@ -120,14 +115,14 @@ namespace Util { // --> util/types.hpp
 
 namespace Util { // --> util/functional.hpp
 	/**
-	 * @brief A tag representing the signature of a function
+	 * A tag representing the signature of a function
 	 * @tparam S A function or function object type
 	 */
 	template<class S>
 		struct sig_t;
 
 	/**
-	 * @brief A type exposing an application function over a permutation
+	 * A type exposing an application function over a permutation
 	 * of elements of array types
 	 * @tparam SEQ The unique ID of the permutation
 	 * @tparam CUR The index into the permutation
@@ -137,7 +132,7 @@ namespace Util { // --> util/functional.hpp
 		struct for_seq_t;
 
 	/**
-	 * @brief A type exposing an application function over all permutations
+	 * A type exposing an application function over all permutations
 	 * of elements of array types 
 	 * @tparam SEQ The unique ID of the current permutation
 	 * @tparam FN The type of the function or function object to apply
@@ -147,7 +142,7 @@ namespace Util { // --> util/functional.hpp
 		struct for_all_t;
 
 	/**
-	 * @brief Maps each array to another type before applying a function to
+	 * Maps each array to another type before applying a function to
 	 * each permutation of the resulting elements.
 	 * @tparam SEQ The unique ID of the current sequence
 	 * @tparam FN The function to apply to each permutation
@@ -158,7 +153,7 @@ namespace Util { // --> util/functional.hpp
 		struct map_for_all_t;
 
 	/**
-	 * @brief Applies a function to each permutation in the diagonal of all
+	 * Applies a function to each permutation in the diagonal of all
 	 * permutations of the elements of the given statically-sized arrays
 	 * (all first elements, all second elements, etc.)
 	 * @tparam SEQ The unique ID of the current sequence
