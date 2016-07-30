@@ -3,17 +3,17 @@
 
 namespace Model {
 	namespace Ply {
-		/** A structure representing a PLY primitive data type */
+		/// A structure representing a PLY primitive data type
 		struct Primitive;
-		/** A structure representing instances of a single property */
+		/// A structure representing instances of a single property
 		struct Property;
-		/** A vector/stack of raw bytes (needs replacement) */
+		/// A vector/stack of raw bytes (needs replacement)
 		struct Buffer;
-		/** A grouping of properties */
+		/// A grouping of properties
 		struct Element;
-		/** A grouping of declarations */
+		/// A grouping of declarations
 		struct Header;
-	} // --> 
+	}
 }
 
 #endif
