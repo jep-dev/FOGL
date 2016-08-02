@@ -18,6 +18,7 @@ namespace Model {
 			UNKNOWN
 		};
 
+		/// A basic PLY data type
 		struct Primitive {
 			enum ID {
 				INT8=0, UINT8, INT16, UINT16,
@@ -29,6 +30,7 @@ namespace Model {
 			static const std::vector<std::string> NAMES, ALIASES;
 		};
 
+		/// A type storing instances of a single property
 		struct Property {
 			const std::string name;
 			const bool is_list;
@@ -38,6 +40,7 @@ namespace Model {
 			operator<<(std::ostream& lhs, Property const& rhs);
 		};
 		
+ 		/// A vector/stack of raw bytes (needs replacement)
 		struct Buffer {
 			std::vector<uint8_t> data;
 			template<typename T>
@@ -53,6 +56,7 @@ namespace Model {
 			}
 		};
 
+ 		/// A group of properties
 		struct Element: public Buffer {
 			std::string name;
 			bool has_list = false,
@@ -67,6 +71,7 @@ namespace Model {
 			operator<<(std::ostream& lhs, const Element& rhs);
 		};
 
+		/// A group of declarations
 		struct Header {
 			STATUS status = OK;
 			std::string statusContext;
