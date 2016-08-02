@@ -8,13 +8,10 @@
 #include <sstream>
 
 #include <string>
-//#include <type_traits>
 
 // Forward-declaration
 template<typename...> struct vector;
 
-
-/* --> source */
 #include <algorithm>
 
 namespace System {

@@ -1,26 +1,39 @@
 #ifndef SYSTEM_NET_HPP
 #define SYSTEM_NET_HPP
+/// @file
 
 #include <boost/asio.hpp>
 #include <boost/system/error_code.hpp>
 
 #include "util.hpp"
 #include "util/types.hpp"
+#include "system.hpp"
 
-namespace Net {
-	typedef std::integral_constant<short, 512> page_size;
-	typedef char page[page_size::value];
+namespace System {
+	namespace Net {
+		typedef std::integral_constant<short, 512> page_size;
+		typedef char page[page_size::value];
 
-	using namespace boost::asio;
-	typedef ip::tcp TCP;
-	typedef ip::udp UDP;
-	typedef boost::system::error_code error_code;
+		using namespace boost::asio;
+		typedef ip::tcp TCP;
+		typedef ip::udp UDP;
+		typedef boost::system::error_code error_code;
 
-	struct cotask;
-	struct channel;
-	template<typename> struct agent;
-	struct server;
-	struct client;
+		/// A type for asynchronous buffered socket read/write operations
+		struct channel;
+
+		/**
+ 		 * An abstract reader and writer with a FIFO message container
+		 * @tparam T An implementation type
+		 */
+		template<class T = Util::undef_t> struct agent;
+
+		/// An asynchronous acceptor and notifier
+		struct server;
+
+ 		/// An asynchronous connector, reader and writer
+		struct client;
+	}
 }
 
 #endif
