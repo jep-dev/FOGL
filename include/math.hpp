@@ -11,52 +11,39 @@
  * Replace quat/dual with abstract CT logic applied to RT primitives
  * Integrate util (graph -> expression tree, etc.) */
 namespace Math {
-	/** True if and only if u and v are at most 1/2^E apart */
+	/*! True if and only if u and v are at most 1/2^E apart */
 	template<typename T = double, int E = -6>
 	bool near(T u, T v, int e = E) {
 		return std::abs(u-v) <= pow(2.0, e);
 	};
 
-	/**
-	 * A quaternion (real, i, j, k)
-	 * @tparam R The type of each dimension
-	 */
+	/*! A quaternion (real, i, j, k)
+	 * @tparam R The type of each dimension */
 	template<typename R> struct quat; // --> math/quat
-	/**
-	 * A dual quaternion (real, dual)
-	 * @tparam R The type of each dimension
-	 */
+
+	/*! A dual quaternion (real, dual)
+	 * @tparam R The type of each dimension */
 	template<typename R> struct dual; // --> math/dual
 	
-	/**
-	 * A Cartesian triplet (i, j, k)
-	 * @tparam R The type of each dimension
-	 */
-	template<typename R> struct Point; // --> math/affine
+	/*! A Cartesian triplet (i, j, k)
+	 * @tparam R The type of each dimension */
+	template<typename R> struct point; // --> math/affine
 
-	/**
-	 * A Cartesian triplet (i, j, k) normalized to radius 1
-	 * @tparam R The type of each dimension
-	 */
-	template<typename R> struct Unit; // --> math/affine
+	/*! A Cartesian triplet (i, j, k) normalized to radius 1
+	 * @tparam R The type of each dimension */
+	template<typename R> struct unit; // --> math/affine
 
-	/**
-	 * A Cartesian triplet (i, j, k) representing a directed vector
-	 * @tparam R The type of each dimension
-	 */
-	template<typename R> struct Ray; // --> math/affine
+	/*! A Cartesian triplet (i, j, k) representing a directed vector
+	 * @tparam R The type of each dimension */
+	template<typename R> struct ray; // --> math/affine
 
-	/**
-	 * Rotation about an arbitrary axis
-	 * @tparam R The type of each dimension
-	 */
-	template<typename R> struct Rotor; // --> math/affine
+	/*! Rotation about an arbitrary axis
+	 * @tparam R The type of each dimension */
+	template<typename R> struct rotor; // --> math/affine
 
-	/**
-	 * Rotation about an offset
-	 * @tparam R The type of each dimension
-	 */
-	template<typename R> struct Pivot; // --> math/affine
+	/*! Rotation about an offset
+	 * @tparam R The type of each dimension */
+	template<typename R> struct pivot; // --> math/affine
 }
 
 #include "math/quat.hpp"
@@ -108,10 +95,6 @@ namespace Math {
 		return lhs << (any ? oss.str() : "0");
 	}
 	
-
-	
-	/*---------------------------------------------------------------------*/
-
 	/*template<typename U, typename V = U>
 	struct State {
 		U u; V v;

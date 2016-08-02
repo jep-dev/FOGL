@@ -2,11 +2,12 @@
 #define MATH_QUAT_HPP
 
 #include "math.hpp"
+#include <boost/operators.hpp>
 
 namespace Math {
 
 	template<typename R = float>
-	struct quat {
+	struct quat: public boost::operators<quat<R>> {
 		R w, x, y, z;
 		
 		/* Unary operators */
@@ -24,8 +25,6 @@ namespace Math {
 		/** Simple promotion */
 		explicit operator dual<R>(void) const;
 
-		/* Constant binary methods (where lhs = *this) */
-
 		/** Distributes equality test */
 		bool operator==(quat<R> const& rhs) const;
 		/** Apply (lhs * rhs * ~lhs) */
@@ -35,15 +34,10 @@ namespace Math {
 		
 		quat<R> operator+(quat<R> const& rhs) const;
 		quat<R> operator-(quat<R> const& rhs) const;
-		quat<R> operator*(quat<R> const& rhs) const;
 		quat<R> operator/(quat<R> const& rhs) const;
-
-		quat<R> operator*(R const& rhs) const;
 		quat<R> operator/(R const& rhs) const;
 
-		/* Binary operators */
 
- 		//quat<R> operator=(quat<R> const& rhs);
 		quat<R>& operator+=(quat<R> const& rhs);
 		quat<R>& operator-=(quat<R> const& rhs);
 		quat<R>& operator*=(R const& rhs);
@@ -97,7 +91,7 @@ namespace Math {
 	quat<R> quat<R>::operator-(quat<R> const& rhs) const {
 		return {w-rhs.w, x-rhs.x, y-rhs.y, z-rhs.z};
 	}
-	template<typename R>
+	/*template<typename R>
 	quat<R> quat<R>::operator*(R const& rhs) const {
 		return {rhs*w, rhs*x, rhs*y, rhs*z};
 	}
@@ -110,7 +104,7 @@ namespace Math {
 			w*rx + x*rw + y*rz - z*ry,
 			w*ry + y*rw + rz*x - z*rx,
 			w*rz + z*rw + x*ry - y*rx};
-	}
+	}*/
 	template<typename R>
 	quat<R> quat<R>::operator/(R const& rhs) const {
 		return {w/rhs, x/rhs, y/rhs, z/rhs};
@@ -138,7 +132,13 @@ namespace Math {
 	}
 	template<typename R>
 	quat<R>& quat<R>::operator*=(quat<R> const& rhs) {
-		return *this = *this * rhs;
+		quat<R> clone {w, x, y, z};
+		w = clone.w * w - clone.x * x - clone.y * y - clone.z * z;
+		x = clone.w * x + clone.x * w + clone.y * z - clone.z * y;
+		y = clone.w * y - clone.x * z + clone.y * w + clone.z * x;
+		z = clone.w * z + clone.x * y - clone.y * x + clone.z * w;
+		return *this;
+		//return *this = *this * rhs;
 	}
 	template<typename R>
 	quat<R>& quat<R>::operator/=(R const& rhs) {

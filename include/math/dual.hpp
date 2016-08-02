@@ -15,7 +15,7 @@ namespace Math {
 		struct quat;
 
 	template<typename R = float>
-	struct dual: boost::operators<dual<R>> {
+	struct dual: public boost::operators<dual<R>> {
 		quat<R> u, v;
 
 		/** Additive inverse */

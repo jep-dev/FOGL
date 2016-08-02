@@ -10,100 +10,99 @@
 namespace Math {
 
 	template<typename R>
-	struct Point:
-	boost::additive<Point<R>> {
+	struct point: boost::operators<point<R>> {
 		R x, y, z;
 		operator dual<R>(void) const {
 			return {{1},{0,x,y,z}};
 		}
-		Point& operator+=(const Point<R> &rhs) {
+		point& operator+=(const point<R> &rhs) {
 			x += rhs.x;
 			y += rhs.y;
 			z += rhs.z;
 			return *this;
 		}
-		Point& operator-=(const Point<R> &rhs) {
+		point& operator-=(const point<R> &rhs) {
 			x -= rhs.x;
 			y -= rhs.y;
 			z -= rhs.z;
 			return *this;
 		}
-		Point& operator*=(const R &rhs) {
+		point& operator*=(const R &rhs) {
 			return *this = {x*rhs, y*rhs, z*rhs};
 		}
-		Point& operator*=(R && rhs) {
+		point& operator*=(R && rhs) {
 			return *this = {x*rhs, y*rhs, z*rhs};
 		}
-		Point operator*(R rhs) const {
+		point operator*(R rhs) const {
 			return Point(x*rhs, y*rhs, z*rhs);
 		}
-		Point(R x = 0, R y = 0, R z = 0):
+		point(R x = 0, R y = 0, R z = 0):
 			x(x), y(y), z(z) {}
-		Point(const Point &p):
+		point(const point &p):
 			x(p.x), y(p.y), z(p.z) {}
 	};
 
 	template<typename S, typename R>
-	Point<R> operator*(const S &lhs, const Point<R> &rhs) {
-		Point<R> out(rhs);
+	point<R> operator*(const S &lhs, const point<R> &rhs) {
+		point<R> out(rhs);
 		return out *= static_cast<R>(lhs);
 	}
 	template<typename S, typename R>
-	Point<R> operator*(S && lhs, const Point<R> &rhs) {
+	point<R> operator*(S && lhs, const point<R> &rhs) {
 		return rhs * static_cast<R>(lhs);
 	}
 
 	template<typename R>
-	struct Unit {
+	struct unit {
 		R x, y, z;
 		operator dual<R>(void) const {
 			return {1,0,0,0,0, x/2, y/2, z/2};
 		}
-		Unit(R x, R y, R z): x(x), y(y), z(z) {}
-		Unit(Unit<R> const& u): x(u.x), y(u.y), z(u.z) {}
+		unit(R x, R y, R z): x(x), y(y), z(z) {}
+		unit(unit<R> const& u): x(u.x), y(u.y), z(u.z) {}
 	};
 
 	template<typename R>
-	struct Ray: public virtual dual<R> {
+	struct ray: virtual dual<R> {
 		R r;
-		Unit<R> n;
-		Ray(R r, R x, R y, R z):
+		unit<R> n;
+		ray(R r, R x, R y, R z):
 			r(r), n(x, y, z),
 			dual<R>(1, 0, 0, 0, 0,
 				r*x/2, r*y/2, r*z/2) {}
-		Ray(R r, const Unit<R> &dir):
+		ray(R r, const unit<R> &dir):
 			r(r), n(dir),
 			dual<R>(1, 0, 0, 0, 0,
 				r*n.x/2, r*n.y/2, r*n.z/2) {}
-		Ray(Unit<R> const& dir):
-			Ray(1, dir) {}
-		Ray(Ray<R> const& rhs):
-			Ray(rhs.r, rhs.n) {}
+		ray(unit<R> const& dir):
+			ray(1, dir) {}
+		ray(ray<R> const& rhs):
+			ray(rhs.r, rhs.n) {}
 	};
 	
 	template<typename R>
-	struct Rotor: public quat<R> {
+	struct rotor: quat<R> {
 		R theta;
-		Unit<R> n;
+		unit<R> n;
 		operator dual<R>(void) const {
 			return {*this, 0};
 		}
-		Rotor(R theta, R nx, R ny, R nz):
-			Rotor(theta, Unit<R>(nx, ny, nz)) {}
-		Rotor(R theta, const Unit<R>& n):
+		rotor(R theta, R nx, R ny, R nz):
+			rotor(theta, unit<R>(nx, ny, nz)) {}
+		rotor(R theta, const unit<R>& n):
 			theta(theta), n(n),
 			quat<R>(cos(theta/2), sin(theta/2)*n.x,
 				sin(theta/2)*n.y, sin(theta/2)*n.z) {}
 	};
 
 	template<typename R>
-	struct Pivot: public dual<R> {
-		Ray<R> translation;
-		Rotor<R> rotation;
-		Pivot(const Ray<R> &offset, const Rotor<R> &rotor):
+	struct pivot: dual<R> {
+		ray<R> translation;
+		rotor<R> rotation;
+		pivot(const ray<R> &offset, const rotor<R> &rotor):
 			translation(offset), rotation(rotor),
 			dual<R>((~dual<R>(offset))(rotor)) {}
-		Pivot(Ray<R> && offset, Rotor<R> && rotor):
+		pivot(ray<R> && offset, rotor<R> && rotor):
 			translation(offset), rotation(rotor),
 			dual<R> ((~dual<R>(offset))(rotor)) {}
 	};
