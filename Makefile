@@ -27,8 +27,8 @@ DIR_GL3W_LIB?=$(abspath $(DIR_GL3W))/
 EXE_EXT?=
 PCH_EXT?=.pch
 EXE_BASE?=fogl
-TEST_EXT?=-test
-DEBUG_EXT?=-debug
+TEST_EXT?=_test
+DEBUG_EXT?=_debug
 RELEASE_EXT?=
 
 MODULE_DIRS?=util/ system/ math/ model/ view/
@@ -93,14 +93,10 @@ vpath %.cpp $(DIR_ROOT_SRC)
 release: $(RELEASE_EXE) ;
 $(RELEASE_EXE): $(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS) $(MAIN_PCHS)
 	$(LINK_CXX) -fPIE $< -lgl3w $(MAIN_OBJS) -o $@ $(RELEASE_LDFLAGS)
-#$(LINK_CXX) -shared $< $(GL3W_OBJS) $(MAIN_OBJS) \
-#	-o $(@:%.o=lib%.so) $(RELEASE_LDFLAGS)
 
 test: $(TEST_EXE) ; # use --log_level=error
 $(TEST_EXE): $(TEST_OBJ) $(MAIN_OBJS) $(GL3W_OBJS)
 	$(LINK_CXX) -fPIE $< $(MAIN_OBJS) $(GL3W_OBJS) -o $@ $(TEST_LDFLAGS)
-#$(LINK_CXX) -shared $< $(MAIN_OBJS) $(GL3W_OBJS) \
-#	-o $(@:%.o=lib%.so) $(TEST_LDFLAGS)
 
 $(RELEASE_OBJ): $(DIR_ROOT_SRC)main.cpp $(MAIN_PCHS) $(MAIN_INCLUDES)
 	$(COMPILE_CXX) $< -o $@
