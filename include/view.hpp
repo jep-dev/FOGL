@@ -16,10 +16,17 @@
 namespace View {
 	void printErrors(const char *prefix);
 	struct view {
+		typedef enum {
+			prog_id=0, va_id, 
+			vbuf_id, ibuf_id, 
+			model_id, view_id,
+			proj_id,
+			_max
+		} id_index; 
+		GLuint ids[id_index::_max];
+
 		bool valid = false;
 		float near = 1, far = 10, fov = 25;
-		GLuint progID, vaID, vbuf, ibuf,
-					 modelID, viewID, projID;
 		int nTriangles;
 		GLFWwindow *win;
 	

@@ -52,32 +52,32 @@ namespace View {
 		int w, h;
 		glfwGetFramebufferSize(win, &w, &h);
 		float mag = float(1/tan(fov*M_PI/180));
-		float projection[]{
+		float mat_proj[]{
 				mag*h/w, 0, 0, 0, 0, mag, 0, 0,
 				0, 0, (far+near)/(far-near), -1,
 				0, 0, 2*far*near/(far-near), 0
 		};
-		glUniformMatrix4fv(projID, 1, GL_TRUE,  projection);
+		glUniformMatrix4fv(ids[proj_id], 1, GL_TRUE,  mat_proj);
 
 		/* TODO - static not intended, just persistence;
  		 * all of the data here should be passed or shared */
 		static float theta = 0;
 		theta += M_PI/180;
 		float c = cos(theta), s = sin(theta);
-		float modelData[]{
+		float mat_model[]{
 				c, 0,-s, 0,
 				0, 1, 0, 0,
 				s, 0, c, c,
 				0, 0, 0, 1
-		}, viewData[]{
+		}, mat_view[]{
 				1, 0, 0, 0,
 				0, 1, 0, 0,
 				0, 0, 1, 0,
 				0, 0, 2, 1
 		};
 
-		glUniformMatrix4fv(modelID, 1, GL_TRUE,  modelData);
-		glUniformMatrix4fv(viewID, 1, GL_FALSE, viewData);
+		glUniformMatrix4fv(ids[model_id], 1, GL_TRUE, mat_model);
+		glUniformMatrix4fv(ids[view_id], 1, GL_FALSE, mat_view);
 	}
 	
 	void view::redraw(void) {
@@ -89,13 +89,13 @@ namespace View {
 
 		static long int offset = 3*sizeof(float),
 				stride = 2*offset;
-		glBindBuffer(GL_ARRAY_BUFFER, vbuf);
+		glBindBuffer(GL_ARRAY_BUFFER, ids[vbuf_id]);
 		glVertexAttribPointer(0, 3, GL_FLOAT,
 				GL_FALSE, stride, nullptr);
 		glVertexAttribPointer(1, 3, GL_FLOAT,
 				GL_FALSE, stride, (void*) offset);
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibuf);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ids[ibuf_id]);
 		glDrawElements(GL_TRIANGLES, nTriangles*3,
 				GL_UNSIGNED_INT, nullptr);
 
@@ -133,8 +133,7 @@ namespace View {
 	}
 
 	view::view(const char *vert, const char *frag) {
-		using Header = Model::Ply::Header;
-		using Element = Model::Ply::Element;
+		using namespace Model::Ply;
 
 		// TODO - safe model and shader loading at runtime
 		static constexpr const char *mpath = "share/bunny.ply";
@@ -168,8 +167,8 @@ namespace View {
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 
-		glGenVertexArrays(1, &vaID);
-		glBindVertexArray(vaID);
+		glGenVertexArrays(1, &ids[va_id]);
+		glBindVertexArray(ids[va_id]);
 
 		if(model.status) {
 			std::cout << model.statusContext << std::endl;
@@ -195,31 +194,31 @@ namespace View {
 			return;
 		}
 
-		glGenBuffers(1, &vbuf);
-		glBindBuffer(GL_ARRAY_BUFFER, vbuf);
+		glGenBuffers(1, &ids[vbuf_id]);
+		glBindBuffer(GL_ARRAY_BUFFER, ids[vbuf_id]);
 		glBufferData(GL_ARRAY_BUFFER, vertices->data.size(),
 				(void*)(&vertices->data[0]), GL_STATIC_DRAW);
 
-		glGenBuffers(1, &ibuf);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibuf);
+		glGenBuffers(1, &ids[ibuf_id]);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ids[ibuf_id]);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices->data.size(),
 				(void*)(&indices->data[0]), GL_STATIC_DRAW);
 		nTriangles = indices -> instances;
 		
-		progID = glCreateProgram();
-		if(!link(vert, frag, progID)) {
+		ids[prog_id] = glCreateProgram();
+		if(!link(vert, frag, ids[prog_id])) {
 			std::cout << "Could not compile/link shader(s)." << std::endl;
 			return;
 		}
-		modelID = glGetUniformLocation(progID, "model");
-		viewID = glGetUniformLocation(progID, "view");
-		projID = glGetUniformLocation(progID, "proj");
-		glUseProgram(progID);
+		ids[model_id] = glGetUniformLocation(ids[prog_id], "model");
+		ids[view_id] = glGetUniformLocation(ids[prog_id], "view");
+		ids[proj_id] = glGetUniformLocation(ids[prog_id], "proj");
+		glUseProgram(ids[prog_id]);
 		valid = true;
 	}
 	view::~view(void) {
-		if(progID) {
-			glDeleteProgram(progID);
+		if(ids[prog_id]) {
+			glDeleteProgram(ids[prog_id]);
 		}
 		glfwDestroyWindow(win);
 	}
