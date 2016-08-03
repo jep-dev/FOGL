@@ -175,7 +175,7 @@ constexpr int SizeProduct(T1 && t1, TN &&... tn) {
 	return SizeProduct<T1, TN...>();
 }
 
-/** Applies fn to one element (SEQ) of the cartesian product of
+/**! Applies fn to one element (SEQ) of the cartesian product of
  * the argument arrays. */
 template<int SEQ, typename FN, typename T1, typename... TN>
 void for_seq(FN fn, T1 && t1, TN &&... tn) {
@@ -184,7 +184,7 @@ void for_seq(FN fn, T1 && t1, TN &&... tn) {
 			::apply(fn, FWD(T1,t1), FWD(TN,tn)...);
 }
 
-/** Applies fn to each element of the cartesian product of the
+/**! Applies fn to each element of the cartesian product of the
  * argument arrays. */
 template<typename FN, typename T1, typename... TN,
 	int N = Util::sizes_t<T1, TN..., Util::delim_t>::SIZE>
@@ -252,24 +252,31 @@ namespace Util {
 					pack_i<2, 0, -1>>::value, "");
 
 			// Prune duplicates
-			static_assert(std::is_same<decltype(prune(VIFD)), T_IFD>::value, "");
+			static_assert(std::is_same<decltype(prune(VIFD)),
+					T_IFD>::value, "");
 			static_assert(std::is_same<decltype(prune(T_FDF {})),
 					decltype(VF+VD)>::value, "");
 			
 			// Or
-			static_assert(std::is_same<decltype(VI+VF+VD), T_IFD>::value, "");
-			static_assert(!std::is_same<decltype(VD+VF+VI), T_IFD>::value, "");
+			static_assert(std::is_same<decltype(VI+VF+VD),
+					T_IFD>::value, "");
+			static_assert(!std::is_same<decltype(VD+VF+VI),
+					T_IFD>::value, "");
 			// Not
-			static_assert(std::is_same<decltype(VIF-VF), T_I>::value, "");
-			static_assert(std::is_same<decltype(VIF-VF-VI), T_void>::value, "");
+			static_assert(std::is_same<decltype(VIF-VF),
+					T_I>::value, "");
+			static_assert(std::is_same<decltype(VIF-VF-VI),
+					T_void>::value, "");
 			// Xor
 			static_assert(std::is_same<decltype(VI^VI),
 					decltype(VI-VI)>::value, "");
 			static_assert(std::is_same<decltype(VI^VF),
 					decltype(VI+VF)>::value, "");
 			// And
-			static_assert(std::is_same<decltype(VI & VI), T_I>::value, "");
-			static_assert(std::is_same<decltype(VIF & VI), T_I>::value, "");
+			static_assert(std::is_same<decltype(VI & VI),
+					T_I>::value, "");
+			static_assert(std::is_same<decltype(VIF & VI),
+					T_I>::value, "");
 
 			// Permutations
 			static_assert(!std::is_same<decltype(VI+VF),
