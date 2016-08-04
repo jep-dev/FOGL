@@ -136,9 +136,9 @@ namespace View {
 		using namespace Model::Ply;
 
 		// TODO - safe model and shader loading at runtime
-		static constexpr const char *mpath = "share/bunny.ply";
+		//static constexpr const char *mpath = "share/bunny.ply";
 
-		Header model(mpath);
+		//Header model(mpath);
 		if(!glfwInit()) {
 			std::cout << "Could not initialize GLFW." << std::endl;
 			return;
@@ -170,7 +170,7 @@ namespace View {
 		glGenVertexArrays(1, &ids[va_id]);
 		glBindVertexArray(ids[va_id]);
 
-		if(model.status) {
+		/*if(model.status) {
 			std::cout << model.statusContext << std::endl;
 			return;
 		}
@@ -192,18 +192,18 @@ namespace View {
 			std::cout << "The model is valid, but does not match "
 				"the anticipated structure." << std::endl;
 			return;
-		}
+		}*/
 
 		glGenBuffers(1, &ids[vbuf_id]);
 		glBindBuffer(GL_ARRAY_BUFFER, ids[vbuf_id]);
-		glBufferData(GL_ARRAY_BUFFER, vertices->data.size(),
-				(void*)(&vertices->data[0]), GL_STATIC_DRAW);
+		/*glBufferData(GL_ARRAY_BUFFER, vertices->data.size(),
+				(void*)(&vertices->data[0]), GL_STATIC_DRAW);*/
 
 		glGenBuffers(1, &ids[ibuf_id]);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ids[ibuf_id]);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices->data.size(),
+		/*glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices->data.size(),
 				(void*)(&indices->data[0]), GL_STATIC_DRAW);
-		nTriangles = indices -> instances;
+		nTriangles = indices -> instances;*/
 		
 		ids[prog_id] = glCreateProgram();
 		if(!link(vert, frag, ids[prog_id])) {
