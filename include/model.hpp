@@ -5,13 +5,23 @@
 //#include <GL/gl.h>
 
 namespace Model {
-	template<typename T, typename R = GLfloat>
-	struct contour_t {
-		void operator()(GLfloat *dest, GLclampf u, GLclampf v) {
-			dest[0] = T::x(u,v);
-			dest[1] = T::y(u,v);
-			dest[2] = T::z(u,v);
-		}
+	
+	/** A parametrized surface
+	 * @tparam S The implementation type
+	 * @tparam T The type of each output dimension
+	 * @tparam U The type of the first input dimension
+	 * @tparam V The type of the second input dimension
+	 */
+	template<typename S, typename T = GLfloat,
+		typename U = GLclampf, typename V = U>
+	struct contour {
+		/**
+ 		 * A surface with parameters 0 <= u,v < 1
+	 	 * @param dest The destination for the output value
+	 	 * @param u The value of the first parameter
+	 	 * @param v The value of the second parameter
+	 	 */
+		void operator()(S *dest, U u, V v);
 	};
 }
 
