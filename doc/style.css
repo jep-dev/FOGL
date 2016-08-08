@@ -1,4 +1,5 @@
 /* Custom section - night mode + bg tweak */
+
 body, div.ah {
 	background-color:#000 !important;
 	filter:invert(100%) hue-rotate(180deg);
