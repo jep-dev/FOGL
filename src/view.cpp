@@ -1,11 +1,16 @@
+
 #include "view.hpp"
 #include "view/shade.hpp"
+
 #include "system.hpp"
 #include "model/ply.hpp"
 
 #include <iostream>
 #include <sstream>
 #include <math.h>
+
+#include <GL/gl3w.h>
+#include <GLFW/glfw3.h>
 
 namespace View {
 
@@ -57,7 +62,7 @@ namespace View {
 				0, 0, (far+near)/(far-near), -1,
 				0, 0, 2*far*near/(far-near), 0
 		};
-		glUniformMatrix4fv(ids[proj_id], 1, GL_TRUE,  mat_proj);
+		glUniformMatrix4fv(ids[proj_id], 1, GL_TRUE, mat_proj);
 
 		/* TODO - static not intended, just persistence;
  		 * all of the data here should be passed or shared */
@@ -114,7 +119,7 @@ namespace View {
 			nFrames = -1;
 		}
 	}
-
+	
 	void view::run(std::function<bool()> update,
 			std::function<void()> quit) {
 		if(valid && win) {
@@ -193,6 +198,18 @@ namespace View {
 				"the anticipated structure." << std::endl;
 			return;
 		}*/
+		//Model::contour<GLfloat, Util::undef_t, GLclampf, GLclampf> contour;
+		const int iMax = 10, jMax = iMax;
+		GLfloat vertices[3*iMax*jMax];
+		GLclampf u, v;
+		for(int i = 0; i < iMax; i++) {
+			u = i/(GLclampf) iMax;
+			for(int j = 0; j < jMax; j++) {
+				v = j/(GLclampf) jMax;
+				/*contour((GLfloat*) (&vertices[3*(i*iMax+j)]),
+						(GLclampf) u, (GLclampf) v);*/
+			}
+		}
 
 		glGenBuffers(1, &ids[vbuf_id]);
 		glBindBuffer(GL_ARRAY_BUFFER, ids[vbuf_id]);
