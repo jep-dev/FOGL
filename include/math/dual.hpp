@@ -1,3 +1,4 @@
+#pragma once
 #ifndef MATH_DUAL_HPP
 #define MATH_DUAL_HPP
 
@@ -6,7 +7,6 @@
 #endif
 
 #include "math.hpp"
-#include "math/quat.hpp"
 
 #include <boost/operators.hpp>
 

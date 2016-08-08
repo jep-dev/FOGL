@@ -1,8 +1,8 @@
+#pragma once
 #ifndef MODEL_HPP
 #define MODEL_HPP
 
 #include <GL/gl3w.h>
-//#include <GL/gl.h>
 
 namespace Model {
 	

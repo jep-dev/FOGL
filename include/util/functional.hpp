@@ -1,5 +1,8 @@
+#pragma once
 #ifndef UTIL_FUNCTION_HPP
 #define UTIL_FUNCTION_HPP
+
+#include "util.hpp"
 
 namespace Util {
 	template<typename T>
@@ -9,16 +12,19 @@ namespace Util {
 		typedef typename sig_type::result_type result_type;
 		typedef typename sig_type::args_type args_type;
 	};
+	/// \copydoc sig_t
 	template<typename R, typename S, typename... T>
 	struct sig_t<R (S::*) (T...) const> {
 		typedef R result_type;
 		typedef typename std::tuple<T...> args_type;
 	};
+	/// \copydoc sig_t
 	template<typename R, typename S, typename... T>
 	struct sig_t<R& (S::*) (T &&...)> {
 		typedef R& result_type;
 		typedef typename std::tuple<T...> args_type;
 	};
+	/// \copydoc sig_t
 	template<typename R, typename... T>
 	struct sig_t<R (*) (T...)> {
 		typedef R result_type;
@@ -35,6 +41,7 @@ namespace Util {
 		}
 	};
 
+	/// \copydoc for_seq_t
 	template<int SEQ, typename FN, typename... TN>
 	struct for_seq_t<SEQ, 0, FN, TN...> {
 		static auto apply(FN fn, TN &&... tn)
@@ -54,6 +61,7 @@ namespace Util {
 			THIS::apply(fn, SELF(t1), SELF(tn)...);
 		}
 	};
+	/// \copydoc for_all_t
 	template<typename FN, typename T1, typename... TN>
 	struct for_all_t<0, FN, T1, TN...> {
 		static void apply(FN fn, T1 && t1, TN &&... tn) {}
@@ -73,6 +81,7 @@ namespace Util {
 		}
 	};
 
+	/// \copydoc map_for_all_t
 	template<typename FN, typename T1, typename... TN>
 	struct map_for_all_t<0, FN, T1, TN...> {
 		template<typename RET>
@@ -87,6 +96,7 @@ namespace Util {
 			fn(t1[SEQ-1], tn[SEQ-1]...);
 		}
 	};
+	/// \copydoc for_zip_t
 	template<int N, typename FN, typename T1, typename... TN>
 	struct for_zip_t<0, N, FN, T1, TN...> {
 		static void apply(FN fn, T1 (&t1)[N], TN (&...tn)[N]) {}

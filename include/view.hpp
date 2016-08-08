@@ -1,3 +1,4 @@
+#pragma once
 #ifndef VIEW_HPP
 #define VIEW_HPP
 
@@ -5,16 +6,14 @@
 #define _USE_MATH_DEFINES
 #endif
 
-#include <iosfwd>
 #include <functional>
-
 #include <GL/gl3w.h>
-#include <GL/glcorearb.h>
 #include <GLFW/glfw3.h>
-#include <GL/gl.h>
 
+//template<typename T> struct std::function;
 namespace View {
 	void printErrors(const char *prefix);
+	/// A view structure (state and implementation)
 	struct view {
 		typedef enum {
 			prog_id=0, va_id, 

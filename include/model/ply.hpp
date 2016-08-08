@@ -1,8 +1,8 @@
+#pragma once
 #ifndef PLY_HPP
 #define PLY_HPP
 
-#include "model/ply.hpp"
-#include "util.hpp"
+#include "model.hpp"
 #include "system.hpp"
 #include <iosfwd>
 

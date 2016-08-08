@@ -1,3 +1,6 @@
+#ifndef MAIN_HPP
+#define MAIN_HPP
+/// @file
 /**
  * Entry point of the program
  * @param argc Number of args (1+)
@@ -5,3 +8,5 @@
  * @return Zero if and only if exiting without failure
  */
 int main(int argc, const char **argv);
+
+#endif

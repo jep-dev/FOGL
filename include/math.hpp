@@ -1,3 +1,4 @@
+#pragma once
 #ifndef MATH_HPP
 #define MATH_HPP
 

@@ -1,3 +1,4 @@
+#pragma once
 #ifndef MATH_QUAT_HPP
 #define MATH_QUAT_HPP
 

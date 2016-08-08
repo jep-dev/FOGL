@@ -135,9 +135,8 @@ namespace Util { // --> util/functional.hpp
 	template<int SEQ, class FN, class T1, class... TN>
 		struct map_for_all_t;
 
-	/*! Applies a function to each permutation in the diagonal of all
-	 * permutations of the elements of the given statically-sized arrays
-	 * (all first elements, all second elements, etc.)
+	/*! Applies a function to parallel sets of elements of the given
+ 	 * statically-sized arrays
 	 * @tparam SEQ The unique ID of the current sequence
 	 * @tparam FN The function to apply to each selected permutation
 	 * @tparam N The size of each array type

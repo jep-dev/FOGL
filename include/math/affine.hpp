@@ -1,10 +1,8 @@
+#pragma once
 #ifndef MATH_AFFINE_HPP
 #define MATH_AFFINE_HPP
 
 #include "math.hpp"
-#include "math/quat.hpp"
-#include "math/dual.hpp"
-#include <cmath>
 #include <boost/operators.hpp>
 
 namespace Math {
