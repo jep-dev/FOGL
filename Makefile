@@ -132,7 +132,7 @@ clean-objs:; $(RM) $(EXE_OBJS) $(MAIN_OBJS)
 clean-exes:; $(RM) $(EXES)
 clean-sentinels:; $(RM) .sentinel
 clean-gl3w:; $(RM) $(GL3W_OBJS)
-clean: clean-exes clean-objs clean-pchs clean-deps;
+clean: clean-exes clean-objs clean-pchs clean-deps clean-sentinels;
 
 env:; @echo "$(foreach var,CC CXX CFLAGS CPPFLAGS WFLAGS\
 	RELEASE_LDFLAGS TEST_LDFLAGS,\
