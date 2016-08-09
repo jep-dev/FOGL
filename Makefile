@@ -1,7 +1,7 @@
 CC=clang
 CXX=clang++
 MKDIR=@mkdir -p
-RM=rm -f
+RM=@rm -f
 
 DIR_ROOT?=
 #DIR_DEBUG?=$(DIR_ROOT)debug/
@@ -68,7 +68,7 @@ LDFLAGS:=-L$(DIR_BOOST_LIB) -L$(DIR_GL3W_LIB) \
 	-lpthread -Wl,--gc-sections\
 	-Wl,-rpath,$(DIR_BOOST_LIB):$(DIR_GL3W_LIB)\
 	-lboost_system
-RELEASE_LDFLAGS:=$(LDFLAGS) -lGL -lglfw -ldl
+RELEASE_LDFLAGS:=$(LDFLAGS) -lGL -lGLU -lglfw -ldl
 #DEBUG_LDFLAGS=$(LDFLAGS) -lboost_system
 TEST_LDFLAGS:=$(LDFLAGS) -lboost_unit_test_framework -lGL -lglfw -ldl
 ###############################################################################
