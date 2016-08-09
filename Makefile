@@ -38,7 +38,9 @@ MAIN_MODULES?=util system/net system\
 MAIN_H_ONLY?=util/types math/quat math/dual
 MAIN_INCLUDES?=$(foreach inc,$(MAIN_H_ONLY) $(MAIN_MODULES),\
 			   $(inc:%=%.hpp))
-MAIN_PCHS?=$(DIR_ROOT_INCLUDE)util.hpp$(PCH_EXT)
+MAIN_PCHS?=
+#$(foreach mod,util.hpp view.hpp,\
+#		   $(DIR_ROOT_INCLUDE)$(mod)$(PCH_EXT))
 MAIN_SRCS?=$(foreach mod,$(MAIN_MODULES) main,$(DIR_ROOT_SRC)$(mod).cpp)
 MAIN_OBJS=$(foreach mod,$(MAIN_MODULES),$(mod:%=$(DIR_ROOT_LIB)%.o))
 MAIN_DEPS=$(MAIN_OBJS:%.o=%.d)
