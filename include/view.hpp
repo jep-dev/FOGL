@@ -6,6 +6,7 @@
 #define _USE_MATH_DEFINES
 #endif
 
+#include <atomic>
 #include <functional>
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
@@ -14,17 +15,19 @@
 #include "view/shade.hpp"
 
 namespace View {
+	/// Loops over the queued GL errors and prints each (using GLU).
 	void printErrors(const char *prefix);
+
 	/// A view structure (state and implementation)
 	struct view {
 		typedef enum {
-			prog_id=0, va_id, 
-			vbuf_id, ibuf_id, 
-			model_id, view_id,
-			proj_id,
-			_max
-		} id_index; 
-		GLuint ids[id_index::_max];
+			e_id_prog=0, e_id_va, 
+			e_id_vbuf,   e_id_ibuf, 
+			e_id_model,  e_id_view,
+			e_id_proj,
+			e_id_total
+		} e_id_index; 
+		GLuint ids[e_id_total];
 
 		bool valid = false;
 		float near = 1, far = 10, fov = 25;
@@ -44,8 +47,7 @@ namespace View {
 		 * @param update Updates the model; false signals shutdown
 		 * @param quit Destroys the model and managed resources
 		 */
-		void run(std::function<bool()> update,
-			std::function<void()> quit);
+		void run(bool (*update)(void), std::atomic_bool &alive);
 		
 		/** Constructor for a view object
 		 * @param vert Path to a GLSL vertex shader
