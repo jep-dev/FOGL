@@ -10,6 +10,9 @@
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
 
+#include "view/input.hpp"
+#include "view/shade.hpp"
+
 //template<typename T> struct std::function;
 namespace View {
 	void printErrors(const char *prefix);
@@ -29,6 +32,7 @@ namespace View {
 		int nTriangles;
 		GLFWwindow *win;
 	
+		/// Sets stable shader values (uniforms)
 		void setUniforms(void);
 		/*! Calculates and displays the next frame, potentially incorporating
  		 * the frame index (discrete time) and FPS
@@ -36,8 +40,21 @@ namespace View {
 		 * @param fps The most-recently calculated frames per second
 		 */
 		void redraw(int frame = 0, int fps = 0);
-		void run(std::function<bool()>, std::function<void()>);
+		
+		/** Begins the game loop with the specified callbacks
+		 * @param update Updates the model; false signals shutdown
+		 * @param quit Destroys the model and managed resources
+		 */
+		void run(std::function<bool()> update,
+			std::function<void()> quit);
+		
+		/** Constructor for a view object
+		 * @param vert Path to a GLSL vertex shader
+		 * @param frag Path to a GLSL fragment shader
+		 */
 		view(const char *vert, const char *frag);
+
+		/// Destructor for a view object
 		virtual ~view(void);
 	};
 }
