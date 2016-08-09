@@ -1,10 +1,9 @@
-#include "main.hpp"
-
 //#include "util.hpp"
 #include "system.hpp"
-//#include "math.hpp"
 #include "model.hpp"
 #include "view.hpp"
+#include "control.hpp"
+#include "main.hpp"
 
 #include <chrono>
 #include <iostream>
@@ -27,27 +26,16 @@ int main(int argc, const char **argv) {
 	{
 		switch(omp_get_thread_num()) {
 			case e_tid_view: {
-				auto quit = [&alive]() {
-					alive = false;
-				};
-				auto updateView = []() {
-					return true;
-				};
+				auto kill = [&alive] {alive = false;};
 				View::view display("share/shade.vert", "share/shade.frag");
 				if(display.valid) {
-					display.run(updateView, quit);
+					display.run([](void){return true;}, alive);
+				} else {
+					alive = false;
 				}
 			} break;
 			case e_tid_model: {
 				int t = 0;
-				auto updateModel = [&alive, &delay]{
-					static int t = 0;
-					while(alive) {
-						std::cout << "Model update #" << t++ << std::endl;
-						std::this_thread::sleep_for(delay);
-					}
-				};
-				
 				while(alive) {
 					std::cout << "Model update #" << t++ << std::endl;
 					std::this_thread::sleep_for(delay);
@@ -56,8 +44,6 @@ int main(int argc, const char **argv) {
 			default: break;
 		}
 	}
-
 	glfwTerminate();
-
 	return 0;
 }
