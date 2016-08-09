@@ -1,4 +1,3 @@
-
 #include "view.hpp"
 #include "system.hpp"
 #include "model/ply.hpp"
@@ -8,46 +7,15 @@
 #include <math.h>
 
 #include <GL/gl3w.h>
+#include <GL/glu.h>
 #include <GLFW/glfw3.h>
 
 namespace View {
 
-	void printErrors(const char *prefix = "OpenGL error(s): ") {
+	void printErrors(void) {
 		GLenum err;
-		bool once = false;
-		std::ostringstream oss;
-		
 		while(!(err = glGetError())) {
-			once = true;
-			switch(err) {
-			case GL_INVALID_ENUM:
-				oss << "invalid enum; ";
-				break;
-			case GL_INVALID_VALUE:
-				oss << "invalid value; ";
-				break;
-			case GL_INVALID_OPERATION:
-				oss << "invalid operation; ";
-				break;
-			case GL_STACK_OVERFLOW:
-				oss << "stack overflow; ";
-				break;
-			case GL_STACK_UNDERFLOW:
-				oss << "stack underflow; ";
-				break;
-			case GL_OUT_OF_MEMORY:
-				oss << "out of memory; ";
-				break;
-			case GL_INVALID_FRAMEBUFFER_OPERATION:
-				oss << "invalid framebuffer operation; ";
-				break;
-			default:
-				break;
-			}
-		}
-		 
-		if(once) {
-			std::cout << prefix << oss.str() << std::endl;
+			std::cout << gluErrorString(err) << "\n";
 		}
 	}
 
@@ -60,7 +28,7 @@ namespace View {
 				0, 0, (far+near)/(far-near), -1,
 				0, 0, 2*far*near/(far-near), 0
 		};
-		glUniformMatrix4fv(ids[proj_id], 1, GL_TRUE, mat_proj);
+		glUniformMatrix4fv(ids[e_id_proj], 1, GL_TRUE, mat_proj);
 
 		/* TODO - static not intended, just persistence;
  		 * all of the data here should be passed or shared */
@@ -79,8 +47,8 @@ namespace View {
 				0, 0, 2, 1
 		};
 
-		glUniformMatrix4fv(ids[model_id], 1, GL_TRUE, mat_model);
-		glUniformMatrix4fv(ids[view_id], 1, GL_FALSE, mat_view);
+		glUniformMatrix4fv(ids[e_id_model], 1, GL_TRUE, mat_model);
+		glUniformMatrix4fv(ids[e_id_view], 1, GL_FALSE, mat_view);
 	}
 	
 	void view::redraw(int frame, int fps) {
@@ -94,13 +62,13 @@ namespace View {
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 
-		glBindBuffer(GL_ARRAY_BUFFER, ids[vbuf_id]);
+		glBindBuffer(GL_ARRAY_BUFFER, ids[e_id_vbuf]);
 		glVertexAttribPointer(0, 3, GL_FLOAT,
 				GL_FALSE, stride, nullptr);
 		glVertexAttribPointer(1, 3, GL_FLOAT,
 				GL_FALSE, stride, (void*) offset);
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ids[ibuf_id]);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ids[e_id_ibuf]);
 		glDrawElements(GL_TRIANGLES, nTriangles*3,
 				GL_UNSIGNED_INT, nullptr);
 
@@ -109,20 +77,21 @@ namespace View {
 		glfwSwapBuffers(win);
 	}
 	
-	void view::run(std::function<bool()> update,
-			std::function<void()> quit) {
+	void view::run(bool (*update)(void), std::atomic_bool& alive) {
 		if(valid && win) {
 			glfwMakeContextCurrent(win);
 			double t1 = glfwGetTime(), t2;
 			int frame = 0, dFrame = 0, fps;
-			while(true) {
+			while(alive) {
 				glfwPollEvents();
 				if(glfwWindowShouldClose(win)) {
-					quit();
+					alive = false;
+					update();
+					// Source then sink?
 				} else if(update()) {
 					redraw(frame + dFrame, fps);
 					t2 = glfwGetTime();
-					if(t2-t1 >= .5) {
+					if(t2-t1 >= .75) {
 						fps = int(dFrame/(t2-t1));
 						std::cout << fps << " fps\n";
 						t1 = t2;
@@ -141,9 +110,9 @@ namespace View {
 		using namespace Model::Ply;
 
 		// TODO - safe model and shader loading at runtime
-		//static constexpr const char *mpath = "share/bunny.ply";
+		static constexpr const char *mpath = "share/bunny.ply";
 
-		//Header model(mpath);
+		Header model(mpath);
 		if(!glfwInit()) {
 			std::cout << "Could not initialize GLFW." << std::endl;
 			return;
@@ -172,10 +141,10 @@ namespace View {
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 
-		glGenVertexArrays(1, &ids[va_id]);
-		glBindVertexArray(ids[va_id]);
+		glGenVertexArrays(1, &ids[e_id_va]);
+		glBindVertexArray(ids[e_id_va]);
 
-		/*if(model.status) {
+		if(model.status) {
 			std::cout << model.statusContext << std::endl;
 			return;
 		}
@@ -197,45 +166,45 @@ namespace View {
 			std::cout << "The model is valid, but does not match "
 				"the anticipated structure." << std::endl;
 			return;
-		}*/
+		}
 		//Model::contour<GLfloat, Util::undef_t, GLclampf, GLclampf> contour;
-		const int iMax = 10, jMax = iMax;
+		/*const int iMax = 10, jMax = iMax;
 		GLfloat vertices[3*iMax*jMax];
 		GLclampf u, v;
 		for(int i = 0; i < iMax; i++) {
 			u = i/(GLclampf) iMax;
 			for(int j = 0; j < jMax; j++) {
 				v = j/(GLclampf) jMax;
-				/*contour((GLfloat*) (&vertices[3*(i*iMax+j)]),
-						(GLclampf) u, (GLclampf) v);*/
+				contour((GLfloat*) (&vertices[3*(i*iMax+j)]),
+						(GLclampf) u, (GLclampf) v);
 			}
-		}
+		}*/
 
-		glGenBuffers(1, &ids[vbuf_id]);
-		glBindBuffer(GL_ARRAY_BUFFER, ids[vbuf_id]);
-		/*glBufferData(GL_ARRAY_BUFFER, vertices->data.size(),
-				(void*)(&vertices->data[0]), GL_STATIC_DRAW);*/
+		glGenBuffers(1, &ids[e_id_vbuf]);
+		glBindBuffer(GL_ARRAY_BUFFER, ids[e_id_vbuf]);
+		glBufferData(GL_ARRAY_BUFFER, vertices->data.size(),
+				(void*)(&vertices->data[0]), GL_STATIC_DRAW);
 
-		glGenBuffers(1, &ids[ibuf_id]);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ids[ibuf_id]);
-		/*glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices->data.size(),
+		glGenBuffers(1, &ids[e_id_ibuf]);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ids[e_id_ibuf]);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices->data.size(),
 				(void*)(&indices->data[0]), GL_STATIC_DRAW);
-		nTriangles = indices -> instances;*/
+		nTriangles = indices -> instances;
 		
-		ids[prog_id] = glCreateProgram();
-		if(!link(vert, frag, ids[prog_id])) {
+		ids[e_id_prog] = glCreateProgram();
+		if(!link(vert, frag, ids[e_id_prog])) {
 			std::cout << "Could not compile/link shader(s)." << std::endl;
 			return;
 		}
-		ids[model_id] = glGetUniformLocation(ids[prog_id], "model");
-		ids[view_id] = glGetUniformLocation(ids[prog_id], "view");
-		ids[proj_id] = glGetUniformLocation(ids[prog_id], "proj");
-		glUseProgram(ids[prog_id]);
+		ids[e_id_model] = glGetUniformLocation(ids[e_id_prog], "model");
+		ids[e_id_view] = glGetUniformLocation(ids[e_id_prog], "view");
+		ids[e_id_proj] = glGetUniformLocation(ids[e_id_prog], "proj");
+		glUseProgram(ids[e_id_prog]);
 		valid = true;
 	}
 	view::~view(void) {
-		if(ids[prog_id]) {
-			glDeleteProgram(ids[prog_id]);
+		if(ids[e_id_prog]) {
+			glDeleteProgram(ids[e_id_prog]);
 		}
 		glfwDestroyWindow(win);
 	}
