@@ -85,15 +85,17 @@ namespace View {
 		glUniformMatrix4fv(ids[view_id], 1, GL_FALSE, mat_view);
 	}
 	
-	void view::redraw(void) {
+	void view::redraw(int frame, int fps) {
+		static constexpr const unsigned int
+			offset = 3*sizeof(float),
+			stride = 2*offset;
+
 		setUniforms();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 
-		static long int offset = 3*sizeof(float),
-				stride = 2*offset;
 		glBindBuffer(GL_ARRAY_BUFFER, ids[vbuf_id]);
 		glVertexAttribPointer(0, 3, GL_FLOAT,
 				GL_FALSE, stride, nullptr);
@@ -106,30 +108,30 @@ namespace View {
 
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(0);
-
 		glfwSwapBuffers(win);
-
-		static int nFrames = -1;
-		nFrames++;
-		static double t0 = glfwGetTime();
-		double t1 = glfwGetTime(), dt = t1-t0;
-		if(dt >= 1) {
-			std::cout << (nFrames/dt) << "FPS" << std::endl;
-			t0 = t1;
-			nFrames = -1;
-		}
 	}
 	
 	void view::run(std::function<bool()> update,
 			std::function<void()> quit) {
 		if(valid && win) {
 			glfwMakeContextCurrent(win);
+			double t1 = glfwGetTime(), t2;
+			int frame = 0, dFrame = 0, fps;
 			while(true) {
 				glfwPollEvents();
 				if(glfwWindowShouldClose(win)) {
 					quit();
 				} else if(update()) {
-					redraw();
+					redraw(frame + dFrame, fps);
+					t2 = glfwGetTime();
+					if(t2-t1 >= .5) {
+						fps = int(dFrame/(t2-t1));
+						std::cout << fps << " fps\n";
+						t1 = t2;
+						frame += dFrame;
+						dFrame = 0;
+					}
+					dFrame++;
 					continue;
 				}
 				break;

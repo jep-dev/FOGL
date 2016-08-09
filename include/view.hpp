@@ -30,7 +30,12 @@ namespace View {
 		GLFWwindow *win;
 	
 		void setUniforms(void);
-		void redraw(void);
+		/*! Calculates and displays the next frame, potentially incorporating
+ 		 * the frame index (discrete time) and FPS
+		 * @param frame The discrete time (frames since startup)
+		 * @param fps The most-recently calculated frames per second
+		 */
+		void redraw(int frame = 0, int fps = 0);
 		void run(std::function<bool()>, std::function<void()>);
 		view(const char *vert, const char *frag);
 		virtual ~view(void);
