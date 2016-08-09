@@ -13,7 +13,6 @@
 #include "view/input.hpp"
 #include "view/shade.hpp"
 
-//template<typename T> struct std::function;
 namespace View {
 	void printErrors(const char *prefix);
 	/// A view structure (state and implementation)
