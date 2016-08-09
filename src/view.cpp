@@ -1,7 +1,6 @@
 
 #include "view.hpp"
-#include "view/shade.hpp"
-
+#include "view/input.hpp"
 #include "system.hpp"
 #include "model/ply.hpp"
 
