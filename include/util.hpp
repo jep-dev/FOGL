@@ -1,9 +1,6 @@
 #ifndef UTIL_HPP
 #define UTIL_HPP
 
-#include <type_traits>
-#include <typeinfo>
-#include <typeindex>
 #include <functional>
 
 #ifndef FWD
