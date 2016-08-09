@@ -1,6 +1,5 @@
 
 #include "view.hpp"
-#include "view/input.hpp"
 #include "system.hpp"
 #include "model/ply.hpp"
 
