@@ -18,11 +18,11 @@ DIR_ROOT_INCLUDE?=$(DIR_ROOT)$(DIR_INCLUDE)
 DIR_ROOT_SRC?=$(DIR_ROOT)$(DIR_SRC)
 DIR_ROOT_LIB?=$(DIR_ROOT)$(DIR_LIB)
 DIR_ROOT_BIN?=$(DIR_ROOT)$(DIR_BIN)
-DIR_BOOST_INCLUDE?=$(abspath $(DIR_BOOST))/
+DIR_BOOST_INCLUDE?=$(DIR_BOOST)/
 DIR_BOOST_LIB?=$(DIR_BOOST)stage/lib/
-DIR_GL3W_INCLUDE?=$(abspath $(DIR_GL3W)$(DIR_INCLUDE))/
-DIR_GL3W_SRC?=$(abspath $(DIR_GL3W)$(DIR_SRC))/
-DIR_GL3W_LIB?=$(abspath $(DIR_GL3W))/
+DIR_GL3W_INCLUDE?=$(DIR_GL3W)$(DIR_INCLUDE)/
+DIR_GL3W_SRC?=$(DIR_GL3W)$(DIR_SRC)/ #$(abspath $(DIR_GL3W)$(DIR_SRC))/
+DIR_GL3W_LIB?=$(DIR_GL3W)/
 
 EXE_EXT?=
 PCH_EXT?=.pch
@@ -102,24 +102,20 @@ $(TEST_EXE): $(TEST_OBJ) $(MAIN_OBJS) $(GL3W_OBJS)
 
 $(RELEASE_OBJ): $(DIR_ROOT_SRC)main.cpp $(MAIN_PCHS) $(MAIN_INCLUDES)
 	$(COMPILE_CXX) $< -o $@
-	$(DEPEND_CXX) $< -o $(@:%.o=%.d)
 $(TEST_OBJ): $(DIR_TEST)$(DIR_SRC)*.cpp
 	$(COMPILE_CXX) $< -o $@
-	$(DEPEND_CXX) $< -o $(@:%.o=%.d)
-
 
 $(DIR_GL3W)%.o: $(DIR_GL3W)$(DIR_SRC)*.c
 	$(COMPILE_CC) -fPIC -o $@ $<
 	$(LINK_CC) $(CFLAGS) -shared $< \
 		-o $(@:$(DIR_GL3W_LIB)%.o=$(DIR_GL3W_LIB)lib%.so)
+
 $(DIR_ROOT_LIB)%.o: $(DIR_ROOT_SRC)%.cpp $(DIR_ROOT_INCLUDE)%.hpp
 	$(COMPILE_CXX) $< -o $@
 	$(LINK_CXX) -I$(DIR_ROOT_INCLUDE) -shared $< -o $@
-	$(DEPEND_CXX) $< -o $(@:%.o=%.d)
-$(DIR_ROOT_LIB)*/%.o: $(DIR_ROOT_SRC)*/%.cpp
-	$(COMPILE_CXX) $< -o $@
-	$(LINK_CXX) -shared $< -o $@
-	$(DEPEND_CXX) $< -o $(@:%.o=%.d)
+
+%.d: %.o
+	$(DEPEND_CXX) $(<:$(DIR_ROOT_LIB)%.o=$(DIR_ROOT_SRC)%.cpp) -o $@
 
 %.hpp$(PCH_EXT): %.hpp
 	$(COMPILE_HPP) $< -o $@
