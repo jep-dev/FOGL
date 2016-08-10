@@ -5,15 +5,11 @@
 #include "util.hpp"
 #include <iomanip>
 
+#include <algorithm>
 #include <fstream>
 #include <sstream>
-
 #include <string>
-
-// Forward-declaration
-template<typename...> struct vector;
-
-#include <algorithm>
+#include <vector>
 
 namespace System {
 
