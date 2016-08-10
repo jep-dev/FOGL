@@ -14,8 +14,8 @@ namespace View {
 		GLint status = GL_FALSE;
 		string lines = "";
 		if(System::readFile(fname, lines)) {
-			const char *cs = lines.c_str();
-			glShaderSource(shader, 1, (const GLchar **)&cs, NULL);
+			const GLchar *cs = lines.c_str();
+			glShaderSource(shader, 1, &cs, NULL);
 			glCompileShader(shader);
 			glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
 			glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &len);
