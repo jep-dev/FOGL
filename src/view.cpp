@@ -167,7 +167,6 @@ namespace View {
 				"the anticipated structure." << std::endl;
 			return;
 		}
-		//Model::contour<GLfloat, Util::undef_t, GLclampf, GLclampf> contour;
 		/*const int iMax = 10, jMax = iMax;
 		GLfloat vertices[3*iMax*jMax];
 		GLclampf u, v;
