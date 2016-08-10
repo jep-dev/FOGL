@@ -1,13 +1,10 @@
-//#include "util.hpp"
 #include "control.hpp"
 #include "main.hpp"
 #include "system.hpp"
 #include "model.hpp"
 #include "view.hpp"
 
-//#include <chrono>
 #include <iostream>
-//#include <thread>
 
 #include "omp.h"
 #include <boost/asio.hpp>
