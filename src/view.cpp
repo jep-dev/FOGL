@@ -11,7 +11,6 @@
 #include <GLFW/glfw3.h>
 
 namespace View {
-
 	void printErrors(void) {
 		GLenum err;
 		while(!(err = glGetError())) {
@@ -54,24 +53,24 @@ namespace View {
 	void view::redraw(int frame, int fps) {
 		static constexpr const unsigned int
 			offset = 3*sizeof(float),
-			stride = 2*offset;
-
+			stride = 2*offset,
+			bits = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;;
+		
 		setUniforms();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-
 		glBindBuffer(GL_ARRAY_BUFFER, ids[e_id_vbuf]);
+		
+		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, GL_FLOAT,
 				GL_FALSE, stride, nullptr);
+		
+		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 3, GL_FLOAT,
 				GL_FALSE, stride, (void*) offset);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ids[e_id_ibuf]);
 		glDrawElements(GL_TRIANGLES, nTriangles*3,
 				GL_UNSIGNED_INT, nullptr);
-
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(0);
 		glfwSwapBuffers(win);
@@ -111,6 +110,7 @@ namespace View {
 
 		// TODO - safe model and shader loading at runtime
 		static constexpr const char *mpath = "share/bunny.ply";
+		//static constexpr const char *mpath = "share/ant.ply";
 
 		Header model(mpath);
 		if(!glfwInit()) {
@@ -152,7 +152,7 @@ namespace View {
 				 stop = end(model.elements);
 		auto getVertices = [](Element const& el) -> bool {
 			return el.name == "vertex" && !el.has_list
-				&& el.properties.size() == 6;
+				&& (el.properties.size() == 6 || el.properties.size() == 3);
 		};
 		auto getIndices = [](Element const& el) -> bool {
 			int sz = el.properties.size();
