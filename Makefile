@@ -34,7 +34,7 @@ RELEASE_EXT?=
 MODULE_DIRS?=util/ system/ math/ model/ view/
 MAIN_MODULES?=util system/net system\
 			  math math/affine math/quat math/dual\
-			  model/ply model view view/shade
+			  model/ply model view view/shade control
 MAIN_H_ONLY?=util/types math/quat math/dual
 MAIN_INCLUDES?=$(foreach inc,$(MAIN_H_ONLY) $(MAIN_MODULES),\
 			   $(inc:%=%.hpp))
