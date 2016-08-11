@@ -1,6 +1,7 @@
 #include "view.hpp"
 #include "system.hpp"
 #include "model/ply.hpp"
+#include "model/obj.hpp"
 
 #include <iostream>
 #include <sstream>
