@@ -1,8 +1,6 @@
 #include "control.hpp"
 #include "main.hpp"
 #include "system.hpp"
-#include "model.hpp"
-#include "view.hpp"
 
 #include <iostream>
 
