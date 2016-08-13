@@ -143,6 +143,7 @@ namespace View {
 		ids[e_id_model] = glGetUniformLocation(ids[e_id_prog], "model");
 		ids[e_id_view] = glGetUniformLocation(ids[e_id_prog], "view");
 		ids[e_id_proj] = glGetUniformLocation(ids[e_id_prog], "proj");
+		glUseProgram(ids[e_id_prog]);
 		
 		/*if(model.status) {
 			std::cout << model.statusContext << std::endl;

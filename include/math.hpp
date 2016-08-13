@@ -6,19 +6,33 @@
 #include <iosfwd>
 #include <sstream>
 
+#include <ratio>
+
 /* TODO 
  * Improve generics; at least fixed- vs. floating-point
  * Replace quat/dual with abstract CT logic applied to RT primitives
  * Integrate util (graph -> expression tree, etc.) */
 namespace Math {
-	/*! True if and only if u and v are at most 1/2^E apart */
+	/// \copydoc near
+	template<typename T, int E>
+	constexpr bool near(T A, T B, int _adt1, int _adt2 = 0) {
+		return std::ratio_less_equal<std::ratio<B,A>,
+			   std::ratio<2,-(E+1)>>::value;
+	}
+	/*! True if and only if u and v are at most 1/2^e apart
+	 * \tparam T The type of each input dimension
+	 * \tparam E The threshold, a binary exponent 
+	 * \param u The first value to compare
+	 * \param v The second value to compare
+	 * \param e The runtime precision binary exponent
+	 * \return True if and only if u and v are less than the threshold
+	 */
 	template<typename T = double, int E = -6>
-	bool near(T u, T v, int e = E, int _adt = 0) {
+	bool near(T u, T v, int e = E) {
 		return (((u-v)*(u-v)) <= pow(2.0,e+1));
 	};
 
 	// TODO constexpr near using std::ratio
-
 
 	/*! A quaternion (real, i, j, k)
 	 * @tparam R The type of each dimension */
