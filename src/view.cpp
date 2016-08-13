@@ -184,5 +184,6 @@ namespace View {
 			glDeleteProgram(ids[e_id_prog]);
 		}
 		glfwDestroyWindow(win);
+		glfwTerminate();
 	}
 }
