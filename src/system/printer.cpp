@@ -47,6 +47,7 @@ namespace System {
 		oss << std::setw(w) << std::setfill(c);
 		return oss.str();
 	}
+
 	template<typename T>
 	std::string stringify(const T &t) {
 		std::ostringstream oss;

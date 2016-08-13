@@ -32,10 +32,10 @@ DEBUG_EXT?=_debug
 RELEASE_EXT?=
 
 MODULE_DIRS?=util/ system/ math/ model/ view/
-MAIN_MODULES?=util system/net system\
+MAIN_MODULES?=util system/net\
 			  math math/affine math/quat math/dual\
 			  model/ply model view view/shade control
-MAIN_H_ONLY?=util/types math/quat math/dual
+MAIN_H_ONLY?=util/types math/quat math/dual system
 MAIN_INCLUDES?=$(foreach inc,$(MAIN_H_ONLY) $(MAIN_MODULES),\
 			   $(inc:%=%.hpp))
 
@@ -59,18 +59,17 @@ EXE_OBJS?=$(TEST_OBJ) $(RELEASE_OBJ)
 
 ###############################################################################
 WFLAGS+=-Wall -Wno-unused
-CFLAGS=-fPIC -fdata-sections -isystem $(DIR_GL3W_INCLUDE)
-CPPFLAGS:=$(CFLAGS) -I$(DIR_ROOT_INCLUDE) \
-		 -I$(DIR_GL3W_INCLUDE) -I$(DIR_BOOST_INCLUDE) \
+CFLAGS=-fPIC -fdata-sections \
+	   -isystem $(DIR_GL3W_INCLUDE) -isystem $(DIR_GL3W_INCLUDE)
+CPPFLAGS:=$(CFLAGS) -I$(DIR_ROOT_INCLUDE) -I$(DIR_BOOST_INCLUDE) \
 		 -std=c++11 -pthread -fopenmp=libomp
 LD_LIBRARY_PATH:=$(LD_LIBRARY_PATH):$(DIR_GL3W_LIB)
-LDFLAGS:=-L$(DIR_BOOST_LIB) -L$(DIR_GL3W_LIB) \
-	-lpthread -Wl,--gc-sections\
-	-Wl,-rpath,$(DIR_BOOST_LIB):$(DIR_GL3W_LIB)\
-	-lboost_system
+LDFLAGS:=-L$(DIR_BOOST_LIB) -L$(DIR_GL3W_LIB) -lpthread \
+	-Wl,--gc-sections -Wl,-rpath,$(DIR_BOOST_LIB):$(DIR_GL3W_LIB)\
+	-lboost_coroutine -lboost_system
 RELEASE_LDFLAGS:=$(LDFLAGS) -lGL -lGLU -lglfw -ldl
 #DEBUG_LDFLAGS=$(LDFLAGS) -lboost_system
-TEST_LDFLAGS:=$(LDFLAGS) -lboost_unit_test_framework -lGL -lglfw -ldl
+TEST_LDFLAGS:=$(LDFLAGS) -lboost_unit_test_framework -lGL -lGLU -lglfw -ldl
 ###############################################################################
 LINK_CC=$(CC) $(CFLAGS) $(WFLAGS)
 LINK_CXX=$(CXX) $(CPPFLAGS) $(WFLAGS)
@@ -93,7 +92,7 @@ $(RELEASE_EXE): $(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS)
 	$(LINK_CXX) -fPIE $< -lgl3w $(MAIN_OBJS) -o $@ $(RELEASE_LDFLAGS)
 
 test: $(TEST_EXE) ; # use --log_level=error
-$(TEST_EXE): $(TEST_OBJ) $(MAIN_OBJS) $(GL3W_OBJS)
+$(TEST_EXE): $(DIR_TEST)$(DIR_SRC)math.cpp $(MAIN_SRCS) $(GL3W_SRCS)
 	$(LINK_CXX) -fPIE $< $(MAIN_OBJS) $(GL3W_OBJS) -o $@ $(TEST_LDFLAGS)
 
 $(DIR_GL3W)%.o: $(DIR_GL3W)$(DIR_SRC)*.c
@@ -106,8 +105,8 @@ $(DIR_ROOT_LIB)%.o: $(DIR_ROOT_SRC)%.cpp $(DIR_ROOT_INCLUDE)%.hpp
 	$(LINK_CXX) -I$(DIR_ROOT_INCLUDE) -shared $< -o $@
 	$(DEPEND_CXX) $< -o $(@:.o=.d)
 
-#%.hpp$(PCH_EXT): %.hpp
-#	$(COMPILE_HPP) $< -o $@
+%.hpp$(PCH_EXT): %.hpp
+	$(COMPILE_HPP) $< -o $@
 
 .sentinel:
 	$(MKDIR) $(SENTINEL_DIRS)
@@ -119,11 +118,10 @@ clean-objs:; $(RM) $(EXE_OBJS) $(MAIN_OBJS)
 clean-exes:; $(RM) $(EXES)
 clean-sentinels:; $(RM) .sentinel
 clean-gl3w:; $(RM) $(GL3W_OBJS)
-clean: clean-deps clean-exes clean-objs clean-pchs clean-sentinels;
+clean: clean-exes clean-objs clean-pchs clean-sentinels;
 
 env:; @echo "$(foreach var,CC CXX CFLAGS CPPFLAGS WFLAGS\
-	RELEASE_LDFLAGS TEST_LDFLAGS,\
-		\r$(var) = ${$(var)}\n)"
+	RELEASE_LDFLAGS TEST_LDFLAGS,\r$(var) = ${$(var)}\n)"
 
 .PHONY: all depends env release test debug \
 	clean clean-exes clean-deps clean-objs clean-sentinels
