@@ -6,6 +6,14 @@
 
 namespace View {
 	namespace Input {
+		enum e_cb_type : uint16_t{
+			e_cb_char=0, e_cb_jmove, e_cb_kbd, e_cb_mcross,
+			e_cb_mdrop, e_cb_mmove, e_cb_mpress, e_cb_mscroll
+		};
+
+		/// Generic callback type
+		typedef void (*cb_t)();
+
 		/// Keyboard event callback type
 		typedef void (*cb_kbd)(GLFWwindow*, int, int, int, int);
 
@@ -29,6 +37,7 @@ namespace View {
 
 		/// Joystick movement event callback type
 		typedef void (*cb_jmove)(GLFWwindow*, int, int);
+
 	}
 }
 
