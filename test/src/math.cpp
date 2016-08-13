@@ -16,16 +16,19 @@
 
 using namespace Math;
 
-const quat<float> R0{0}, R1{1}, 
-	  i{0,1}, j{0,0,1}, k{0,0,0,1};
+const quat<float> R0{0,0,0,0}, R1{1,0,0,0}, 
+	  i{0,1,0,0}, j{0,0,1,0}, k{0,0,0,1};
 const dual<float> E0{R0}, E1{R0, 1}, 
-	  Ei = E1*i, Ej = E1*j, Ek = E1*k;
+	  Ei = i*E1, Ej = j*E1, Ek = k*E1;
 
 BOOST_AUTO_TEST_CASE(quaternions) {
-	BOOST_CHECK_EQUAL(i*j, k);
-	BOOST_CHECK_EQUAL(j*i,-k);
+	auto subtrahend = i*j, minuend = k;
+	BOOST_REQUIRE_EQUAL((subtrahend - minuend).w, 0);
+	auto subtrahend2 = j*i, minuend2 = -k;
+	BOOST_REQUIRE_EQUAL((subtrahend2 - minuend2).w, 0);
 }
 
 BOOST_AUTO_TEST_CASE(dual_quaternions) {
-	BOOST_CHECK_EQUAL(E1*E1, E0);
+	auto product = ((E1-E0)*(E1-E0)).u.w;
+	BOOST_REQUIRE_EQUAL(product, 0);
 }
