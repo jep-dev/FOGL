@@ -7,6 +7,7 @@
 #include <chrono>
 
 namespace Control {
+
 	void control::run(std::atomic_bool &alive,
 			const char *vert, const char *frag) {
 		using namespace Model::Ply;
@@ -29,6 +30,5 @@ namespace Control {
 			}
 			if(!alive) break;
 		}
-		//glfwTerminate();
 	}
 }
