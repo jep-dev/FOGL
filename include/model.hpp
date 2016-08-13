@@ -1,8 +1,13 @@
-#pragma once
 #ifndef MODEL_HPP
 #define MODEL_HPP
 
+#include <vector>
 #include <GL/gl3w.h>
+
+#include "system.hpp"
+#include "model/ply.hpp"
+#include "model/obj.hpp"
+
 
 namespace Model {
 	

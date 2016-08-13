@@ -1,10 +1,9 @@
-#pragma once
 #ifndef PLY_HPP
 #define PLY_HPP
 
-#include "model.hpp"
-#include "system.hpp"
 #include <iosfwd>
+#include <vector>
+#include <string>
 
 namespace Model {
 	namespace Ply {

@@ -1,8 +1,6 @@
 #ifndef MAIN_HPP
 #define MAIN_HPP
 
-#include "model/obj.hpp"
-
 /**
  * Entry point of the program
  * @param argc Number of args (1+)

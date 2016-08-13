@@ -1,8 +1,6 @@
-#pragma once
 #ifndef MATH_AFFINE_HPP
 #define MATH_AFFINE_HPP
 
-#include "math.hpp"
 #include <boost/operators.hpp>
 
 namespace Math {

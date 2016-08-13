@@ -1,8 +1,5 @@
-#pragma once
 #ifndef UTIL_FUNCTION_HPP
 #define UTIL_FUNCTION_HPP
-
-//#include "util.hpp"
 
 namespace Util {
 	template<typename T>

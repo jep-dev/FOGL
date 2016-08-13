@@ -1,8 +1,6 @@
-#pragma once
 #ifndef MATH_QUAT_HPP
 #define MATH_QUAT_HPP
 
-#include "math.hpp"
 #include <boost/operators.hpp>
 
 namespace Math {
@@ -33,10 +31,10 @@ namespace Math {
 		/** Apply (lhs * rhs * ~lhs) */
 		dual<R> operator()(dual<R> const& rhs) const;
 		
-		quat<R> operator+(quat<R> const& rhs) const;
+		/*quat<R> operator+(quat<R> const& rhs) const;
 		quat<R> operator-(quat<R> const& rhs) const;
 		quat<R> operator/(quat<R> const& rhs) const;
-		quat<R> operator/(R const& rhs) const;
+		quat<R> operator/(R const& rhs) const;*/
 
 
 		quat<R>& operator+=(quat<R> const& rhs);
@@ -84,7 +82,7 @@ namespace Math {
 	quat<R> quat<R>::operator()(quat<R> const& rhs) const {
 		return *this * rhs * ~*this;
 	}
-	template<typename R>
+	/*template<typename R>
 	quat<R> quat<R>::operator+(quat<R> const& rhs) const {
 		return {w+rhs.w, x+rhs.x, y+rhs.y, z+rhs.z};
 	}
@@ -92,7 +90,7 @@ namespace Math {
 	quat<R> quat<R>::operator-(quat<R> const& rhs) const {
 		return {w-rhs.w, x-rhs.x, y-rhs.y, z-rhs.z};
 	}
-	/*template<typename R>
+	template<typename R>
 	quat<R> quat<R>::operator*(R const& rhs) const {
 		return {rhs*w, rhs*x, rhs*y, rhs*z};
 	}
@@ -105,7 +103,7 @@ namespace Math {
 			w*rx + x*rw + y*rz - z*ry,
 			w*ry + y*rw + rz*x - z*rx,
 			w*rz + z*rw + x*ry - y*rx};
-	}*/
+	}
 	template<typename R>
 	quat<R> quat<R>::operator/(R const& rhs) const {
 		return {w/rhs, x/rhs, y/rhs, z/rhs};
@@ -113,7 +111,7 @@ namespace Math {
 	template<typename R>
 	quat<R> quat<R>::operator/(quat<R> const& rhs) const {
 		return *this * !rhs;
-	}
+	}*/
 
 	template<typename R>
 	quat<R>& quat<R>::operator+=(quat<R> const& rhs) {
@@ -132,16 +130,17 @@ namespace Math {
 		return *this;
 	}
 	template<typename R>
-	quat<R>& quat<R>::operator*=(quat<R> const& rhs) {
-		quat<R> clone {w, x, y, z};
-		w = clone.w * w - clone.x * x - clone.y * y - clone.z * z;
-		x = clone.w * x + clone.x * w + clone.y * z - clone.z * y;
-		y = clone.w * y - clone.x * z + clone.y * w + clone.z * x;
-		z = clone.w * z + clone.x * y - clone.y * x + clone.z * w;
+	quat<R>& quat<R>::operator*=(quat<R> const& r) {
+		R lw = w, lx = x, ly = y, lz = z,
+		  rw = r.w, rx = r.x, ry = r.y, rz = r.z;
+		w = lw*rw - lx*rx - ly*ry - lz*rz;
+		x = lw*rx + lx*rw + ly*rz - lz*ry;
+		y = lw*ry - lx*rz + ly*rw + lz*rx;
+		z = lw*rz + lx*ry - ly*rx + lz*rw;
 		return *this;
 		//return *this = *this * rhs;
 	}
-	template<typename R>
+	/*template<typename R>
 	quat<R>& quat<R>::operator/=(R const& rhs) {
 		w /= rhs; x /= rhs;
 		y /= rhs; z /= rhs;
@@ -150,7 +149,7 @@ namespace Math {
 	template<typename R>
 	quat<R>& quat<R>::operator/=(quat<R> const& rhs) {
 		return *this = *this / rhs;
-	}
+	}*/
 }
 
 #endif

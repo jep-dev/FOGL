@@ -1,4 +1,3 @@
-#pragma once
 #ifndef MATH_HPP
 #define MATH_HPP
 
@@ -14,9 +13,12 @@
 namespace Math {
 	/*! True if and only if u and v are at most 1/2^E apart */
 	template<typename T = double, int E = -6>
-	bool near(T u, T v, int e = E) {
-		return std::abs(u-v) <= pow(2.0, e);
+	bool near(T u, T v, int e = E, int _adt = 0) {
+		return (((u-v)*(u-v)) <= pow(2.0,e+1));
 	};
+
+	// TODO constexpr near using std::ratio
+
 
 	/*! A quaternion (real, i, j, k)
 	 * @tparam R The type of each dimension */
