@@ -55,8 +55,7 @@ namespace View {
 		static constexpr const unsigned int
 			offset = 3*sizeof(float),
 			stride = 2*offset,
-			bits = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;;
-		
+			bits = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
 		setUniforms();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glBindBuffer(GL_ARRAY_BUFFER, ids[e_id_vbuf]);
@@ -76,61 +75,47 @@ namespace View {
 		glDisableVertexAttribArray(0);
 		glfwSwapBuffers(win);
 	}
-	
-	void view::run(bool (*update)(void), std::atomic_bool& alive) {
-		if(valid && win) {
+
+	// TODO move to control along with View::Inputs
+	void view::poll(std::atomic_bool &alive) {
+		if(alive && win) {
 			glfwMakeContextCurrent(win);
-			double t1 = glfwGetTime(), t2;
-			int frame = 0, dFrame = 0, fps;
-			while(alive) {
-				glfwPollEvents();
-				if(glfwWindowShouldClose(win)) {
-					alive = false;
-					update();
-					// Source then sink?
-				} else if(update()) {
-					redraw(frame + dFrame, fps);
-					t2 = glfwGetTime();
-					if(t2-t1 >= .75) {
-						fps = int(dFrame/(t2-t1));
-						std::cout << fps << " fps\n";
-						t1 = t2;
-						frame += dFrame;
-						dFrame = 0;
-					}
-					dFrame++;
-					continue;
-				}
-				break;
-			}
+			glfwPollEvents();
+		}
+		if(glfwWindowShouldClose(win)) {
+			alive = false;
 		}
 	}
-
-	view::view(const char *vert, const char *frag) {
-		using namespace Model::Ply;
-
-		// TODO - safe model and shader loading at runtime
-		static constexpr const char *mpath = "share/bunny.ply";
-		//static constexpr const char *mpath = "share/ant.ply";
-
-		Header model(mpath);
-		if(!glfwInit()) {
-			std::cout << "Could not initialize GLFW." << std::endl;
+	
+	void view::run(std::atomic_bool& alive, int frame, int fps) {
+		if(alive && win && !glfwWindowShouldClose(win)) {
+			glfwMakeContextCurrent(win);
+			redraw(frame, fps);
+		}
+	}
+	view::view(std::atomic_bool &alive, const char *vert, const char *frag) {
+		if(!alive) {
+			return;
+		}
+		if(glfwInit() == 0) {
+			alive = false;
+			//std::cout << "glfwInit() returned 0!" << std::endl;
 			return;
 		}
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-		win = glfwCreateWindow(512, 512, "View", NULL, NULL);
-
-		if(!win) {
+		
+		if(!(win = glfwCreateWindow(512, 512, "View", NULL, NULL))) {
 			std::cout << "Could not create window." << std::endl;
+			alive = false;
 			return;
 		}
 
 		glfwMakeContextCurrent(win);
 		if(gl3wInit()) {
 			std::cout << "Could not initialize gl3w." << std::endl;
+			alive = false;
 			return;
 		}
 		glfwSetWindowSizeCallback(win, 
@@ -138,14 +123,28 @@ namespace View {
 				glViewport(0, 0, w, h);
 			}
 		);
+		glfwSetErrorCallback(
+			[] (int, const char *szErr) {
+				std::cout << szErr << std::endl;
+			});
 		
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 
 		glGenVertexArrays(1, &ids[e_id_va]);
 		glBindVertexArray(ids[e_id_va]);
-
-		if(model.status) {
+		
+		ids[e_id_prog] = glCreateProgram();
+		if(!link(vert, frag, ids[e_id_prog])) {
+			std::cout << "Could not compile/link shader(s)." << std::endl;
+			alive = false;
+			return;
+		}
+		ids[e_id_model] = glGetUniformLocation(ids[e_id_prog], "model");
+		ids[e_id_view] = glGetUniformLocation(ids[e_id_prog], "view");
+		ids[e_id_proj] = glGetUniformLocation(ids[e_id_prog], "proj");
+		
+		/*if(model.status) {
 			std::cout << model.statusContext << std::endl;
 			return;
 		}
@@ -163,22 +162,10 @@ namespace View {
 		auto vertices = std::find_if(start, stop, getVertices),
 				 indices = std::find_if(start, stop, getIndices);
 		if(vertices == stop || indices == stop) {
-			valid = false;
 			std::cout << "The model is valid, but does not match "
 				"the anticipated structure." << std::endl;
 			return;
 		}
-		/*const int iMax = 10, jMax = iMax;
-		GLfloat vertices[3*iMax*jMax];
-		GLclampf u, v;
-		for(int i = 0; i < iMax; i++) {
-			u = i/(GLclampf) iMax;
-			for(int j = 0; j < jMax; j++) {
-				v = j/(GLclampf) jMax;
-				contour((GLfloat*) (&vertices[3*(i*iMax+j)]),
-						(GLclampf) u, (GLclampf) v);
-			}
-		}*/
 
 		glGenBuffers(1, &ids[e_id_vbuf]);
 		glBindBuffer(GL_ARRAY_BUFFER, ids[e_id_vbuf]);
@@ -190,17 +177,7 @@ namespace View {
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices->data.size(),
 				(void*)(&indices->data[0]), GL_STATIC_DRAW);
 		nTriangles = indices -> instances;
-		
-		ids[e_id_prog] = glCreateProgram();
-		if(!link(vert, frag, ids[e_id_prog])) {
-			std::cout << "Could not compile/link shader(s)." << std::endl;
-			return;
-		}
-		ids[e_id_model] = glGetUniformLocation(ids[e_id_prog], "model");
-		ids[e_id_view] = glGetUniformLocation(ids[e_id_prog], "view");
-		ids[e_id_proj] = glGetUniformLocation(ids[e_id_prog], "proj");
-		glUseProgram(ids[e_id_prog]);
-		valid = true;
+		glUseProgram(ids[e_id_prog]);*/
 	}
 	view::~view(void) {
 		if(ids[e_id_prog]) {

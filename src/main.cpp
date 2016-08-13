@@ -1,6 +1,7 @@
-#include "control.hpp"
-#include "main.hpp"
 #include "system.hpp"
+#include "control.hpp"
+#include "math.hpp"
+#include "main.hpp"
 
 #include <iostream>
 
@@ -12,9 +13,15 @@ using namespace System;
 using PB = Printer_Base;
 
 int main(int argc, const char **argv) {
+	using namespace Math;
+	auto __1 = quat<float>{1,0,0,0},
+		 __2 = quat<float>{0,1,0,0},
+		 __3 = quat<float>{0,0,1,0},
+		 __4 = quat<float>{0,0,0,1};
+	auto ident = quat<quat<float>>{__1,__2,__3,__4};
+
 	std::atomic_bool alive(true);
 	Control::control ctl;
-	ctl.run(alive, "share/shade.vert",
-			"share/shade.frag");
+	ctl.run(alive, "share/shade.vert", "share/shade.frag");
 	return 0;
 }

@@ -1,32 +1,37 @@
-
 #include "system.hpp"
+#include "system/printer.hpp"
+
 #include "view.hpp"
 #include "view/shade.hpp"
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <streambuf>
 
 namespace View {
 	using std::string;
 	bool compile(const char *fname, GLuint &shader) {
-		using string=std::string;
-
 		int len;
 		GLint status = GL_FALSE;
-		string lines = "";
-		if(System::readFile(fname, lines)) {
-			const GLchar *cs = lines.c_str();
-			glShaderSource(shader, 1, &cs, NULL);
-			glCompileShader(shader);
-			glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
-			glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &len);
-			if(len > 1) {
-				char msg[len+1];
-				msg[len] = '\0';
-				glGetShaderInfoLog(shader, len, NULL, msg);
-				std::cout << msg << std::endl;
-			}
+		
+		std::ifstream file(fname);
+		std::string lines((std::istreambuf_iterator<char>(file)),
+				std::istreambuf_iterator<char>());
+		file.close();
+
+		const GLchar *cs = lines.c_str();
+		glShaderSource(shader, 1, &cs, NULL);
+		glCompileShader(shader);
+		glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &len);
+		if(len > 1) {
+			char msg[len+1];
+			msg[len] = '\0';
+			glGetShaderInfoLog(shader, len, NULL, msg);
+			std::cout << msg << std::endl;
 		}
-		return status == GL_TRUE;
+		return true;
 	}
 
 	bool link(const char *vertName, 
