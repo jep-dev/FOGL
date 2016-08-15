@@ -99,7 +99,6 @@ namespace View {
 		}
 		if(glfwInit() == 0) {
 			alive = false;
-			//std::cout << "glfwInit() returned 0!" << std::endl;
 			return;
 		}
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);

@@ -20,8 +20,9 @@ int main(int argc, const char **argv) {
 		 __4 = quat<float>{0,0,0,1};
 	auto ident = quat<quat<float>>{__1,__2,__3,__4};
 
+	glfwInit();
 	std::atomic_bool alive(true);
-	Control::control ctl;
-	ctl.run(alive, "share/shade.vert", "share/shade.frag");
+	Control::control ctl(alive, "share/shade.vert", "share/shade.frag");
+	ctl.run(alive);
 	return 0;
 }

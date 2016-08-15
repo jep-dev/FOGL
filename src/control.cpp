@@ -8,13 +8,11 @@
 
 namespace Control {
 
-	void control::run(std::atomic_bool &alive,
-			const char *vert, const char *frag) {
+	void control::run(std::atomic_bool &alive) {
 		using namespace Model::Ply;
 		auto delay = std::chrono::milliseconds(150);
 
 		int frame = 0, dFrames = 0, fps = 0;
-		View::view viewer(alive, vert, frag);
 		auto kill = [&alive] {alive = false;};
 		double t1 = glfwGetTime(), t2;
 		while(true) {
@@ -31,4 +29,7 @@ namespace Control {
 			if(!alive) break;
 		}
 	}
+	control::control(std::atomic_bool &alive,
+			const char *vert, const char *frag):
+		viewer(alive, vert, frag) {}
 }

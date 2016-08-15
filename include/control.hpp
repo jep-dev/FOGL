@@ -18,10 +18,11 @@ namespace Control {
 
 	/// A data structure controlling both model and view
 	struct control {
+		View::view viewer;
 		Model::contour<Util::undef_t, GLfloat,
 			GLclampf, GLclampf> model;
-		void run(std::atomic_bool &alive,
-				const char *vert, const char *frag);
+		void run(std::atomic_bool &alive);
+		control(std::atomic_bool &alive, const char *vert, const char *frag);
 	};
 
 }
