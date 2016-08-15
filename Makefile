@@ -51,7 +51,7 @@ TEST_EXE?=$(DIR_ROOT_BIN)$(EXE_BASE)$(TEST_EXT)$(EXE_EXT)
 RELEASE_EXE?=$(DIR_ROOT_BIN)$(EXE_BASE)$(RELEASE_EXT)$(EXE_EXT)
 EXES?=$(TEST_EXE) $(RELEASE_EXE)
 
-GL3W_OBJS?=$(DIR_GL3W_LIB)gl3w.o
+GL3W_OBJS?=$(DIR_GL3W_LIB)gl3w.o $(DIR_GL3W_LIB)libgl3w.so
 TEST_OBJ?=$(DIR_ROOT_LIB)main$(TEST_EXT).o
 #DEBUG_OBJ=$(DIR_ROOT)$(DIR_LIB)main$(DEBUG_EXT).o
 RELEASE_OBJ?=$(DIR_ROOT_LIB)main$(RELEASE_EXT).o
@@ -95,7 +95,7 @@ test: $(TEST_EXE) ; # use --log_level=error
 $(TEST_EXE): $(DIR_TEST)$(DIR_SRC)math.cpp $(MAIN_SRCS) $(GL3W_SRCS)
 	$(LINK_CXX) -fPIE $< $(MAIN_OBJS) $(GL3W_OBJS) -o $@ $(TEST_LDFLAGS)
 
-$(DIR_GL3W)%.o: $(DIR_GL3W)$(DIR_SRC)*.c
+$(DIR_GL3W)%.o $(DIR_GL3w)%.so: $(DIR_GL3W)$(DIR_SRC)*.c
 	$(COMPILE_CC) -fPIC -o $@ $<
 	$(LINK_CC) $(CFLAGS) -shared $< \
 		-o $(@:$(DIR_GL3W_LIB)%.o=$(DIR_GL3W_LIB)lib%.so)
