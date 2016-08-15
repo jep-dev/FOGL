@@ -31,7 +31,7 @@ TEST_EXT?=_test
 DEBUG_EXT?=_debug
 RELEASE_EXT?=
 
-MODULE_DIRS?=util/ system/ math/ model/ view/
+#MODULE_DIRS?=util/ system/ math/ model/ view/
 MAIN_MODULES?=util system/net\
 			  math math/affine math/quat math/dual\
 			  model/ply model view view/shade control
@@ -102,7 +102,7 @@ $(DIR_GL3W)%.o $(DIR_GL3w)%.so: $(DIR_GL3W)$(DIR_SRC)*.c
 
 $(DIR_ROOT_LIB)%.o: $(DIR_ROOT_SRC)%.cpp $(DIR_ROOT_INCLUDE)%.hpp
 	$(COMPILE_CXX) $< -o $@
-	$(LINK_CXX) -I$(DIR_ROOT_INCLUDE) -shared $< -o $@
+	$(LINK_CXX) -I$(DIR_ROOT_INCLUDE) -shared $< -o $(@:%.o=%.so)
 	$(DEPEND_CXX) $< -o $(@:.o=.d)
 
 %.hpp$(PCH_EXT): %.hpp
