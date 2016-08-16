@@ -2,11 +2,19 @@
 #include "model/ply.hpp"
 
 #include "omp.h"
-
-#include <GLFW/glfw3.h>
 #include <chrono>
 
 namespace Control {
+	void control::init(std::atomic_bool &alive) {
+		glfwSetWindowSizeCallback(viewer.win,
+			[] (GLFWwindow *win, int wx, int wy) {
+				std::cout << "Resize: " << wx << ", " << wy << std::endl;
+			});
+		glfwSetCursorPosCallback(viewer.win,
+			[] (GLFWwindow *win, double x, double y) {
+				std::cout << "Mouse: " << x << ", " << y << std::endl;
+			});
+	}
 
 	void control::run(std::atomic_bool &alive) {
 		using namespace Model::Ply;
@@ -31,5 +39,7 @@ namespace Control {
 	}
 	control::control(std::atomic_bool &alive,
 			const char *vert, const char *frag):
-		viewer(alive, vert, frag) {}
+		task(), viewer(alive, vert, frag) {
+			init(alive);
+		}
 }

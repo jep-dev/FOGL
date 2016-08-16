@@ -4,6 +4,7 @@
 #include <atomic>
 #include <iostream>
 #include <thread>
+#include <GL/gl3w.h>
 
 #include "util.hpp"
 #include "model.hpp"
@@ -17,14 +18,13 @@ namespace Control {
 	} e_tid; ///< The ID of a thread, where 0 is the master
 
 	/// A data structure controlling both model and view
-	struct control {
+	struct control : virtual Util::task {
 		View::view viewer;
-		Model::contour<Util::undef_t, GLfloat,
-			GLclampf, GLclampf> model;
+		Model::contour<Util::undef_t, GLfloat, GLclampf, GLclampf> model;
+		void init(std::atomic_bool &alive);
 		void run(std::atomic_bool &alive);
 		control(std::atomic_bool &alive, const char *vert, const char *frag);
 	};
-
 }
 
 
