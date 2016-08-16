@@ -14,6 +14,5 @@ int main(int argc, const char **argv) {
 	std::atomic_bool alive(true);
 	Control::control ctl(alive, "share/shade.vert", "share/shade.frag");
 	Util::task::run(alive, &ctl);
-	glfwTerminate();
 	return 0;
 }
