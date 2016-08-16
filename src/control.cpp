@@ -14,6 +14,17 @@ namespace Control {
 			[] (GLFWwindow *win, double x, double y) {
 				std::cout << "Mouse: " << x << ", " << y << std::endl;
 			});
+		glfwSetKeyCallback(viewer.win,
+			[] (GLFWwindow *win, int key, int scancode, int action, int mods) {
+				if(action == GLFW_PRESS) {
+					switch(key) {
+					case GLFW_KEY_ESCAPE: {
+						std::cout << "Escape press" << std::endl;
+					} break;
+					default: break;
+					}
+				}
+			});
 	}
 
 	void control::run(std::atomic_bool &alive) {
