@@ -2,7 +2,6 @@
 #define VIEW_INPUT_HPP
 
 #include "view.hpp"
-#include <GLFW/glfw3.h>
 
 namespace View {
 	namespace Input {
