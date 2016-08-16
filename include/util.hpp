@@ -144,6 +144,7 @@ namespace Util { // --> util/functional.hpp
 		struct for_zip_t;
 }
 #include "util/functional.hpp"
+#include "util/task.hpp"
 
 template<typename... S>
 void zipper(std::function<void(S...)> fn) {}
