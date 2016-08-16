@@ -25,6 +25,8 @@ DIR_GL3W_SRC?=$(DIR_GL3W)$(DIR_SRC)
 DIR_GL3W_LIB?=$(DIR_GL3W)
 
 EXE_EXT?=
+OBJ_EXT=.o
+DLL_EXT?=.so
 PCH_EXT?=.pch
 EXE_BASE?=fogl
 TEST_EXT?=_test
@@ -51,10 +53,10 @@ TEST_EXE?=$(DIR_ROOT_BIN)$(EXE_BASE)$(TEST_EXT)$(EXE_EXT)
 RELEASE_EXE?=$(DIR_ROOT_BIN)$(EXE_BASE)$(RELEASE_EXT)$(EXE_EXT)
 EXES?=$(TEST_EXE) $(RELEASE_EXE)
 
-GL3W_OBJS?=$(DIR_GL3W_LIB)gl3w.o $(DIR_GL3W_LIB)libgl3w.so
-TEST_OBJ?=$(DIR_ROOT_LIB)main$(TEST_EXT).o
+GL3W_OBJS?=$(DIR_GL3W_LIB)gl3w$(OBJ_EXT) $(DIR_GL3W_LIB)libgl3w$(DLL_EXT)
+TEST_OBJ?=$(DIR_ROOT_LIB)main$(TEST_EXT)$(OBJ_EXT)
 #DEBUG_OBJ=$(DIR_ROOT)$(DIR_LIB)main$(DEBUG_EXT).o
-RELEASE_OBJ?=$(DIR_ROOT_LIB)main$(RELEASE_EXT).o
+RELEASE_OBJ?=$(DIR_ROOT_LIB)main$(RELEASE_EXT)$(OBJ_EXT)
 EXE_OBJS?=$(TEST_OBJ) $(RELEASE_OBJ)
 
 ###############################################################################
@@ -95,12 +97,13 @@ test: $(TEST_EXE) ; # use --log_level=error
 $(TEST_EXE): $(DIR_TEST)$(DIR_SRC)math.cpp $(MAIN_SRCS) $(GL3W_SRCS)
 	$(LINK_CXX) -fPIE $< $(MAIN_OBJS) $(GL3W_OBJS) -o $@ $(TEST_LDFLAGS)
 
-$(DIR_GL3W)%.o $(DIR_GL3w)%.so: $(DIR_GL3W)$(DIR_SRC)*.c
+$(DIR_GL3W)%$(OBJ_EXT)$(DIR_GL3W)%$(DLL_EXT): $(DIR_GL3W)$(DIR_SRC)*.c
 	$(COMPILE_CC) -fPIC -o $@ $<
 	$(LINK_CC) $(CFLAGS) -shared $< \
 		-o $(@:$(DIR_GL3W_LIB)%.o=$(DIR_GL3W_LIB)lib%.so)
 
-$(DIR_ROOT_LIB)%.o: $(DIR_ROOT_SRC)%.cpp $(DIR_ROOT_INCLUDE)%.hpp
+$(DIR_ROOT_LIB)%$(OBJ_EXT) $(DIR_ROOT_LIB)lib%$(DLL_EXT): \
+		$(DIR_ROOT_SRC)%.cpp $(DIR_ROOT_INCLUDE)%.hpp
 	$(COMPILE_CXX) $< -o $@
 	$(LINK_CXX) -I$(DIR_ROOT_INCLUDE) -shared $< -o $(@:%.o=%.so)
 	$(DEPEND_CXX) $< -o $(@:.o=.d)
@@ -114,7 +117,7 @@ $(DIR_ROOT_LIB)%.o: $(DIR_ROOT_SRC)%.cpp $(DIR_ROOT_INCLUDE)%.hpp
 
 clean-deps:; $(RM) $(EXE_OBJS:.o=.d) $(MAIN_DEPS) 
 clean-pchs:; $(RM) $(MAIN_PCHS)
-clean-objs:; $(RM) $(EXE_OBJS) $(MAIN_OBJS)
+clean-objs:; $(RM) $(EXE_OBJS) $(MAIN_OBJS) $(MAIN_DLLS)
 clean-exes:; $(RM) $(EXES)
 clean-sentinels:; $(RM) .sentinel
 clean-gl3w:; $(RM) $(GL3W_OBJS)
