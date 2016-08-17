@@ -51,7 +51,7 @@ namespace View {
 		glUniformMatrix4fv(ids[e_id_view], 1, GL_FALSE, mat_view);
 	}
 	
-	void view::redraw(int frame, int fps) {
+	void view::redraw() {
 		static constexpr const unsigned int
 			offset = 3*sizeof(float),
 			stride = 2*offset,
@@ -86,11 +86,22 @@ namespace View {
 			alive = false;
 		}
 	}
+	void view::init(std::atomic_bool &alive) {
+		glfwSetWindowSizeCallback(win, 
+			[](GLFWwindow*, int w, int h){
+				glViewport(0, 0, w, h);
+			}
+		);
+		glfwSetErrorCallback(
+			[] (int, const char *szErr) {
+				std::cout << szErr << std::endl;
+			});
+	}
 	
-	void view::run(std::atomic_bool& alive, int frame, int fps) {
+	void view::run(std::atomic_bool &alive) {
 		if(alive && win && !glfwWindowShouldClose(win)) {
 			glfwMakeContextCurrent(win);
-			redraw(frame, fps);
+			redraw();
 		}
 	}
 	view::view(std::atomic_bool &alive, const char *vert, const char *frag) {
@@ -117,15 +128,6 @@ namespace View {
 			alive = false;
 			return;
 		}
-		glfwSetWindowSizeCallback(win, 
-			[](GLFWwindow*, int w, int h){
-				glViewport(0, 0, w, h);
-			}
-		);
-		glfwSetErrorCallback(
-			[] (int, const char *szErr) {
-				std::cout << szErr << std::endl;
-			});
 		
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);

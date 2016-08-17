@@ -146,8 +146,21 @@ namespace Util { // --> util/functional.hpp
 #include "util/functional.hpp"
 #include "util/task.hpp"
 
+/** \copydoc zipper */
 template<typename... S>
 void zipper(std::function<void(S...)> fn) {}
+/** Applies the given function to each pair of elements
+ * @tparam S1 The type of the first element from the first pack
+ * @tparam SN The type of the remaining elements of the second pack
+ * @tparam T1 The type of the first element of the second pack
+ * @tparam TN The type of the remaining elements of the first pack
+ * @tparam FN The type of the function to apply to the given elements
+ * @param fn The function to apply to the given elements
+ * @param s1 The first element from the first pack
+ * @param sn The remaining elements from the first pack
+ * @param t1 The first element of the second pack
+ * @param tn The remaining elements from the first pack
+ */
 template<typename S1, typename... SN, typename T1, typename... TN,
 	template<typename> class FN = std::function>
 void zipper(FN<void(S1, SN...)> fn,
@@ -156,6 +169,16 @@ void zipper(FN<void(S1, SN...)> fn,
 	fn(SELF(s1), SELF(sn)...);
 	zipper(fn, SELF(t1), SELF(tn)...);
 }
+
+/** Abstraction of \ref zipper to arrays of elements
+ * @tparam FN The type of the function to apply
+ * @tparam N The number of elements in all arrays
+ * @tparam T1 The type of the first argument array
+ * @tparam TN The type of the rest of the argument arrays
+ * @param fn The function to apply
+ * @param t1 The first argument array
+ * @param tn The remainder of the argument arrays
+ */
 template<typename FN, int N, typename T1, typename... TN>
 void for_zip(FN fn, T1 (&t1)[N], TN (&...tn)[N]) {
 	using namespace Util;
@@ -163,10 +186,21 @@ void for_zip(FN fn, T1 (&t1)[N], TN (&...tn)[N]) {
 			FWD(T1(&)[N],t1), FWD(TN(&)[N],tn)...);
 }
 
+/** Calculates the product of sizes for statically-sized members
+ * @tparam T1 The first statically-sized template argument
+ * @tparam TN The remainder of the template arguments
+ * @return The product of all argument sizes
+ */
 template<typename T1, typename... TN>
 constexpr int SizeProduct(void) {
 	return Util::sizes_t<T1, TN..., Util::delim_t>::SIZE;
 }
+
+/** Calculates the product of sizes for statically-sized members
+ * @tparam T1 The first statically-sized template argument
+ * @tparam TN The remainder of the template arguments
+ * @return The product of all argument sizes
+ */
 template<typename T1, typename... TN>
 constexpr int SizeProduct(T1 && t1, TN &&... tn) {
 	return SizeProduct<T1, TN...>();
@@ -182,7 +216,15 @@ void for_seq(FN fn, T1 && t1, TN &&... tn) {
 }
 
 /**! Applies fn to each element of the cartesian product of the
- * argument arrays. */
+ * argument arrays.
+ * @tparam FN The type of the function to apply
+ * @tparam T1 The type of the first argument
+ * @tparam TN the type of the remainder of the arguments
+ * @tparam N The product of the argument sizes
+ * @param fn The function to apply
+ * @param t1 The first argument
+ * @param tn The remainder of the arguments
+ */
 template<typename FN, typename T1, typename... TN,
 	int N = Util::sizes_t<T1, TN..., Util::delim_t>::SIZE>
 void for_all(FN fn, T1 && t1, TN &&... tn) {
@@ -212,6 +254,7 @@ auto map_for_all(FN fn, RET (&out)[N],
 
 namespace Util {
 	namespace Test {
+		/** Statically tests traits of derivative types */
 		static bool run(void) {
 			using namespace Util;
 			// Base types

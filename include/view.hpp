@@ -10,6 +10,7 @@
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
 
+#include "util.hpp"
 #include "view/input.hpp"
 #include "view/shade.hpp"
 
@@ -18,7 +19,7 @@ namespace View {
 	void printErrors(const char *prefix);
 
 	/// A view structure (state and implementation)
-	struct view {
+	struct view : virtual Util::task {
 		typedef enum {
 			e_id_prog=0, e_id_va, 
 			e_id_vbuf,   e_id_ibuf, 
@@ -30,26 +31,33 @@ namespace View {
 		float near = 1, far = 10, fov = 25;
 		int nTriangles;
 		GLFWwindow *win;
+		int frame = 0, fps = 0;
 	
 		/// Sets stable shader values (uniforms)
 		void setUniforms(void);
 
+		/** Polls for updates; move to control?
+ 		 * @param alive Shared state; false signals shutdown
+ 		 */
 		void poll(std::atomic_bool &alive);
 
 		/*! Calculates and displays the next frame, potentially incorporating
  		 * the frame index (discrete time) and FPS
-		 * @param frame The discrete time (frames since startup)
-		 * @param fps The most-recently calculated frames per second
 		 */
-		void redraw(int frame = 0, int fps = 0);
+		void redraw();
 		
 		/** Begins the game loop with the specified callbacks
-		 * @param update Updates the model; false signals shutdown
 		 * @param alive Shared status flag; false signals shutdown
 		 */
-		void run(std::atomic_bool &alive, int frame = 0, int fps = 0);
+		void run(std::atomic_bool &alive) override;
+
+		/** Initializes any resources not initialized in the constructor
+ 		 * @param alive Shared status flag; false signals shutdown
+ 		 */
+		void init(std::atomic_bool &alive) override;
 
 		/** Constructor for a view object
+ 		 * @param alive Shared status flag; false signals shutdown
 		 * @param vert Path to a GLSL vertex shader
 		 * @param frag Path to a GLSL fragment shader
 		 */

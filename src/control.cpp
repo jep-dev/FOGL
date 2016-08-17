@@ -36,7 +36,7 @@ namespace Control {
 		double t1 = glfwGetTime(), t2;
 		while(true) {
 			if(alive) viewer.poll(alive);
-			if(alive) viewer.run(alive, frame, fps);
+			if(alive) viewer.run(alive);
 			t2 = glfwGetTime() - t1;
 			frame++;
 			dFrames++;
