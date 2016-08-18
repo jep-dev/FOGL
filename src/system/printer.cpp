@@ -1,5 +1,5 @@
-#include "system.hpp"
 #include <fstream>
+#include "system.hpp"
 
 namespace System {
 	bool uni_special(char ch) {
@@ -92,4 +92,4 @@ namespace System {
 		}
 		return wc;
 	}
-};
+}

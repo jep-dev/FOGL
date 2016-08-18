@@ -5,7 +5,7 @@ namespace Model {
 	/// An object 
 	struct obj_t {
 		/*! The enumeration and count of possible states */
-		typedef enum e_obj_status : uint8_t{
+		typedef enum {
 			e_status_ok=0,   ///< Parsing status is OK
 			e_status_io,     ///< An IO exception has occurred
 			e_status_unknown,///< An unknown exception has occurred
@@ -13,7 +13,7 @@ namespace Model {
 		} e_obj_status;
 
 		/*! An enumeration of supported types */
-		typedef enum e_obj_element : uint8_t {
+		typedef enum {
 			e_element_comment=0, ///< \ref element_t
 			e_element_face,      ///< \ref face_t
 			e_element_group,     ///< \ref group_t
