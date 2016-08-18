@@ -42,7 +42,7 @@ namespace System {
 		return len;
 	}
 
-	std::string repeat(int w, char c = ' ') {
+	std::string repeat(int w, char c) {
 		std::ostringstream oss;
 		oss << std::setw(w) << std::setfill(c);
 		return oss.str();
