@@ -27,23 +27,43 @@ DIR_GL3W_LIB?=$(DIR_GL3W)
 EXE_EXT?=
 OBJ_EXT=.o
 DLL_EXT?=.so
+DEP_EXT?=.d
 PCH_EXT?=.pch
 EXE_BASE?=fogl
 TEST_EXT?=_test
-DEBUG_EXT?=_debug
+#DEBUG_EXT?=_debug
 RELEASE_EXT?=
 
-#MODULE_DIRS?=util/ system/ math/ model/ view/
-MAIN_MODULES?=util system/net\
-			  math math/affine math/quat math/dual\
-			  model/ply model view view/shade control
+MODULE_DIRS?=util/ system/ math/ model/ view/
+MAIN_MODULES?=util math model view control
+SYSTEM_SUBMODULES?=net
+MATH_SUBMODULES?=affine quat dual
+VIEW_SUBMODULES?=shade input
+MODEL_SUBMODULES?=ply obj
+MAIN_SUBMODULES?=$(foreach mod,$(SYSTEM_SUBMODULES),system/$(mod))\
+				 $(foreach mod,$(MATH_SUBMODULES),math/$(mod))\
+				 $(foreach mod,$(VIEW_SUBMODULES),view/$(mod))\
+				 $(foreach mod,$(MODEL_SUBMODULES),model/$(mod))
+#MAIN_SUBMODULES?=system/net\
+				view/shade view/input\
+				math/affine math/quat math/dual\
+				model/ply model/obj
 MAIN_H_ONLY?=util/types math/quat math/dual system
-MAIN_INCLUDES?=$(foreach inc,$(MAIN_H_ONLY) $(MAIN_MODULES),\
-			   $(inc:%=%.hpp))
+MAIN_INCLUDES?=$(foreach inc,$(MAIN_H_ONLY)\
+			   $(MAIN_MODULES) $(MAIN_SUBMODULES),$(inc:%=%.hpp))
 
-MAIN_SRCS?=$(foreach mod,$(MAIN_MODULES) main,$(DIR_ROOT_SRC)$(mod).cpp)
-MAIN_OBJS=$(foreach mod,$(MAIN_MODULES),$(mod:%=$(DIR_ROOT_LIB)%.o))
-MAIN_DEPS=$(MAIN_OBJS:%.o=%.d)
+MAIN_SRCS?=$(foreach mod,$(MAIN_MODULES) $(MAIN_SUBMODULES) main,\
+		   $(DIR_ROOT_SRC)$(mod).cpp)
+MAIN_OBJS=$(foreach mod,$(MAIN_MODULES) $(MAIN_SUBMODULES),\
+		  $(mod:%=$(DIR_ROOT_LIB)%$(OBJ_EXT)))
+MAIN_DLLS=$(foreach dir,$(MODULE_DIRS),$(foreach src,\
+		  $(wildcard $(DIR_ROOT_SRC)$(dir)*.cpp),\
+		  $(src:$(DIR_ROOT_SRC)$(dir)%.cpp=$(DIR_ROOT_LIB)$(dir)lib%$(DLL_EXT))))
+MAIN_DLL_LINKS=$(foreach dll,$(MAIN_DLLS),$(dll:lib%$(DLL_EXT)=-l%)
+MAIN_DLL_DIRS=-L$(DIR_ROOT_LIB) $(foreach dir,$(MODULE_DIRS),\
+			  -L$(DIR_ROOT_LIB)$(dir))
+MAIN_DEPS=$(MAIN_OBJS:%$(OBJ_EXT)=%$(DEP_EXT))\
+		$(MAIN_DLLS:%$(DLL_EXT)=%$(DEP_EXT))
 
 SENTINEL_DIRS?=$(DIR_BIN) $(foreach outer,$(DIR_LIB),\
 			   $(foreach inner,. $(MODULE_DIRS),$(outer)$(inner)))
@@ -69,7 +89,7 @@ LD_LIBRARY_PATH:=$(LD_LIBRARY_PATH):$(DIR_GL3W_LIB)
 LDFLAGS:=-L$(DIR_BOOST_LIB) -L$(DIR_GL3W_LIB) -lpthread \
 	-Wl,--gc-sections -Wl,-rpath,$(DIR_BOOST_LIB):$(DIR_GL3W_LIB)\
 	-lboost_coroutine -lboost_system
-RELEASE_LDFLAGS:=$(LDFLAGS) -lGL -lGLU -lglfw -ldl
+RELEASE_LDFLAGS:=$(LDFLAGS) $(MAIN_DLL_DIRS) -lGL -lGLU -lglfw -ldl
 #DEBUG_LDFLAGS=$(LDFLAGS) -lboost_system
 TEST_LDFLAGS:=$(LDFLAGS) -lboost_unit_test_framework -lGL -lGLU -lglfw -ldl
 ###############################################################################
@@ -83,15 +103,17 @@ COMPILE_HPP=$(LINK_CXX) -x c++-header
 ###############################################################################
 
 default:.sentinel $(MAIN_PCHS) release
-all:default test #debug
+all:.sentinel $(MAIN_PCHS) $(MAIN_OBJS) $(MAIN_DLLS) $(MAIN_DEPS) \
+		release test #debug
 vpath %.hpp $(DIR_ROOT_INCLUDE)
 vpath %.cpp $(DIR_ROOT_SRC)
 
 -include $(MAIN_DEPS)
 
-release: $(RELEASE_EXE) ;
-$(RELEASE_EXE): $(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS)
-	$(LINK_CXX) -fPIE $< -lgl3w $(MAIN_OBJS) -o $@ $(RELEASE_LDFLAGS)
+release: $(RELEASE_EXE) $(RELEASE_OBJ);
+$(RELEASE_EXE): $(RELEASE_OBJ) $(MAIN_OBJS) $(MAIN_DLLS) $(GL3W_OBJS)
+	$(LINK_CXX) -fPIE $(RELEASE_OBJ) $(MAIN_OBJS) -lgl3w \
+		-L$(DIR_ROOT_LIB) -o $@ $(RELEASE_LDFLAGS)
 
 test: $(TEST_EXE) ; # use --log_level=error
 $(TEST_EXE): $(DIR_TEST)$(DIR_SRC)math.cpp $(MAIN_SRCS) $(GL3W_SRCS)
@@ -99,14 +121,19 @@ $(TEST_EXE): $(DIR_TEST)$(DIR_SRC)math.cpp $(MAIN_SRCS) $(GL3W_SRCS)
 
 $(DIR_GL3W)%$(OBJ_EXT)$(DIR_GL3W)%$(DLL_EXT): $(DIR_GL3W)$(DIR_SRC)*.c
 	$(COMPILE_CC) -fPIC -o $@ $<
-	$(LINK_CC) $(CFLAGS) -shared $< \
-		-o $(@:$(DIR_GL3W_LIB)%.o=$(DIR_GL3W_LIB)lib%.so)
+	$(LINK_CC) $(CFLAGS) -shared \
+		$< -o $(@:$(DIR_GL3W_LIB)%.o=$(DIR_GL3W_LIB)lib%.so)
 
-$(DIR_ROOT_LIB)%$(OBJ_EXT) $(DIR_ROOT_LIB)lib%$(DLL_EXT): \
+#$(DIR_ROOT_LIB)%$(OBJ_EXT) $(DIR_ROOT_LIB)lib%$(DLL_EXT): \
+		$(DIR_ROOT_SRC)%.cpp $(DIR_ROOT_INCLUDE)%.hpp
+
+$(DIR_ROOT_LIB)%$(OBJ_EXT) $(DIR_ROOT_LIB)%$(DEP_EXT):\
 		$(DIR_ROOT_SRC)%.cpp $(DIR_ROOT_INCLUDE)%.hpp
 	$(COMPILE_CXX) $< -o $@
-	$(LINK_CXX) -I$(DIR_ROOT_INCLUDE) -shared $< -o $(@:%.o=%.so)
-	$(DEPEND_CXX) $< -o $(@:.o=.d)
+	$(DEPEND_CXX) $< -o $(@:$(OBJ_EXT)=.d)
+
+lib%$(DLL_EXT): %$(OBJ_EXT)
+	$(LINK_CXX) -I$(DIR_ROOT_INCLUDE) -shared $< -o $@
 
 %.hpp$(PCH_EXT): %.hpp
 	$(COMPILE_HPP) $< -o $@
@@ -124,7 +151,7 @@ clean-gl3w:; $(RM) $(GL3W_OBJS)
 clean: clean-exes clean-objs clean-pchs clean-sentinels;
 
 env:; @echo "$(foreach var,CC CXX CFLAGS CPPFLAGS WFLAGS\
-	RELEASE_LDFLAGS TEST_LDFLAGS,\r$(var) = ${$(var)}\n)"
+	RELEASE_LDFLAGS TEST_LDFLAGS MAIN_DLLS,\r$(var) = ${$(var)}\n)"
 
 .PHONY: all depends env release test debug \
 	clean clean-exes clean-deps clean-objs clean-sentinels
