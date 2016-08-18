@@ -26,21 +26,17 @@ namespace Model {
 							element = oe;
 						}
 					}
+					// TODO Parsing
 					switch(element) {
 					case e_element_comment: {
-						// TODO
 					} break;
 					case e_element_face: {
-						// TODO 
 					} break;
 					case e_element_group: {
-						// TODO
 					} break;
 					case e_element_line: {
-						// TODO
 					} break;
 					case e_element_vertex: {
-						// TODO
 					} break;
 					default: {
 						element = e_element_total;
