@@ -5,22 +5,22 @@ namespace Model {
 	/// An object 
 	struct obj_t {
 		/*! The enumeration and count of possible states */
-		enum e_obj_status {
+		typedef enum e_obj_status : uint8_t{
 			e_status_ok=0,   ///< Parsing status is OK
 			e_status_io,     ///< An IO exception has occurred
 			e_status_unknown,///< An unknown exception has occurred
 			e_status_total   ///< The total number of statuses
-		};
+		} e_obj_status;
 
 		/*! An enumeration of supported types */
-		enum e_obj_element {
+		typedef enum e_obj_element : uint8_t {
 			e_element_comment=0, ///< \ref element_t
 			e_element_face,      ///< \ref face_t
 			e_element_group,     ///< \ref group_t
 			e_element_line,      ///< \ref line_t
 			e_element_vertex,    ///< \ref vertex_t
 			e_element_total      ///< The total number of supported types
-		};
+		} e_obj_element;
 
 		static constexpr const char *prefixes[e_element_total]{
 			"#", "f", "g", "l", "v"
