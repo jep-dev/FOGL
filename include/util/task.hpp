@@ -9,11 +9,11 @@ namespace Util {
 		/** Initializes any resources deferred from constructor
  		 * @param alive Shared status; false signals shutdown
  		 */
-		virtual void init(std::atomic_bool&) =0;
+		virtual void init(std::atomic_bool& alive) =0;
 		/** Runs a given task
  		 * @param alive Shared status; false signals shutdown
  		 */
-		virtual void run(std::atomic_bool&) =0;
+		virtual void run(std::atomic_bool& alive) =0;
 	
 		/** Initializes any resources deferred from constructor
  		 * @param alive Shared status; false signals shutdown
