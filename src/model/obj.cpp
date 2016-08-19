@@ -6,7 +6,8 @@
 #include <boost/tokenizer.hpp>
 
 namespace Model {
-	obj_t::e_obj_status obj_t::load(const char *fname, element_t** elements) {
+	obj_t::e_obj_status obj_t::load(const char *fname,
+			std::vector<element_t> &elements) {
 		std::ifstream file;
 		file.open(fname, std::ios::in);
 		if(!file.is_open()) {
@@ -28,7 +29,9 @@ namespace Model {
 					}
 					// TODO Parse obj types
 					switch(element) {
-					case e_element_comment: break;
+					case e_element_comment:
+						//
+						break;
 					case e_element_face: break;
 					case e_element_group: break;
 					case e_element_line: break;

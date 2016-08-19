@@ -146,9 +146,13 @@ namespace Util { // --> util/functional.hpp
 #include "util/functional.hpp"
 #include "util/task.hpp"
 
-/** \copydoc zipper */
+/** Applies the given function to each pair of elements
+ * @tparam S The expected type of the arguments
+ * @param fn The function to apply to the arguments
+ */
 template<typename... S>
 void zipper(std::function<void(S...)> fn) {}
+
 /** Applies the given function to each pair of elements
  * @tparam S1 The type of the first element from the first pack
  * @tparam SN The type of the remaining elements of the second pack
@@ -180,7 +184,7 @@ void zipper(FN<void(S1, SN...)> fn,
  * @param tn The remainder of the argument arrays
  */
 template<typename FN, int N, typename T1, typename... TN>
-void for_zip(FN fn, T1 (&t1)[N], TN (&...tn)[N]) {
+void for_zip(FN fn, T1 (&t1)[N], TN (&... tn)[N]) {
 	using namespace Util;
 	for_zip_t<N, N, FN, T1, TN...>::apply(fn,
 			FWD(T1(&)[N],t1), FWD(TN(&)[N],tn)...);
