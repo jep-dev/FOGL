@@ -1,5 +1,6 @@
 #ifndef OBJ_HPP
 #define OBJ_HPP
+#include <vector>
 
 namespace Model {
 	/// An object 
@@ -65,7 +66,13 @@ namespace Model {
 			const e_obj_element type = e_element_vertex;
 		};
 
-		static e_obj_status load(const char *fname, element_t** elements);
+		/** Loads an obj file with the given path into a vector of elements
+		 * @param fname The path to the obj file
+		 * @param elements The destination, a vector of elements
+		 * @return e_status_ok (0) if and only if the load was successful
+		 */
+		static e_obj_status load(const char *fname,
+				std::vector<element_t> &elements);
 	};
 }
 
