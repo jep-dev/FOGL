@@ -145,41 +145,6 @@ namespace View {
 		ids[e_id_view] = glGetUniformLocation(ids[e_id_prog], "view");
 		ids[e_id_proj] = glGetUniformLocation(ids[e_id_prog], "proj");
 		glUseProgram(ids[e_id_prog]);
-		
-		/*if(model.status) {
-			std::cout << model.statusContext << std::endl;
-			return;
-		}
-		auto start = begin(model.elements), 
-				 stop = end(model.elements);
-		auto getVertices = [](Element const& el) -> bool {
-			return el.name == "vertex" && !el.has_list
-				&& (el.properties.size() == 6 || el.properties.size() == 3);
-		};
-		auto getIndices = [](Element const& el) -> bool {
-			int sz = el.properties.size();
-			return el.name == "face"
-				&& (el.has_list ? sz==1 : sz==3);
-		};
-		auto vertices = std::find_if(start, stop, getVertices),
-				 indices = std::find_if(start, stop, getIndices);
-		if(vertices == stop || indices == stop) {
-			std::cout << "The model is valid, but does not match "
-				"the anticipated structure." << std::endl;
-			return;
-		}
-
-		glGenBuffers(1, &ids[e_id_vbuf]);
-		glBindBuffer(GL_ARRAY_BUFFER, ids[e_id_vbuf]);
-		glBufferData(GL_ARRAY_BUFFER, vertices->data.size(),
-				(void*)(&vertices->data[0]), GL_STATIC_DRAW);
-
-		glGenBuffers(1, &ids[e_id_ibuf]);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ids[e_id_ibuf]);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices->data.size(),
-				(void*)(&indices->data[0]), GL_STATIC_DRAW);
-		nTriangles = indices -> instances;
-		glUseProgram(ids[e_id_prog]);*/
 	}
 	view::~view(void) {
 		if(ids[e_id_prog]) {
