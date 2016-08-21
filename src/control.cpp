@@ -7,9 +7,12 @@
 
 namespace Control {
 	void control::init(std::atomic_bool &alive) {
-		using namespace Model::Ply;
 		glfwSetInputMode(viewer.win, GLFW_STICKY_KEYS, 1);
 		glfwMakeContextCurrent(viewer.win);
+
+		using namespace Model::Ply;
+		using namespace View;
+
  		Header model("share/bunny.ply");
  		if(model.status) {
 			std::cout << model.statusContext << std::endl;
@@ -34,18 +37,18 @@ namespace Control {
 			return;
 		}
 
-		glGenBuffers(1, &viewer.ids[View::view::e_id_vbuf]);
-		glBindBuffer(GL_ARRAY_BUFFER, viewer.ids[View::view::e_id_vbuf]);
+		glGenBuffers(1, &viewer.ids[view::e_id_vbuf]);
+		glBindBuffer(GL_ARRAY_BUFFER, viewer.ids[view::e_id_vbuf]);
 		glBufferData(GL_ARRAY_BUFFER, vertices->data.size(),
 				(void*)(&vertices->data[0]), GL_STATIC_DRAW);
 
-		glGenBuffers(1, &viewer.ids[View::view::e_id_ibuf]);
+		glGenBuffers(1, &viewer.ids[view::e_id_ibuf]);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,
-				viewer.ids[View::view::e_id_ibuf]);
+				viewer.ids[view::e_id_ibuf]);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices->data.size(),
 				(void*)(&indices->data[0]), GL_STATIC_DRAW);
 		viewer.nTriangles = indices -> instances;
-		glUseProgram(viewer.ids[View::view::e_id_prog]);
+		glUseProgram(viewer.ids[view::e_id_prog]);
 	}
 
 	void control::poll(std::atomic_bool &alive) {

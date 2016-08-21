@@ -24,22 +24,23 @@ namespace View {
 		glfwGetFramebufferSize(win, &w, &h);
 		float mag = float(1/tan(fov*M_PI/180));
 		float mat_proj[]{
-				mag*h/w, 0, 0, 0, 0, mag, 0, 0,
+				mag, 0, 0, 0, 0, mag, 0, 0,
 				0, 0, (far+near)/(far-near), -1,
 				0, 0, 2*far*near/(far-near), 0
 		};
 		glUniformMatrix4fv(ids[e_id_proj], 1, GL_TRUE, mat_proj);
 
-		/* TODO - static not intended, just persistence;
- 		 * all of the data here should be passed or shared */
-		static float theta = 0;
+		/* TODO - replace with members theta,phi; modify from control */
+		static float theta = 0, phi = 0;
 		theta += M_PI/180;
-		float c = cos(theta), s = sin(theta);
+		phi += M_PI/180*2;
+		float ct = cos(theta), st = sin(theta),
+			  cp = cos(cos(phi)), sp = sin(cos(phi));
 		float mat_model[]{
-				c, 0,-s, 0,
-				0, 1, 0, 0,
-				s, 0, c, c,
-				0, 0, 0, 1
+				    ct,    0,    -st, 0,
+				-sp*st,   cp, -sp*ct, 0,
+				 cp*st,   sp,  cp*ct, 0,
+				     0,    0,      0, 1
 		}, mat_view[]{
 				1, 0, 0, 0,
 				0, 1, 0, 0,
