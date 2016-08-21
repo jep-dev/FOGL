@@ -1,6 +1,8 @@
 #ifndef OBJ_HPP
 #define OBJ_HPP
+
 #include <vector>
+#include <memory>
 
 namespace Model {
 	/// An object 
@@ -23,47 +25,66 @@ namespace Model {
 			e_element_total      ///< The total number of supported types
 		} e_obj_element;
 
-		static constexpr const char *prefixes[e_element_total]{
-			"#", "f", "g", "l", "v"
-		};
-
 		/// The abstract base of each obj element
 		struct element_t {
-		protected:
-			e_obj_element type;
+			static constexpr const char *prefix(void);
+			const e_obj_element type;
+			friend std::ostream& operator<<(std::ostream& os,
+					element_t const& el);
+			element_t(e_obj_element type): type(type) {}
+			virtual ~element_t(void) {}
 		};
 
 		/// A comment, used only for storage
-		struct comment_t : element_t {
-			const char *contents;
-		protected:
+		struct comment_t : public element_t {
+			static constexpr const char *prefix(void) {
+				return "#";
+			}
 			const e_obj_element type = e_element_comment;
+			friend std::ostream& operator<<(std::ostream& os,
+					comment_t const& comment) {
+				return os << std::string(comment.contents);
+
+			}
+			std::string contents;
+			comment_t(std::string contents):
+				element_t(e_element_comment),
+				contents(contents) {}
 		};
 
 		/// A set of vertices with or without texture coordinates
-		struct face_t : element_t {
-			unsigned int *vertices, *coordinates;
+		struct face_t : public element_t {
+			static constexpr const char *prefix(void) {
+				return "f";
+			}
+			std::vector<unsigned int> vertices, coordinates;
 			bool tex_coords = false;
-		protected:
-			const e_obj_element type = e_element_face;
+			face_t(bool has_tex = false):
+				element_t(e_element_face), tex_coords(has_tex) {}
 		};
 
 		/// A collection of faces, lines, and vertices
-		struct group_t : element_t {
-		protected:
-			const e_obj_element type = e_element_group;
+		struct group_t : public element_t {
+			static constexpr const char *prefix(void) {
+ 			   return "g";
+			}
+			group_t(void): element_t(e_element_group) {}
 		};
 
 		/// A pair of vertex indices 
-		struct line_t : element_t {
-		protected:
-			const e_obj_element type = e_element_line;
+		struct line_t : public element_t {
+			static constexpr const char *prefix(void) {
+				return "l";
+			}
+			line_t(void): element_t(e_element_line) {}
 		};
 
 		/// A single point, containing at least x, y, z coordinates
-		struct vertex_t : element_t {
-		protected:
-			const e_obj_element type = e_element_vertex;
+		struct vertex_t : public element_t {
+			static constexpr const char *prefix(void) {
+				return "v";
+			}
+			vertex_t(void): element_t(e_element_vertex) {}
 		};
 
 		/** Loads an obj file with the given path into a vector of elements
@@ -71,8 +92,14 @@ namespace Model {
 		 * @param elements The destination, a vector of elements
 		 * @return e_status_ok (0) if and only if the load was successful
 		 */
-		static e_obj_status load(const char *fname,
-				std::vector<element_t> &elements);
+		static e_obj_status load(const char *fname, obj_t &elements);
+
+		std::vector<comment_t> comments;
+		std::vector<face_t> faces;
+		std::vector<group_t> groups;
+		std::vector<line_t> lines;
+		std::vector<vertex_t> vertices;
+		std::vector<e_obj_element> types;
 	};
 }
 
