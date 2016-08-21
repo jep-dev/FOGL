@@ -77,10 +77,11 @@ MAIN_DEPS=$(MAIN_OBJS:%$(OBJ_EXT)=%$(DEP_EXT))
 SENTINEL_DIRS?=$(DIR_BIN) $(foreach outer,$(DIR_LIB),\
 			   $(foreach inner,. $(MODULE_DIRS),$(outer)$(inner)))
 
-TEST_EXE?=$(DIR_ROOT_BIN)$(EXE_BASE)$(TEST_EXT)$(EXE_EXT)
+TEST_EXES?=$(foreach mod,math model,\
+		   $(DIR_ROOT_BIN)$(mod)$(TEST_EXT)$(EXE_EXT))
 #DEBUG_EXE?=$(DIR_ROOT)$(DIR_BIN)$(EXE_BASE)$(DEBUG_EXT)$(EXE_EXT)
 RELEASE_EXE?=$(DIR_ROOT_BIN)$(EXE_BASE)$(RELEASE_EXT)$(EXE_EXT)
-EXES?=$(TEST_EXE) $(RELEASE_EXE)
+EXES?=$(TEST_EXES) $(RELEASE_EXE)
 
 GL3W_OBJS?=$(DIR_GL3W_LIB)gl3w$(OBJ_EXT) $(DIR_GL3W_LIB)libgl3w$(DLL_EXT)
 TEST_OBJ?=$(DIR_ROOT_LIB)main$(TEST_EXT)$(OBJ_EXT)
@@ -92,8 +93,8 @@ EXE_OBJS?=$(TEST_OBJ) $(RELEASE_OBJ)
 WFLAGS+=-Wall -Wno-unused
 CFLAGS=-fPIC -fdata-sections \
 	   -isystem $(DIR_GL3W_INCLUDE) -isystem $(DIR_GL3W_INCLUDE)
-CPPFLAGS:=$(CFLAGS) -I$(DIR_ROOT_INCLUDE) -I$(DIR_BOOST_INCLUDE)\
-		 -std=c++11 -pthread -fopenmp=libomp
+CPPFLAGS:=$(CFLAGS) -std=c++11 -pthread -fopenmp=libomp\
+	-I$(DIR_BOOST_INCLUDE) -I$(DIR_ROOT_INCLUDE) 
 LD_LIBRARY_PATH:=$(LD_LIBRARY_PATH):$(DIR_GL3W_LIB)
 LDFLAGS:=-L$(DIR_BOOST_LIB) -L$(DIR_GL3W_LIB) -lpthread\
 	-Wl,--gc-sections -Wl,-rpath,$(DIR_BOOST_LIB):$(DIR_GL3W_LIB)\
@@ -114,59 +115,45 @@ DEPEND_CXX=$(LINK_CXX) -M
 COMPILE_HPP=$(LINK_CXX) -x c++-header
 ###############################################################################
 
-default:.sentinel $(MAIN_PCHS) release
-all:.sentinel $(MAIN_PCHS) release test #debug
+default:.sentinel release
+all:default test #debug
 vpath %.hpp $(DIR_ROOT_INCLUDE)
 vpath %.cpp $(DIR_ROOT_SRC)
 
--include $(MAIN_DEPS)
-
-release: $(RELEASE_EXE) $(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS);
-#$(RELEASE_EXE): $(RELEASE_OBJ) $(MAIN_OBJS) $(MAIN_DLLS) $(GL3W_OBJS)
-$(RELEASE_EXE): $(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS)
-	$(LINK_CXX) -fPIE\
-		$(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS)\
-		$(RELEASE_LDFLAGS)\
-		-o $@
-#$(LINK_CXX) -fPIE $(RELEASE_OBJ) $(MAIN_OBJS) -lgl3w \
-		-L$(DIR_ROOT_LIB) -o $@ $(RELEASE_LDFLAGS)
-
-test: $(TEST_EXE) ; # use --log_level=error
-$(TEST_EXE): $(DIR_TEST)$(DIR_SRC)math.cpp $(MAIN_SRCS) $(GL3W_SRCS)
-	$(LINK_CXX) -fPIE $< $(MAIN_OBJS) $(GL3W_OBJS)\
-		$(TEST_LDFLAGS)\
-		-o $@
+.sentinel:
+	$(MKDIR) $(SENTINEL_DIRS)
+	@touch .sentinel
 
 $(DIR_GL3W)%$(OBJ_EXT): $(DIR_GL3W)$(DIR_SRC)*.c
-	$(COMPILE_CC) -fPIC $< \
+	$(COMPILE_CC) -fPIC $<\
 		-o $@
 $(DIR_GL3W)lib%$(OBJ_EXT)$(DIR_GL3W)%$(DLL_EXT): $(DIR_GL3W)$(DIR_SRC)*.c
 	$(LINK_CC) $(CFLAGS) -shared $<\
 		-o $@
 
-#$(DIR_ROOT_LIB)%$(OBJ_EXT) $(DIR_ROOT_LIB)lib%$(DLL_EXT): \
-		$(DIR_ROOT_SRC)%.cpp $(DIR_ROOT_INCLUDE)%.hpp
 
-$(DIR_ROOT_LIB)%$(OBJ_EXT) $(DIR_ROOT_LIB)%$(DEP_EXT):\
+#$(DIR_ROOT_LIB)%$(OBJ_EXT) $(DIR_ROOT_LIB)%$(DEP_EXT):\
+		$(DIR_ROOT_SRC)%.cpp $(DIR_ROOT_INCLUDE)%.hpp
+$(DIR_ROOT_LIB)%$(OBJ_EXT):\
 		$(DIR_ROOT_SRC)%.cpp $(DIR_ROOT_INCLUDE)%.hpp
 	$(COMPILE_CXX) $<\
 		-o $@
-	$(DEPEND_CXX) $<\
-		-o $(@:$(OBJ_EXT)=$(DEP_EXT))
 
-#%$(DEP_EXT): %$(OBJ_EXT)
+$(DIR_ROOT_LIB)%$(DEP_EXT): $(DIR_ROOT_SRC)%.cpp
+	$(DEPEND_CXX) $<\
+		-o $@
+$(DIR_ROOT_LIB)*/%$(DEP_EXT): $(DIR_ROOT_SRC)*/%.cpp
+	$(DEPEND_CXX) $<\
+		-o $@
 
 lib%$(DLL_EXT): $(MAIN_SRCS)
-	$(LINK_CXX) -I$(DIR_ROOT_INCLUDE) -shared $<\
+	$(LINK_CXX) -shared $<\
 		-o $@ $(LDFLAGS)
 
 %.hpp$(PCH_EXT): %.hpp
 	$(COMPILE_HPP) $<\
 		-o $@
 
-.sentinel:
-	$(MKDIR) $(SENTINEL_DIRS)
-	@touch .sentinel
 
 clean-deps:; $(RM) $(EXE_OBJS:.o=.d) $(MAIN_DEPS) 
 clean-pchs:; $(RM) $(MAIN_PCHS)
@@ -177,8 +164,35 @@ clean-sentinels:; $(RM) .sentinel
 clean-gl3w:; $(RM) $(GL3W_OBJS)
 clean: clean-exes clean-dlls clean-deps clean-objs clean-pchs clean-sentinels;
 
-env:; @echo "$(foreach var,CC CXX CFLAGS CPPFLAGS WFLAGS\
-	RELEASE_LDFLAGS TEST_LDFLAGS MAIN_OBJS,\r$(var) = ${$(var)}\n)"
+env:
+	@echo "$(foreach var,CC CXX CFLAGS CPPFLAGS WFLAGS\
+		RELEASE_LDFLAGS TEST_LDFLAGS MAIN_OBJS,\r$(var) = ${$(var)}\n)"
+
+
+-include $(MAIN_DEPS)
+
+release: $(RELEASE_EXE) $(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS);
+#$(RELEASE_EXE): $(RELEASE_OBJ) $(MAIN_OBJS) $(MAIN_DLLS) $(GL3W_OBJS)
+$(RELEASE_EXE): $(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS)
+	$(LINK_CXX) -fPIE\
+		$(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS)\
+		$(RELEASE_LDFLAGS)\
+		-o $@
+
+test: $(TEST_EXES) ; # use --log_level=error
+$(DIR_ROOT_BIN)math$(TEST_EXT)$(EXE_EXT):\
+		$(DIR_TEST)$(DIR_SRC)math.cpp $(MAIN_OBJS)
+	$(LINK_CXX) -fPIE\
+		$< $(MAIN_OBJS) $(GL3W_OBJS)\
+		$(TEST_LDFLAGS)\
+		-o $@
+
+$(DIR_ROOT_BIN)model$(TEST_EXT)$(EXE_EXT):\
+		$(DIR_TEST)$(DIR_SRC)model.cpp $(MAIN_OBJS)
+	$(LINK_CXX) -fPIE\
+		$< $(MAIN_OBJS) $(GL3W_OBJS)\
+		$(TEST_LDFLAGS)\
+		-o $@
 
 .PHONY: all depends env release test debug\
 	clean clean-exes clean-dlls clean-deps clean-objs clean-sentinels
