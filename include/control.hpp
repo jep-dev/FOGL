@@ -21,8 +21,11 @@ namespace Control {
 	struct control : virtual Util::task {
 		View::view viewer;
 		Model::contour<Util::undef_t, GLfloat, GLclampf, GLclampf> model;
+		
 		void init(std::atomic_bool &alive) override;
+		void poll(std::atomic_bool &alive);
 		void run(std::atomic_bool &alive) override;
+
 		/** Constructor; initializes and applies shaders
  		 * @param alive Shared state; false signals shutdown
  		 * @param vert Path to a GLSL vertex shader

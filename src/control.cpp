@@ -1,30 +1,46 @@
 #include "control.hpp"
 #include "model/ply.hpp"
+#include <sstream>
 
 #include "omp.h"
 #include <chrono>
 
 namespace Control {
 	void control::init(std::atomic_bool &alive) {
-		glfwSetWindowSizeCallback(viewer.win,
-			[] (GLFWwindow *win, int wx, int wy) {
-				std::cout << "Resize: " << wx << ", " << wy << std::endl;
-			});
-		glfwSetCursorPosCallback(viewer.win,
-			[] (GLFWwindow *win, double x, double y) {
-				std::cout << "Mouse: " << x << ", " << y << std::endl;
-			});
-		glfwSetKeyCallback(viewer.win,
-			[] (GLFWwindow *win, int key, int scancode, int action, int mods) {
-				if(action == GLFW_PRESS) {
-					switch(key) {
-					case GLFW_KEY_ESCAPE: {
-						std::cout << "Escape press" << std::endl;
-					} break;
-					default: break;
-					}
+		glfwSetInputMode(viewer.win, GLFW_STICKY_KEYS, 1);
+	}
+
+	void control::poll(std::atomic_bool &alive) {
+		std::ostringstream oss;
+		if(alive)
+			viewer.poll(alive);
+		if(alive) {
+			if(glfwGetKey(viewer.win, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+				alive = false;
+			int nButtons;
+			const uint8_t *buttons =
+				glfwGetJoystickButtons(GLFW_JOYSTICK_1, &nButtons);
+			bool once = false;
+			for(int i = 0; i < nButtons; i++) {
+				bool pressed = buttons[i] == GLFW_PRESS;
+				if(once && pressed) oss << ", " << i;
+				if(!once && pressed) {
+					once = true;
+					oss << i;
 				}
-			});
+			}
+			if(once)
+				std::cout << "\nPressed: " << oss.str() << std::endl;
+
+			once = false;
+			int nAxes;
+			const GLfloat *axes =
+				glfwGetJoystickAxes(GLFW_JOYSTICK_1, &nAxes);
+			for(int i = 0; i < nAxes; i++) {
+				std::cout << "Axis " << i << " = " << axes[i] << std::endl;
+			}
+			endl(std::cout);
+		}
 	}
 
 	void control::run(std::atomic_bool &alive) {
@@ -35,7 +51,7 @@ namespace Control {
 		auto kill = [&alive] {alive = false;};
 		double t1 = glfwGetTime(), t2;
 		while(true) {
-			if(alive) viewer.poll(alive);
+			poll(alive);
 			if(alive) viewer.run(alive);
 			t2 = glfwGetTime() - t1;
 			frame++;
@@ -48,6 +64,7 @@ namespace Control {
 			if(!alive) break;
 		}
 	}
+
 	control::control(std::atomic_bool &alive,
 			const char *vert, const char *frag):
 		task(), viewer(alive, vert, frag) {
