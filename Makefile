@@ -139,10 +139,10 @@ $(DIR_ROOT_LIB)%$(OBJ_EXT):\
 	$(COMPILE_CXX) $<\
 		-o $@
 
-$(DIR_ROOT_LIB)%$(DEP_EXT): $(DIR_ROOT_SRC)%.cpp
+$(DIR_ROOT_LIB)%$(DEP_EXT): $(DIR_ROOT_SRC)%.cpp $(DIR_ROOT_INCLUDE)%.hpp
 	$(DEPEND_CXX) $<\
 		-o $@
-$(DIR_ROOT_LIB)*/%$(DEP_EXT): $(DIR_ROOT_SRC)*/%.cpp
+$(DIR_ROOT_LIB)*/%$(DEP_EXT): $(DIR_ROOT_SRC)*/%.cpp $(DIR_ROOT_INCLUDE)*/%.hpp
 	$(DEPEND_CXX) $<\
 		-o $@
 
