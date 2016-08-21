@@ -14,7 +14,7 @@ void main() {
 	mat4 vm = view * model;
 	gl_Position = proj * vm * vec4(vertex, 1.0);
 	vec4 tnorm = vm * vec4(normal, 1.0);
-	InColor = vec4(dot(tnorm.xyz, vec3(0,-1,0))*vec3(.5,.5,.5)+vec3(.5,.5,.5),1.0);
-	//InColor = vec4(dot(normal, vec3(0,-1,0))*vec3(.5,.5,.5) + vec3(0.5,0.5,0.5), 1.0);
-	//InColor = vec4(1.0,1.0,1.0,1.0);
+	vec3 half3 = vec3(.5,.5,.5);
+	vec3 dotted = dot(tnorm.xyz,vec3(-1,0,0))*half3+half3;
+	InColor = vec4(dotted/2+dotted*dotted*dotted,1.0);
 }
