@@ -51,6 +51,15 @@ namespace Model {
 					}
 					obj.lines.push_back(line);
 					obj.types.emplace_back(e_element_line);
+				} else if(word == object_t::prefix()) {
+					int index;
+					object_t object;
+					while(it != std::end(tk)) {
+						index = boost::lexical_cast<int>(*it++);
+						object.members.push_back(index);
+					}
+					obj.objects.push_back(object);
+					obj.types.push_back(e_element_object);
 				} else if(word == vertex_t::prefix()) {
 					float point;
 					vertex_t vertex;

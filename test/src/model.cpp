@@ -28,6 +28,7 @@ int main(int argc, const char **argv) {
 	auto fit = std::begin(obj.faces);
 	auto lit = std::begin(obj.lines);
 	auto git = std::begin(obj.groups);
+	auto oit = std::begin(obj.objects);
 	auto vit = std::begin(obj.vertices);
 	for(auto t : obj.types) {
 		switch(t) {
@@ -46,6 +47,13 @@ int main(int argc, const char **argv) {
 			case obj_t::e_element_line: {
 				std::cout << "Line: ";
 				for(auto iit : (*lit++).vertices) {
+					std::cout << iit << " ";
+				}
+				endl(std::cout);
+			} break;
+			case obj_t::e_element_object: {
+				std::cout << "Object: ";
+				for(auto iit : (*oit++).members) {
 					std::cout << iit << " ";
 				}
 				endl(std::cout);

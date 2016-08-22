@@ -21,6 +21,7 @@ namespace Model {
 			e_element_face,      ///< \ref face_t
 			e_element_group,     ///< \ref group_t
 			e_element_line,      ///< \ref line_t
+			e_element_object,    ///< \ref object_t
 			e_element_vertex,    ///< \ref vertex_t
 			e_element_total      ///< The total number of supported types
 		} e_obj_element;
@@ -80,6 +81,15 @@ namespace Model {
 			line_t(void): element_t(e_element_line) {}
 		};
 
+		/// An object; see \ref group_t
+		struct object_t : public element_t {
+			static constexpr const char *prefix(void) {
+				return "o";
+			}
+			std::vector<unsigned int> members;
+			object_t(void): element_t(e_element_object) {}
+		};
+
 		/// A single point, containing at least x, y, z coordinates
 		struct vertex_t : public element_t {
 			static constexpr const char *prefix(void) {
@@ -96,20 +106,11 @@ namespace Model {
 		 */
 		static e_obj_status load(const char *fname, obj_t &elements);
 
-		/* Primitive types in contiguous containers
-
-		std::vector<int> integers;
-		std::vector<float> floats;
-		std::vector<std::string> strings;
-		
-		Reference via indices in each element
-		Then store the type-enums contiguously
-		*/
-
 		std::vector<comment_t> comments;
 		std::vector<face_t> faces;
 		std::vector<group_t> groups;
 		std::vector<line_t> lines;
+		std::vector<object_t> objects;
 		std::vector<vertex_t> vertices;
 		std::vector<e_obj_element> types;
 	};
