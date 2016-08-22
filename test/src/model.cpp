@@ -7,9 +7,10 @@
 
 int main(int argc, const char **argv) {
 	using namespace Model;
-	std::cout << "Testing" << std::endl;
 	obj_t obj;
-	switch(obj_t::load("share/test.obj", obj)) {
+	auto fname = "share/test.obj";
+	endl(std::cout << "File: " << fname);
+	switch(obj_t::load(fname, obj)) {
 		case obj_t::e_status_io:
 			std::cout << "Status: I/O Error" << std::endl;
 			break;
@@ -25,17 +26,36 @@ int main(int argc, const char **argv) {
 	}
 	auto cit = std::begin(obj.comments);
 	auto fit = std::begin(obj.faces);
+	auto lit = std::begin(obj.lines);
+	auto git = std::begin(obj.groups);
+	auto vit = std::begin(obj.vertices);
 	for(auto t : obj.types) {
 		switch(t) {
 			case obj_t::e_element_comment: {
-				std::cout << "Comment: " << (*cit++).contents << std::endl;
+				endl(std::cout << "Comment: " << (*cit++).contents);
 			} break;
 			case obj_t::e_element_face: {
 				std::cout << "Face: ";
 				for(auto iit : (*fit++).vertices) {
 					std::cout << iit << " ";
 				}
-				std::cout << std::endl;
+				endl(std::cout);
+			} break;
+			case obj_t::e_element_group: {
+			} break;
+			case obj_t::e_element_line: {
+				std::cout << "Line: ";
+				for(auto iit : (*lit++).vertices) {
+					std::cout << iit << " ";
+				}
+				endl(std::cout);
+			} break;
+			case obj_t::e_element_vertex: {
+				std::cout << "Vertex: ";
+				for(auto iit : (*vit++).point) {
+					std::cout << iit << " ";
+				}
+				endl(std::cout);
 			} break;
 			default: break;
 		}

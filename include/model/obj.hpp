@@ -76,6 +76,7 @@ namespace Model {
 			static constexpr const char *prefix(void) {
 				return "l";
 			}
+			std::vector<unsigned int> vertices;
 			line_t(void): element_t(e_element_line) {}
 		};
 
@@ -84,6 +85,7 @@ namespace Model {
 			static constexpr const char *prefix(void) {
 				return "v";
 			}
+			std::vector<float> point;
 			vertex_t(void): element_t(e_element_vertex) {}
 		};
 
@@ -93,6 +95,16 @@ namespace Model {
 		 * @return e_status_ok (0) if and only if the load was successful
 		 */
 		static e_obj_status load(const char *fname, obj_t &elements);
+
+		/* Primitive types in contiguous containers
+
+		std::vector<int> integers;
+		std::vector<float> floats;
+		std::vector<std::string> strings;
+		
+		Reference via indices in each element
+		Then store the type-enums contiguously
+		*/
 
 		std::vector<comment_t> comments;
 		std::vector<face_t> faces;
