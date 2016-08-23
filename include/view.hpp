@@ -32,6 +32,7 @@ namespace View {
 		int nTriangles;
 		GLFWwindow *win;
 		int frame = 0, fps = 0;
+		float phi, theta;
 	
 		/// Sets stable shader values (uniforms)
 		void setUniforms(void);

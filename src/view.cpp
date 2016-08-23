@@ -31,11 +31,8 @@ namespace View {
 		glUniformMatrix4fv(ids[e_id_proj], 1, GL_TRUE, mat_proj);
 
 		/* TODO - replace with members theta,phi; modify from control */
-		static float theta = 0, phi = 0;
-		theta += M_PI/180;
-		phi += M_PI/180*2;
 		float ct = cos(theta), st = sin(theta),
-			  cp = cos(cos(phi)), sp = sin(cos(phi));
+			  cp = cos(phi/2), sp = sin(phi/2);
 		float mat_model[]{
 				    ct,    0,    -st, 0,
 				-sp*st,   cp, -sp*ct, 0,

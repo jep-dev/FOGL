@@ -19,6 +19,7 @@ namespace Control {
 
 	/// A data structure controlling both model and view
 	struct control : virtual Util::task {
+		const char *mpath;
 		View::view viewer;
 		Model::contour<Util::undef_t, GLfloat, GLclampf, GLclampf> model;
 		
@@ -31,7 +32,8 @@ namespace Control {
  		 * @param vert Path to a GLSL vertex shader
  		 * @param frag Path to a GLSL fragment shader
  		 */
-		control(std::atomic_bool &alive, const char *vert, const char *frag);
+		control(std::atomic_bool &alive, const char *ply,
+ 			const char *vert, const char *frag);
 	};
 }
 

@@ -1,6 +1,8 @@
 #include "control.hpp"
 #include "model/ply.hpp"
+
 #include <sstream>
+#include <cmath>
 
 #include "omp.h"
 #include <chrono>
@@ -13,7 +15,7 @@ namespace Control {
 		using namespace Model::Ply;
 		using namespace View;
 
- 		Header model("share/bunny.ply");
+ 		Header model(this -> mpath);
  		if(model.status) {
 			std::cout << model.statusContext << std::endl;
 			return;
@@ -69,18 +71,25 @@ namespace Control {
 					once = true;
 					oss << i;
 				}
+				if(i==8 && pressed) 
+					alive = false;
 			}
 			if(once)
 				std::cout << "\nPressed: " << oss.str() << std::endl;
 
-			/*once = false;
+			once = false;
 			int nAxes;
 			const GLfloat *axes =
 				glfwGetJoystickAxes(GLFW_JOYSTICK_1, &nAxes);
 			for(int i = 0; i < nAxes; i++) {
-				std::cout << "Axis " << i << " = " << axes[i] << std::endl;
+				if(i == 0) {
+					viewer.theta = axes[i]*2 + 1.5;
+				} else if(i == 1) {
+					viewer.phi = axes[i];
+				}
+				//std::cout << "Axis " << i << " = " << axes[i] << std::endl;
 			}
-			endl(std::cout);*/
+			//endl(std::cout);
 		}
 	}
 
@@ -106,9 +115,9 @@ namespace Control {
 		}
 	}
 
-	control::control(std::atomic_bool &alive,
+	control::control(std::atomic_bool &alive, const char *mpath,
 			const char *vert, const char *frag):
-		task(), viewer(alive, vert, frag) {
+		task(), mpath(mpath), viewer(alive, vert, frag) {
 			init(alive);
 		}
 }

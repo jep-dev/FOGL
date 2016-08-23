@@ -12,7 +12,8 @@
 int main(int argc, const char **argv) {
 	glfwInit();
 	std::atomic_bool alive(true);
-	Control::control ctl(alive, "share/shade.vert", "share/shade.frag");
+	Control::control ctl(alive, "share/bunny.ply",
+			"share/shade.vert", "share/shade.frag");
 	Util::task::init(alive, &ctl);
 	Util::task::run(alive, &ctl);
 	return 0;
