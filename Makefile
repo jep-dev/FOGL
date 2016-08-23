@@ -132,8 +132,6 @@ $(DIR_GL3W)lib%$(OBJ_EXT)$(DIR_GL3W)%$(DLL_EXT): $(DIR_GL3W)$(DIR_SRC)*.c
 		-o $@
 
 
-#$(DIR_ROOT_LIB)%$(OBJ_EXT) $(DIR_ROOT_LIB)%$(DEP_EXT):\
-		$(DIR_ROOT_SRC)%.cpp $(DIR_ROOT_INCLUDE)%.hpp
 $(DIR_ROOT_LIB)%$(OBJ_EXT):\
 		$(DIR_ROOT_SRC)%.cpp $(DIR_ROOT_INCLUDE)%.hpp
 	$(COMPILE_CXX) $<\
