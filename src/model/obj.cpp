@@ -9,6 +9,33 @@
 #include <boost/lexical_cast.hpp>
 
 namespace Model {
+	std::ostream &operator<<(std::ostream &os, obj_t::element_t const& el) {
+		return os;
+	}
+	std::ostream& operator<<(std::ostream &os,
+			obj_t::comment_t const& comment) {
+		return os << std::string(comment.contents);
+	}
+	std::ostream& operator<<(std::ostream &os, obj_t::line_t const& line) {
+		return os << std::string("Line: ") << line.vertices[0] << ", "
+			<< line.vertices[1] << std::endl;
+	}
+	std::ostream& operator<<(std::ostream &os, obj_t::face_t const& face) {
+		os << "Face: ";
+		for(auto v : face.vertices) {
+			os << v << " ";
+		}
+		if(face.tex_coords) {
+			std::cout << "\n\tTex coords: ";
+			for(auto c : face.coordinates) {
+				std::cout << c << " ";
+			}
+		}
+		return endl(os);
+	}
+	std::ostream& operator<<(std::ostream &os, obj_t::group_t const& group) {
+		return os << "Group" << std::endl;
+	}
 	obj_t::e_status obj_t::load(const char *fname, obj_t &obj) {
 		std::ifstream file;
 		file.open(fname, std::ios::in);
@@ -42,12 +69,13 @@ namespace Model {
 					obj.types.emplace_back(e_el_f);
 					break;
 				} else if(word == group_t::prefix()) {
+					// TODO Parse group_t from line
 				} else if(word == line_t::prefix()) {
 					int index;
 					line_t line;
-					while(it != std::end(tk)) {
-						index = boost::lexical_cast<int>(*it++);
-						line.vertices.push_back(index);
+					for(int i = 0; i < 2 && it != std::end(tk); ++i, ++it) {
+						index = boost::lexical_cast<int>(*it);
+						line.vertices[i] = index;
 					}
 					obj.lines.push_back(line);
 					obj.types.emplace_back(e_el_l);

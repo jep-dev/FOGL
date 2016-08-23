@@ -43,11 +43,6 @@ namespace Model {
 			static constexpr const char *prefix(void) {
 				return "#";
 			}
-			friend std::ostream& operator<<(std::ostream& os,
-					comment_t const& comment) {
-				return os << std::string(comment.contents);
-
-			}
 			std::string contents;
 			comment_t(std::string contents):
 				element_t(e_el_c),
@@ -78,7 +73,7 @@ namespace Model {
 			static constexpr const char *prefix(void) {
 				return "l";
 			}
-			std::vector<unsigned int> vertices;
+			std::array<unsigned int, 2> vertices;
 			line_t(void): element_t(e_el_l) {}
 		};
 

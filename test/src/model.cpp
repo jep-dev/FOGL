@@ -35,17 +35,14 @@ int main(int argc, const char **argv) {
 	for(auto t : obj.types) {
 		switch(t) {
 			case obj_t::e_el_c: {
-				endl(std::cout << "Comment: " << (*cit++).contents);
+				std::cout << *cit++ << std::endl;
 			} break;
 			case obj_t::e_el_f: {
-				std::cout << "Face: ";
-				for(auto iit : (*fit++).vertices) {
-					std::cout << iit << " ";
-				}
-				endl(std::cout);
+				std::cout << *fit++ << std::endl;
 			} break;
 			case obj_t::e_el_g: {
-				// TODO group_t
+				std::cout << *git++ << std::endl;
+				// TODO print group_t
 			} break;
 			case obj_t::e_el_l: {
 				std::cout << "Line: ";
@@ -54,7 +51,8 @@ int main(int argc, const char **argv) {
 				}
 				endl(std::cout);
 			} break;
-			case obj_t::e_el_mtllib: { // TODO mtllib
+			case obj_t::e_el_mtllib: {
+				// TODO print mtllib
 			} break;
 			case obj_t::e_el_o: {
 				std::cout << "Object: ";
@@ -63,7 +61,8 @@ int main(int argc, const char **argv) {
 				}
 				endl(std::cout);
 			} break;
-			case obj_t::e_el_usemtl: { // TODO usemtl
+			case obj_t::e_el_usemtl: {
+				// TODO print usemtl
 			} break;
 			case obj_t::e_el_v: {
 				std::cout << "Vertex: ";
