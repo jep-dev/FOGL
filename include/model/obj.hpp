@@ -17,13 +17,15 @@ namespace Model {
 
 		/*! An enumeration of supported types */
 		typedef enum {
-			e_el_c=0,  ///< \ref element_t
-			e_el_f,    ///< \ref face_t
-			e_el_g,    ///< \ref group_t
-			e_el_l,    ///< \ref line_t
-			e_el_o,    ///< \ref object_t
-			e_el_v,    ///< \ref vertex_t
-			e_el_total ///< The total number of supported types
+			e_el_c=0,    ///< \ref element_t
+			e_el_f,      ///< \ref face_t
+			e_el_g,      ///< \ref group_t
+			e_el_l,      ///< \ref line_t
+			e_el_mtllib, ///< \ref mtllib_t
+			e_el_o,      ///< \ref object_t
+			e_el_usemtl, ///< \ref usemtl_t
+			e_el_v,      ///< \ref vertex_t
+			e_el_total   ///< The total number of supported types
 		} e_el;
 
 		/// The abstract base of each obj element
@@ -80,6 +82,16 @@ namespace Model {
 			line_t(void): element_t(e_el_l) {}
 		};
 
+		/// A material library file
+		struct mtllib_t : public element_t {
+			static constexpr const char *prefix(void) {
+				return "mtllib";
+			}
+			std::string path;
+			mtllib_t(std::string path) :
+				element_t(e_el_mtllib), path(path) {}
+		};
+
 		/// An object; see \ref group_t
 		struct object_t : public element_t {
 			static constexpr const char *prefix(void) {
@@ -98,6 +110,15 @@ namespace Model {
 			vertex_t(void): element_t(e_el_v) {}
 		};
 
+		struct usemtl_t : public element_t {
+			static constexpr const char *prefix(void) {
+				return "usemtl";
+			}
+			std::string path;
+			usemtl_t(std::string path):
+				element_t(e_el_usemtl), path(path) {}
+		};
+
 		/** Loads an obj file with the given path into a vector of elements
 		 * @param fname The path to the obj file
 		 * @param elements The destination, a vector of elements
@@ -109,7 +130,9 @@ namespace Model {
 		std::vector<face_t> faces;
 		std::vector<group_t> groups;
 		std::vector<line_t> lines;
+		std::vector<mtllib_t> mtllibs;
 		std::vector<object_t> objects;
+		std::vector<usemtl_t> usemtls;
 		std::vector<vertex_t> vertices;
 		std::vector<e_el> types;
 	};

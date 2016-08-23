@@ -26,9 +26,11 @@ int main(int argc, const char **argv) {
 	}
 	auto cit = std::begin(obj.comments);
 	auto fit = std::begin(obj.faces);
-	auto lit = std::begin(obj.lines);
 	auto git = std::begin(obj.groups);
+	auto lit = std::begin(obj.lines);
+	auto mit = std::begin(obj.mtllibs);
 	auto oit = std::begin(obj.objects);
+	auto uit = std::begin(obj.usemtls);
 	auto vit = std::begin(obj.vertices);
 	for(auto t : obj.types) {
 		switch(t) {
@@ -43,6 +45,7 @@ int main(int argc, const char **argv) {
 				endl(std::cout);
 			} break;
 			case obj_t::e_el_g: {
+				// TODO group_t
 			} break;
 			case obj_t::e_el_l: {
 				std::cout << "Line: ";
@@ -51,12 +54,16 @@ int main(int argc, const char **argv) {
 				}
 				endl(std::cout);
 			} break;
+			case obj_t::e_el_mtllib: { // TODO mtllib
+			} break;
 			case obj_t::e_el_o: {
 				std::cout << "Object: ";
 				for(auto iit : (*oit++).members) {
 					std::cout << iit << " ";
 				}
 				endl(std::cout);
+			} break;
+			case obj_t::e_el_usemtl: { // TODO usemtl
 			} break;
 			case obj_t::e_el_v: {
 				std::cout << "Vertex: ";
