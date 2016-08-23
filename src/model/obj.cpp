@@ -9,14 +9,14 @@
 #include <boost/lexical_cast.hpp>
 
 namespace Model {
-	obj_t::e_obj_status obj_t::load(const char *fname, obj_t &obj) {
+	obj_t::e_status obj_t::load(const char *fname, obj_t &obj) {
 		std::ifstream file;
 		file.open(fname, std::ios::in);
 		if(!file.is_open()) {
-			return e_status_io;
+			return e_err_io;
 		}
-		e_obj_element element;
-		e_obj_status status = e_status_ok;
+		e_el element;
+		e_status status = e_ok;
 
 		boost::char_separator<char> sep(" ");
 		for(std::string line; std::getline(file, line);) {
@@ -29,7 +29,7 @@ namespace Model {
 						comment += *it++ + ' ';
 					}
 					obj.comments.emplace_back(comment);
-					obj.types.emplace_back(e_element_comment);
+					obj.types.emplace_back(e_el_c);
 					break;
 				} else if(word == face_t::prefix()) {
 					int index;
@@ -39,7 +39,7 @@ namespace Model {
 						face.vertices.push_back(index);
 					}
 					obj.faces.push_back(face);
-					obj.types.emplace_back(e_element_face);
+					obj.types.emplace_back(e_el_f);
 					break;
 				} else if(word == group_t::prefix()) {
 				} else if(word == line_t::prefix()) {
@@ -50,7 +50,7 @@ namespace Model {
 						line.vertices.push_back(index);
 					}
 					obj.lines.push_back(line);
-					obj.types.emplace_back(e_element_line);
+					obj.types.emplace_back(e_el_l);
 				} else if(word == object_t::prefix()) {
 					int index;
 					object_t object;
@@ -59,7 +59,7 @@ namespace Model {
 						object.members.push_back(index);
 					}
 					obj.objects.push_back(object);
-					obj.types.push_back(e_element_object);
+					obj.types.push_back(e_el_o);
 				} else if(word == vertex_t::prefix()) {
 					float point;
 					vertex_t vertex;
@@ -68,12 +68,12 @@ namespace Model {
 						vertex.point.push_back(point);
 					}
 					obj.vertices.push_back(vertex);
-					obj.types.emplace_back(e_element_vertex);
+					obj.types.emplace_back(e_el_v);
 				} else {
 					std::cout << word << ": unknown element prefix"
 						<< std::endl;
-					element = e_element_total;
-					status = e_status_unknown;
+					element = e_el_total;
+					status = e_err_unknown;
 				}
 				break;
 			}

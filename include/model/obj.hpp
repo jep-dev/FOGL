@@ -9,30 +9,30 @@ namespace Model {
 	struct obj_t {
 		/*! The enumeration and count of possible states */
 		typedef enum {
-			e_status_ok=0,   ///< Parsing status is OK
-			e_status_io,     ///< An IO exception has occurred
-			e_status_unknown,///< An unknown exception has occurred
-			e_status_total   ///< The total number of statuses
-		} e_obj_status;
+			e_ok=0,       ///< Parsing status is OK
+			e_err_io,     ///< An IO exception has occurred
+			e_err_unknown,///< An unknown exception has occurred
+			e_err_total   ///< The total number of statuses
+		} e_status;
 
 		/*! An enumeration of supported types */
 		typedef enum {
-			e_element_comment=0, ///< \ref element_t
-			e_element_face,      ///< \ref face_t
-			e_element_group,     ///< \ref group_t
-			e_element_line,      ///< \ref line_t
-			e_element_object,    ///< \ref object_t
-			e_element_vertex,    ///< \ref vertex_t
-			e_element_total      ///< The total number of supported types
-		} e_obj_element;
+			e_el_c=0,  ///< \ref element_t
+			e_el_f,    ///< \ref face_t
+			e_el_g,    ///< \ref group_t
+			e_el_l,    ///< \ref line_t
+			e_el_o,    ///< \ref object_t
+			e_el_v,    ///< \ref vertex_t
+			e_el_total ///< The total number of supported types
+		} e_el;
 
 		/// The abstract base of each obj element
 		struct element_t {
 			static constexpr const char *prefix(void);
-			const e_obj_element type;
+			const e_el type;
 			friend std::ostream& operator<<(std::ostream& os,
 					element_t const& el);
-			element_t(e_obj_element type): type(type) {}
+			element_t(e_el type): type(type) {}
 			virtual ~element_t(void) {}
 		};
 
@@ -41,7 +41,6 @@ namespace Model {
 			static constexpr const char *prefix(void) {
 				return "#";
 			}
-			const e_obj_element type = e_element_comment;
 			friend std::ostream& operator<<(std::ostream& os,
 					comment_t const& comment) {
 				return os << std::string(comment.contents);
@@ -49,7 +48,7 @@ namespace Model {
 			}
 			std::string contents;
 			comment_t(std::string contents):
-				element_t(e_element_comment),
+				element_t(e_el_c),
 				contents(contents) {}
 		};
 
@@ -61,7 +60,7 @@ namespace Model {
 			std::vector<unsigned int> vertices, coordinates;
 			bool tex_coords = false;
 			face_t(bool has_tex = false):
-				element_t(e_element_face), tex_coords(has_tex) {}
+				element_t(e_el_f), tex_coords(has_tex) {}
 		};
 
 		/// A collection of faces, lines, and vertices
@@ -69,7 +68,7 @@ namespace Model {
 			static constexpr const char *prefix(void) {
  			   return "g";
 			}
-			group_t(void): element_t(e_element_group) {}
+			group_t(void): element_t(e_el_g) {}
 		};
 
 		/// A pair of vertex indices 
@@ -78,7 +77,7 @@ namespace Model {
 				return "l";
 			}
 			std::vector<unsigned int> vertices;
-			line_t(void): element_t(e_element_line) {}
+			line_t(void): element_t(e_el_l) {}
 		};
 
 		/// An object; see \ref group_t
@@ -87,7 +86,7 @@ namespace Model {
 				return "o";
 			}
 			std::vector<unsigned int> members;
-			object_t(void): element_t(e_element_object) {}
+			object_t(void): element_t(e_el_o) {}
 		};
 
 		/// A single point, containing at least x, y, z coordinates
@@ -96,7 +95,7 @@ namespace Model {
 				return "v";
 			}
 			std::vector<float> point;
-			vertex_t(void): element_t(e_element_vertex) {}
+			vertex_t(void): element_t(e_el_v) {}
 		};
 
 		/** Loads an obj file with the given path into a vector of elements
@@ -104,7 +103,7 @@ namespace Model {
 		 * @param elements The destination, a vector of elements
 		 * @return e_status_ok (0) if and only if the load was successful
 		 */
-		static e_obj_status load(const char *fname, obj_t &elements);
+		static e_status load(const char *fname, obj_t &elements);
 
 		std::vector<comment_t> comments;
 		std::vector<face_t> faces;
@@ -112,7 +111,7 @@ namespace Model {
 		std::vector<line_t> lines;
 		std::vector<object_t> objects;
 		std::vector<vertex_t> vertices;
-		std::vector<e_obj_element> types;
+		std::vector<e_el> types;
 	};
 }
 

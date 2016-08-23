@@ -11,13 +11,13 @@ int main(int argc, const char **argv) {
 	auto fname = "share/test.obj";
 	endl(std::cout << "File: " << fname);
 	switch(obj_t::load(fname, obj)) {
-		case obj_t::e_status_io:
+		case obj_t::e_err_io:
 			std::cout << "Status: I/O Error" << std::endl;
 			break;
-		case obj_t::e_status_ok:
+		case obj_t::e_ok:
 			std::cout << "Status: OK" << std::endl;
 			break;
-		case obj_t::e_status_unknown:
+		case obj_t::e_err_unknown:
 			std::cout << "Status: Unknown" << std::endl;
 			break;
 		default:
@@ -32,33 +32,33 @@ int main(int argc, const char **argv) {
 	auto vit = std::begin(obj.vertices);
 	for(auto t : obj.types) {
 		switch(t) {
-			case obj_t::e_element_comment: {
+			case obj_t::e_el_c: {
 				endl(std::cout << "Comment: " << (*cit++).contents);
 			} break;
-			case obj_t::e_element_face: {
+			case obj_t::e_el_f: {
 				std::cout << "Face: ";
 				for(auto iit : (*fit++).vertices) {
 					std::cout << iit << " ";
 				}
 				endl(std::cout);
 			} break;
-			case obj_t::e_element_group: {
+			case obj_t::e_el_g: {
 			} break;
-			case obj_t::e_element_line: {
+			case obj_t::e_el_l: {
 				std::cout << "Line: ";
 				for(auto iit : (*lit++).vertices) {
 					std::cout << iit << " ";
 				}
 				endl(std::cout);
 			} break;
-			case obj_t::e_element_object: {
+			case obj_t::e_el_o: {
 				std::cout << "Object: ";
 				for(auto iit : (*oit++).members) {
 					std::cout << iit << " ";
 				}
 				endl(std::cout);
 			} break;
-			case obj_t::e_element_vertex: {
+			case obj_t::e_el_v: {
 				std::cout << "Vertex: ";
 				for(auto iit : (*vit++).point) {
 					std::cout << iit << " ";
