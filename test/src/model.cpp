@@ -43,7 +43,6 @@ int main(int argc, const char **argv) {
 			} break;
 			case obj_t::e_el_g: {
 				std::cout << *git++ << std::endl;
-				// TODO print group_t
 			} break;
 			case obj_t::e_el_l: {
 				std::cout << "Line: ";
@@ -53,13 +52,13 @@ int main(int argc, const char **argv) {
 				endl(std::cout);
 			} break;
 			case obj_t::e_el_mtllib: {
-				// TODO print mtllib
+				std::cout << "Mtllib: " << mit++->path << std::endl;
 			} break;
 			case obj_t::e_el_o: {
 				std::cout << "Object: " << (*oit++).name << std::endl;
 			} break;
 			case obj_t::e_el_usemtl: {
-				// TODO print usemtl
+				std::cout << "Usemtl: " << uit++->name << std::endl;
 			} break;
 			case obj_t::e_el_v: {
 				std::cout << "Vertex: ";

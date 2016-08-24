@@ -21,11 +21,9 @@ namespace System {
 	bool readFile(const char *fname, std::vector<std::string> &lines);
 	std::string repeat(int w, char c = ' ');
 	
-	// TODO Replace with Boost::Regex or Tokenizer?
 	/// Splits a string along tokens
 	int split(std::string const &line, std::vector<std::string> words);
 
-	// TODO Replace 'stringify' template with standard insertion operator?
 	/*! String cast (lexical cast operator) template
  	 * \tparam The type of the instance to convert to a string
  	 */

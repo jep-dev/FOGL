@@ -33,8 +33,6 @@ namespace Model {
 		struct element_t {
 			static constexpr const char *prefix(void);
 			const e_el type;
-			friend std::ostream& operator<<(std::ostream& os,
-					element_t const& el);
 			element_t(e_el type): type(type) {}
 			virtual ~element_t(void) {}
 		};

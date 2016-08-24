@@ -30,7 +30,6 @@ namespace View {
 		};
 		glUniformMatrix4fv(ids[e_id_proj], 1, GL_TRUE, mat_proj);
 
-		/* TODO - replace with members theta,phi; modify from control */
 		float ct = cos(theta), st = sin(theta),
 			  cp = cos(phi/2), sp = sin(phi/2);
 		float mat_model[]{
@@ -74,7 +73,6 @@ namespace View {
 		glfwSwapBuffers(win);
 	}
 
-	// TODO move to control along with View::Inputs
 	void view::poll(std::atomic_bool &alive) {
 		if(alive && win) {
 			glfwMakeContextCurrent(win);

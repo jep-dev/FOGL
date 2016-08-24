@@ -29,6 +29,7 @@ namespace Control {
 
 		/** Constructor; initializes and applies shaders
  		 * @param alive Shared state; false signals shutdown
+ 		 * @param ply The path to a ply model
  		 * @param vert Path to a GLSL vertex shader
  		 * @param frag Path to a GLSL fragment shader
  		 */

@@ -11,7 +11,7 @@
 namespace Model {
 	std::ostream& operator<<(std::ostream &os,
 			obj_t::comment_t const& comment) {
-		return os << std::string(comment.contents);
+		return os << "# " << std::string(comment.contents);
 	}
 	std::ostream& operator<<(std::ostream &os, obj_t::line_t const& line) {
 		return os << std::string("Line: ") << line.vertices[0] << ", "
@@ -35,9 +35,6 @@ namespace Model {
 	}
 	std::ostream& operator<<(std::ostream &os, obj_t::object_t const& obj) {
 		return os << "Object: " << obj.name << std::endl;
-	}
-	std::ostream &operator<<(std::ostream &os, obj_t::element_t const& el) {
-		return os;
 	}
 	obj_t::e_status obj_t::load(const char *fname, obj_t &obj) {
 		std::ifstream file;
@@ -72,7 +69,8 @@ namespace Model {
 					obj.types.emplace_back(e_el_f);
 					break;
 				} else if(word == group_t::prefix()) {
-					// TODO Parse group_t from line
+					obj.groups.emplace_back(*it++);
+					obj.types.emplace_back(e_el_o);
 				} else if(word == line_t::prefix()) {
 					int index;
 					line_t line;

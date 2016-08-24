@@ -8,10 +8,6 @@
 
 #include <ratio>
 
-/* TODO 
- * Improve generics; at least fixed- vs. floating-point
- * Replace quat/dual with abstract CT logic applied to RT primitives
- * Integrate util (graph -> expression tree, etc.) */
 namespace Math {
 	template<typename T, int E>
 	constexpr bool near(T A, T B, int _adt1, int _adt2 = 0) {
@@ -30,8 +26,6 @@ namespace Math {
 	bool near(T u, T v, int e = E) {
 		return (((u-v)*(u-v)) <= pow(2.0,e+1));
 	};
-
-	// TODO constexpr near using std::ratio
 
 	/*! A quaternion (real, i, j, k)
 	 * @tparam R The type of each dimension */
