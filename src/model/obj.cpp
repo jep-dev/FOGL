@@ -97,6 +97,15 @@ namespace Model {
 					}
 					obj.vertices.push_back(vertex);
 					obj.types.emplace_back(e_el_v);
+				} else if(word == vertex_param_t::prefix()) {
+					vertex_param_t param;
+					float val;
+					while(it != std::end(tk)) {
+						val = boost::lexical_cast<float>(*it++);
+						param.point.push_back(val);
+					}
+					obj.params.push_back(param);
+					obj.types.emplace_back(e_el_vp);
 				} else {
 					std::cout << word << ": unknown element prefix"
 						<< std::endl;

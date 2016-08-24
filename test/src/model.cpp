@@ -32,6 +32,7 @@ int main(int argc, const char **argv) {
 	auto oit = std::begin(obj.objects);
 	auto uit = std::begin(obj.usemtls);
 	auto vit = std::begin(obj.vertices);
+	auto vpit = std::begin(obj.params);
 	for(auto t : obj.types) {
 		switch(t) {
 			case obj_t::e_el_c: {
@@ -67,6 +68,13 @@ int main(int argc, const char **argv) {
 			case obj_t::e_el_v: {
 				std::cout << "Vertex: ";
 				for(auto iit : (*vit++).point) {
+					std::cout << iit << " ";
+				}
+				endl(std::cout);
+			} break;
+			case obj_t::e_el_vp: {
+				std::cout << "Vertex params: ";
+				for(auto iit : (*vpit++).point) {
 					std::cout << iit << " ";
 				}
 				endl(std::cout);

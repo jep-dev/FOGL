@@ -25,6 +25,7 @@ namespace Model {
 			e_el_o,      ///< \ref object_t
 			e_el_usemtl, ///< \ref usemtl_t
 			e_el_v,      ///< \ref vertex_t
+			e_el_vp,     ///< \ref vertex_param_t
 			e_el_total   ///< The total number of supported types
 		} e_el;
 
@@ -96,6 +97,17 @@ namespace Model {
 			object_t(void): element_t(e_el_o) {}
 		};
 
+		/// A reference to a loaded material
+		struct usemtl_t : public element_t {
+			static constexpr const char *prefix(void) {
+				return "usemtl";
+			}
+			std::string path;
+			usemtl_t(std::string path):
+				element_t(e_el_usemtl), path(path) {}
+		};
+
+
 		/// A single point, containing at least x, y, z coordinates
 		struct vertex_t : public element_t {
 			static constexpr const char *prefix(void) {
@@ -105,13 +117,13 @@ namespace Model {
 			vertex_t(void): element_t(e_el_v) {}
 		};
 
-		struct usemtl_t : public element_t {
+		/// A single point in parameter space; coordinates u, v
+		struct vertex_param_t : public element_t {
 			static constexpr const char *prefix(void) {
-				return "usemtl";
+				return "vp";
 			}
-			std::string path;
-			usemtl_t(std::string path):
-				element_t(e_el_usemtl), path(path) {}
+			std::vector<float> point;
+			vertex_param_t(void): element_t(e_el_vp) {}
 		};
 
 		/** Loads an obj file with the given path into a vector of elements
@@ -129,6 +141,7 @@ namespace Model {
 		std::vector<object_t> objects;
 		std::vector<usemtl_t> usemtls;
 		std::vector<vertex_t> vertices;
+		std::vector<vertex_param_t> params;
 		std::vector<e_el> types;
 	};
 }
