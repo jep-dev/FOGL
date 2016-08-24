@@ -166,8 +166,9 @@ env:
 	@echo "$(foreach var,CC CXX CFLAGS CPPFLAGS WFLAGS\
 		RELEASE_LDFLAGS TEST_LDFLAGS MAIN_OBJS,\r$(var) = ${$(var)}\n)"
 
-
--include $(MAIN_DEPS)
+ifneq ($(MAKECMDGOALS),clean)
+	-include $(MAIN_DEPS)
+endif
 
 release: $(RELEASE_EXE) $(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS);
 #$(RELEASE_EXE): $(RELEASE_OBJ) $(MAIN_OBJS) $(MAIN_DLLS) $(GL3W_OBJS)
