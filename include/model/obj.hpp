@@ -44,6 +44,8 @@ namespace Model {
 			static constexpr const char *prefix(void) {
 				return "#";
 			}
+			friend std::ostream& operator<<(std::ostream& os,
+					comment_t const& el);
 			std::string contents;
 			comment_t(std::string contents):
 				element_t(e_el_c),
@@ -55,6 +57,8 @@ namespace Model {
 			static constexpr const char *prefix(void) {
 				return "f";
 			}
+			friend std::ostream& operator<<(std::ostream& os,
+					face_t const& el);
 			std::vector<unsigned int> vertices, coordinates;
 			bool tex_coords = false;
 			face_t(bool has_tex = false):
@@ -66,7 +70,11 @@ namespace Model {
 			static constexpr const char *prefix(void) {
  			   return "g";
 			}
-			group_t(void): element_t(e_el_g) {}
+			friend std::ostream& operator<<(std::ostream& os,
+					group_t const& el);
+			std::string name;
+			group_t(std::string name):
+				element_t(e_el_g), name(name) {}
 		};
 
 		/// A pair of vertex indices 
@@ -74,6 +82,8 @@ namespace Model {
 			static constexpr const char *prefix(void) {
 				return "l";
 			}
+			friend std::ostream& operator<<(std::ostream& os,
+					line_t const& el);
 			std::array<unsigned int, 2> vertices;
 			line_t(void): element_t(e_el_l) {}
 		};
@@ -83,6 +93,8 @@ namespace Model {
 			static constexpr const char *prefix(void) {
 				return "mtllib";
 			}
+			friend std::ostream& operator<<(std::ostream& os,
+					mtllib_t const& el);
 			std::string path;
 			mtllib_t(std::string path) :
 				element_t(e_el_mtllib), path(path) {}
@@ -93,8 +105,11 @@ namespace Model {
 			static constexpr const char *prefix(void) {
 				return "o";
 			}
-			std::vector<unsigned int> members;
-			object_t(void): element_t(e_el_o) {}
+			friend std::ostream& operator<<(std::ostream& os,
+					object_t const& el);
+			std::string name;
+			object_t(std::string name):
+				element_t(e_el_o), name(name) {}
 		};
 
 		/// A reference to a loaded material
@@ -102,9 +117,11 @@ namespace Model {
 			static constexpr const char *prefix(void) {
 				return "usemtl";
 			}
+			friend std::ostream& operator<<(std::ostream& os,
+					usemtl_t const& el);
 			std::string name;
 			usemtl_t(std::string name):
-				element_t(e_el_usemtl), path(name) {}
+				element_t(e_el_usemtl), name(name) {}
 		};
 
 
@@ -113,6 +130,8 @@ namespace Model {
 			static constexpr const char *prefix(void) {
 				return "v";
 			}
+			friend std::ostream& operator<<(std::ostream& os,
+					vertex_t const& el);
 			std::vector<float> point;
 			vertex_t(void): element_t(e_el_v) {}
 		};
@@ -122,6 +141,8 @@ namespace Model {
 			static constexpr const char *prefix(void) {
 				return "vp";
 			}
+			friend std::ostream& operator<<(std::ostream& os,
+					vertex_param_t const& el);
 			std::vector<float> point;
 			vertex_param_t(void): element_t(e_el_vp) {}
 		};
