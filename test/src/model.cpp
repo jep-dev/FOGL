@@ -56,11 +56,7 @@ int main(int argc, const char **argv) {
 				// TODO print mtllib
 			} break;
 			case obj_t::e_el_o: {
-				std::cout << "Object: ";
-				for(auto iit : (*oit++).members) {
-					std::cout << iit << " ";
-				}
-				endl(std::cout);
+				std::cout << "Object: " << (*oit++).name << std::endl;
 			} break;
 			case obj_t::e_el_usemtl: {
 				// TODO print usemtl

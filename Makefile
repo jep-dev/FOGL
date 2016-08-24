@@ -35,9 +35,9 @@ TEST_EXT?=_test
 RELEASE_EXT?=
 
 MODULE_DIRS?=util/ system/ math/ model/ view/
-MAIN_MODULES?=util math model view control
+MAIN_MODULES?=util model view control
 SYSTEM_SUBMODULES?=net printer
-MATH_SUBMODULES?=affine quat dual
+MATH_SUBMODULES?=affine
 VIEW_SUBMODULES?=shade input
 MODEL_SUBMODULES?=ply obj
 MAIN_SUBMODULES?=$(SYSTEM_SUBMODULES) $(MATH_SUBMODULES)\
@@ -52,7 +52,7 @@ MAIN_SUBMODULE_PATHS?=\
 				view/shade view/input\
 				math/affine math/quat math/dual\
 				model/ply model/obj
-MAIN_H_ONLY?=util/types math/quat math/dual system
+MAIN_H_ONLY?=util/types math math/quat math/dual system
 MAIN_INCLUDES?=$(foreach inc,$(MAIN_H_ONLY)\
 			   $(MAIN_MODULES) $(MAIN_SUBMODULE_PATHS),$(inc:%=%.hpp))
 

@@ -9,9 +9,6 @@
 #include <boost/lexical_cast.hpp>
 
 namespace Model {
-	std::ostream &operator<<(std::ostream &os, obj_t::element_t const& el) {
-		return os;
-	}
 	std::ostream& operator<<(std::ostream &os,
 			obj_t::comment_t const& comment) {
 		return os << std::string(comment.contents);
@@ -34,7 +31,13 @@ namespace Model {
 		return endl(os);
 	}
 	std::ostream& operator<<(std::ostream &os, obj_t::group_t const& group) {
-		return os << "Group" << std::endl;
+		return os << "Group: " << group.name << std::endl;
+	}
+	std::ostream& operator<<(std::ostream &os, obj_t::object_t const& obj) {
+		return os << "Object: " << obj.name << std::endl;
+	}
+	std::ostream &operator<<(std::ostream &os, obj_t::element_t const& el) {
+		return os;
 	}
 	obj_t::e_status obj_t::load(const char *fname, obj_t &obj) {
 		std::ifstream file;
@@ -80,13 +83,7 @@ namespace Model {
 					obj.lines.push_back(line);
 					obj.types.emplace_back(e_el_l);
 				} else if(word == object_t::prefix()) {
-					int index;
-					object_t object;
-					while(it != std::end(tk)) {
-						index = boost::lexical_cast<int>(*it++);
-						object.members.push_back(index);
-					}
-					obj.objects.push_back(object);
+					obj.objects.emplace_back(*it++);
 					obj.types.push_back(e_el_o);
 				} else if(word == vertex_t::prefix()) {
 					float point;
