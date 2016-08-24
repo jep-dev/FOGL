@@ -9,14 +9,6 @@
 #include <vector>
 
 namespace System {
-
-	// TODO Remove and use ifstream for each time?
-	/*! Reads the contents of a file into a single packed string
- 	 * \param fname The path to a file
- 	 * \param lines The entire contents of the file
- 	 */
-	bool readFile(const char *fname, std::string &lines);
-
 	/// \copydoc readFile
 	bool readFile(const char *fname, std::vector<std::string> &lines);
 	std::string repeat(int w, char c = ' ');
