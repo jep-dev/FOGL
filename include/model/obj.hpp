@@ -25,6 +25,7 @@ namespace Model {
 			e_el_o,      ///< \ref object_t
 			e_el_usemtl, ///< \ref usemtl_t
 			e_el_v,      ///< \ref vertex_t
+			e_el_vn,     ///< \ref vertex_norm_t
 			e_el_vp,     ///< \ref vertex_param_t
 			e_el_total   ///< The total number of supported types
 		} e_el;
@@ -129,18 +130,29 @@ namespace Model {
 				return "v";
 			}
 			friend std::ostream& operator<<(std::ostream& os,
-					vertex_t const& el);
+					vertex_t const& vertex);
 			std::vector<float> point;
 			vertex_t(void): element_t(e_el_v) {}
 		};
 
-		/// A single point in parameter space; coordinates u, v
+		/// A normal vector; coordinates x, y, z
+		struct vertex_norm_t : public element_t {
+			static constexpr const char *prefix(void) {
+				return "vn";
+			}
+			friend std::ostream& operator<<(std::ostream& os,
+					vertex_norm_t const& norm);
+			std::vector<float> point;
+			vertex_norm_t(void): element_t(e_el_vn) {}
+		};
+
+		/// A single point in parameter space; coordinates u[, v [,w]]
 		struct vertex_param_t : public element_t {
 			static constexpr const char *prefix(void) {
 				return "vp";
 			}
 			friend std::ostream& operator<<(std::ostream& os,
-					vertex_param_t const& el);
+					vertex_param_t const& param);
 			std::vector<float> point;
 			vertex_param_t(void): element_t(e_el_vp) {}
 		};
@@ -160,6 +172,7 @@ namespace Model {
 		std::vector<object_t> objects;
 		std::vector<usemtl_t> usemtls;
 		std::vector<vertex_t> vertices;
+		std::vector<vertex_norm_t> norms;
 		std::vector<vertex_param_t> params;
 		std::vector<e_el> types;
 	};

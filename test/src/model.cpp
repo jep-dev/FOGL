@@ -32,6 +32,7 @@ int main(int argc, const char **argv) {
 	auto oit = std::begin(obj.objects);
 	auto uit = std::begin(obj.usemtls);
 	auto vit = std::begin(obj.vertices);
+	auto vnit = std::begin(obj.norms);
 	auto vpit = std::begin(obj.params);
 	for(auto t : obj.types) {
 		switch(t) {
@@ -67,6 +68,13 @@ int main(int argc, const char **argv) {
 				}
 				endl(std::cout);
 			} break;
+			case obj_t::e_el_vn: {
+				std::cout << "Vertex norms: ";
+				for(auto iit : (*vnit++).point) {
+					std::cout << iit << " ";
+				}
+				endl(std::cout);
+			}
 			case obj_t::e_el_vp: {
 				std::cout << "Vertex params: ";
 				for(auto iit : (*vpit++).point) {
