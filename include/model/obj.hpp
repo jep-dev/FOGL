@@ -102,9 +102,9 @@ namespace Model {
 			static constexpr const char *prefix(void) {
 				return "usemtl";
 			}
-			std::string path;
-			usemtl_t(std::string path):
-				element_t(e_el_usemtl), path(path) {}
+			std::string name;
+			usemtl_t(std::string name):
+				element_t(e_el_usemtl), path(name) {}
 		};
 
 
