@@ -25,7 +25,7 @@ Comments for declarations are kept in the project headers, and use the QT varian
 
 1. Run `git clone https://github.com/skaslev/gl3w ../gl3w`
 
-2. In `../gl3w/`, run `gl3w_gen.py` to generate OpenGL headers
+2. In `../gl3w/`, run `python gl3w_gen.py` or `python3 gl3w_gen.py` to generate OpenGL headers
 
 3. Run `git clone https://github.com/boostorg/boost ../boost`
 
