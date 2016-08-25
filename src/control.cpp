@@ -27,8 +27,7 @@ namespace Control {
 		auto start = begin(model.elements), 
 				 stop = end(model.elements);
 		auto getVertices = [](Element const& el) -> bool {
-			return el.name == "vertex" && !el.has_list
-				&& (el.properties.size() == 6 || el.properties.size() == 3);
+			return el.name == "vertex" && !el.has_list;
 		};
 		auto getIndices = [](Element const& el) -> bool {
 			int sz = el.properties.size();
