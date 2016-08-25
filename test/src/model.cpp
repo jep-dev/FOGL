@@ -69,12 +69,12 @@ int main(int argc, const char **argv) {
 				endl(std::cout);
 			} break;
 			case obj_t::e_el_vn: {
-				std::cout << "Vertex norms: ";
+				std::cout << "Vertex norm: ";
 				for(auto iit : (*vnit++).point) {
 					std::cout << iit << " ";
 				}
 				endl(std::cout);
-			}
+			} break;
 			case obj_t::e_el_vp: {
 				std::cout << "Vertex params: ";
 				for(auto iit : (*vpit++).point) {

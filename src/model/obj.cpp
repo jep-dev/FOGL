@@ -31,10 +31,10 @@ namespace Model {
 		return os;
 	}
 	std::ostream& operator<<(std::ostream &os, obj_t::group_t const& group) {
-		return os << "Group: " << group.name;
+		return os << obj_t::group_t::prefix() << ' ' << group.name;
 	}
 	std::ostream& operator<<(std::ostream &os, obj_t::object_t const& obj) {
-		return os << "Object: " << obj.name;
+		return os << obj_t::object_t::prefix() << ' ' << obj.name;
 	}
 	obj_t::e_status obj_t::load(const char *fname, obj_t &obj) {
 		std::ifstream file;
@@ -92,6 +92,15 @@ namespace Model {
 					}
 					obj.vertices.push_back(vertex);
 					obj.types.emplace_back(e_el_v);
+				} else if(word == vertex_norm_t::prefix()) {
+					vertex_norm_t norm;
+					float val;
+					while(it != std::end(tk)) {
+						val = boost::lexical_cast<float>(*it++);
+						norm.point.push_back(val);
+					}
+					obj.norms.push_back(norm);
+					obj.types.emplace_back(e_el_vn);
 				} else if(word == vertex_param_t::prefix()) {
 					vertex_param_t param;
 					float val;
