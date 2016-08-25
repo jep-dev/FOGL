@@ -11,15 +11,15 @@
 namespace Model {
 	std::ostream& operator<<(std::ostream &os,
 			obj_t::comment_t const& comment) {
-		return os << obj_t::comment_t::prefix() << ' '
+		return os << obj_t::comment_t::prefix << ' '
 			<< std::string(comment.contents);
 	}
 	std::ostream& operator<<(std::ostream &os, obj_t::line_t const& line) {
-		return os << obj_t::line_t::prefix() << ' '
+		return os << obj_t::line_t::prefix << ' '
 			<< line.vertices[0] << ", " << line.vertices[1];
 	}
 	std::ostream& operator<<(std::ostream &os, obj_t::face_t const& face) {
-		os << obj_t::face_t::prefix();
+		os << obj_t::face_t::prefix;
 		for(auto v : face.vertices) {
 			os << ' ' << v;
 		}
@@ -31,16 +31,16 @@ namespace Model {
 		return os;
 	}
 	std::ostream& operator<<(std::ostream &os, obj_t::group_t const& group) {
-		return os << obj_t::group_t::prefix() << ' ' << group.name;
+		return os << obj_t::group_t::prefix << ' ' << group.name;
 	}
 	std::ostream& operator<<(std::ostream &os, obj_t::mtllib_t const &mtllib) {
-		return os << obj_t::mtllib_t::prefix() << ' ' << mtllib.path;
+		return os << obj_t::mtllib_t::prefix << ' ' << mtllib.path;
 	}
 	std::ostream& operator<<(std::ostream &os, obj_t::object_t const& obj) {
-		return os << obj_t::object_t::prefix() << ' ' << obj.name;
+		return os << obj_t::object_t::prefix << ' ' << obj.name;
 	}
 	std::ostream& operator<<(std::ostream &os, obj_t::vertex_t const& vertex) {
-		os << obj_t::vertex_t::prefix();
+		os << obj_t::vertex_t::prefix;
 		for(auto p : vertex.point) {
 			os << ' ' << p;
 		}
@@ -48,7 +48,7 @@ namespace Model {
 	}
 	std::ostream& operator<<(std::ostream &os,
 			obj_t::vertex_norm_t const &norm) {
-		os << obj_t::vertex_norm_t::prefix();
+		os << obj_t::vertex_norm_t::prefix;
 		for(auto p : norm.point) {
 			os << ' ' << p;
 		}
@@ -56,7 +56,7 @@ namespace Model {
 	}
 	std::ostream& operator<<(std::ostream &os,
 			obj_t::vertex_param_t const &param) {
-		os << obj_t::vertex_param_t::prefix();
+		os << obj_t::vertex_param_t::prefix;
 		for(auto p : param.point) {
 			os << ' ' << p;
 		}
@@ -64,7 +64,7 @@ namespace Model {
 	}
 	std::ostream& operator<<(std::ostream &os,
 			obj_t::usemtl_t const &usemtl) {
-		return os << obj_t::usemtl_t::prefix() << ' ' << usemtl.name;
+		return os << obj_t::usemtl_t::prefix << ' ' << usemtl.name;
 	}
 	obj_t::e_status obj_t::load(const char *fname, obj_t &obj) {
 		std::ifstream file;
@@ -80,7 +80,7 @@ namespace Model {
 			boost::tokenizer<boost::char_separator<char>> tk(line, sep);
 			for(auto it = std::begin(tk); it != std::end(tk); ++it) {
 				auto word = *it++;
-				if(word == comment_t::prefix()) {
+				if(word == comment_t::prefix) {
 					std::string comment;
 					while(it != std::end(tk)) {
 						comment += *it++ + ' ';
@@ -88,7 +88,7 @@ namespace Model {
 					obj.comments.emplace_back(comment);
 					obj.types.emplace_back(e_el_c);
 					break;
-				} else if(word == face_t::prefix()) {
+				} else if(word == face_t::prefix) {
 					int index;
 					face_t face;
 					while(it != std::end(tk)) {
@@ -98,10 +98,10 @@ namespace Model {
 					obj.faces.push_back(face);
 					obj.types.emplace_back(e_el_f);
 					break;
-				} else if(word == group_t::prefix()) {
+				} else if(word == group_t::prefix) {
 					obj.groups.emplace_back(*it++);
 					obj.types.emplace_back(e_el_g);
-				} else if(word == line_t::prefix()) {
+				} else if(word == line_t::prefix) {
 					int index;
 					line_t line;
 					for(int i = 0; i < 2 && it != std::end(tk); ++i, ++it) {
@@ -110,10 +110,10 @@ namespace Model {
 					}
 					obj.lines.push_back(line);
 					obj.types.emplace_back(e_el_l);
-				} else if(word == object_t::prefix()) {
+				} else if(word == object_t::prefix) {
 					obj.objects.emplace_back(*it++);
 					obj.types.push_back(e_el_o);
-				} else if(word == vertex_t::prefix()) {
+				} else if(word == vertex_t::prefix) {
 					float point;
 					vertex_t vertex;
 					while(it != std::end(tk)) {
@@ -122,7 +122,7 @@ namespace Model {
 					}
 					obj.vertices.push_back(vertex);
 					obj.types.emplace_back(e_el_v);
-				} else if(word == vertex_norm_t::prefix()) {
+				} else if(word == vertex_norm_t::prefix) {
 					vertex_norm_t norm;
 					float val;
 					while(it != std::end(tk)) {
@@ -131,7 +131,7 @@ namespace Model {
 					}
 					obj.norms.push_back(norm);
 					obj.types.emplace_back(e_el_vn);
-				} else if(word == vertex_param_t::prefix()) {
+				} else if(word == vertex_param_t::prefix) {
 					vertex_param_t param;
 					float val;
 					while(it != std::end(tk)) {

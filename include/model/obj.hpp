@@ -32,7 +32,7 @@ namespace Model {
 
 		/// The abstract base of each obj element
 		struct element_t {
-			static constexpr const char *prefix(void);
+			static constexpr const char *prefix = "";
 			const e_el type;
 			element_t(e_el type): type(type) {}
 			virtual ~element_t(void) {}
@@ -40,9 +40,7 @@ namespace Model {
 
 		/// A comment, used only for storage
 		struct comment_t : public element_t {
-			static constexpr const char *prefix(void) {
-				return "#";
-			}
+			static constexpr const char *prefix = "#";
 			friend std::ostream& operator<<(std::ostream& os,
 					comment_t const& el);
 			std::string contents;
@@ -53,9 +51,7 @@ namespace Model {
 
 		/// A set of vertices with or without texture coordinates
 		struct face_t : public element_t {
-			static constexpr const char *prefix(void) {
-				return "f";
-			}
+			static constexpr const char *prefix = "f";
 			friend std::ostream& operator<<(std::ostream& os,
 					face_t const& el);
 			std::vector<unsigned int> vertices, coordinates;
@@ -66,9 +62,7 @@ namespace Model {
 
 		/// A collection of faces, lines, and vertices
 		struct group_t : public element_t {
-			static constexpr const char *prefix(void) {
- 			   return "g";
-			}
+			static constexpr const char *prefix = "g";
 			friend std::ostream& operator<<(std::ostream& os,
 					group_t const& el);
 			std::string name;
@@ -78,9 +72,7 @@ namespace Model {
 
 		/// A pair of vertex indices 
 		struct line_t : public element_t {
-			static constexpr const char *prefix(void) {
-				return "l";
-			}
+			static constexpr const char *prefix = "l";
 			friend std::ostream& operator<<(std::ostream& os,
 					line_t const& el);
 			std::array<unsigned int, 2> vertices;
@@ -89,9 +81,7 @@ namespace Model {
 
 		/// A material library file
 		struct mtllib_t : public element_t {
-			static constexpr const char *prefix(void) {
-				return "mtllib";
-			}
+			static constexpr const char *prefix = "mtllib";
 			friend std::ostream& operator<<(std::ostream& os,
 					mtllib_t const& el);
 			std::string path;
@@ -101,9 +91,7 @@ namespace Model {
 
 		/// An object; see \ref group_t
 		struct object_t : public element_t {
-			static constexpr const char *prefix(void) {
-				return "o";
-			}
+			static constexpr const char *prefix = "o";
 			friend std::ostream& operator<<(std::ostream& os,
 					object_t const& el);
 			std::string name;
@@ -113,9 +101,7 @@ namespace Model {
 
 		/// A reference to a loaded material
 		struct usemtl_t : public element_t {
-			static constexpr const char *prefix(void) {
-				return "usemtl";
-			}
+			static constexpr const char *prefix = "usemtl";
 			friend std::ostream& operator<<(std::ostream& os,
 					usemtl_t const& el);
 			std::string name;
@@ -126,9 +112,7 @@ namespace Model {
 
 		/// A single point, containing at least x, y, z coordinates
 		struct vertex_t : public element_t {
-			static constexpr const char *prefix(void) {
-				return "v";
-			}
+			static constexpr const char *prefix = "v";
 			friend std::ostream& operator<<(std::ostream& os,
 					vertex_t const& vertex);
 			std::vector<float> point;
@@ -137,9 +121,7 @@ namespace Model {
 
 		/// A normal vector; coordinates x, y, z
 		struct vertex_norm_t : public element_t {
-			static constexpr const char *prefix(void) {
-				return "vn";
-			}
+			static constexpr const char *prefix = "vn";
 			friend std::ostream& operator<<(std::ostream& os,
 					vertex_norm_t const& norm);
 			std::vector<float> point;
@@ -148,9 +130,7 @@ namespace Model {
 
 		/// A single point in parameter space; coordinates u[, v [,w]]
 		struct vertex_param_t : public element_t {
-			static constexpr const char *prefix(void) {
-				return "vp";
-			}
+			static constexpr const char *prefix = "vp";
 			friend std::ostream& operator<<(std::ostream& os,
 					vertex_param_t const& param);
 			std::vector<float> point;
