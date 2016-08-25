@@ -7,9 +7,16 @@ Asynchronous model/view/controller engine/framework; under construction.
 * OpenGL Utility Library (GLU)
 * [GL3W](https://github.com/skaslev/gl3w) -- OpenGL extension loading
 * [GLFW](https://github.com/glfw/glfw) -- windows with OpenGL and event handling
+* [SOIL](https://www.opengl.org/wiki/Image_Libraries#SOIL) -- Simple OpenGL Image Library
 * [Boost](https://github.com/boostorg/boost) -- versatile C++ support library
 * [Doxygen](https://github.com/doxygen/doxygen) (optional) -- see Documentation section
+* [Graphviz](http://www.graphviz.org/) (optional) -- see Documentation section
 
+Several of these requirements can be installed via the command line rather than manually (download/configure/build/install):
+
+`sudo apt-get install python3 libboost-all-dev libgl1-mesa-dev libglu1-mesa-dev libsoil-dev doxygen graphviz`
+
+You cannot install gl3w the same way; it must be run locally (see Building)
 
 #### Documentation
 Comments for declarations are kept in the project headers, and use the QT variant of Doxygen formatting. To generate HTML and/or LaTex from these comments, simply run `doxygen` from the `doc` directory, with or without modifying the Doxyfile to your liking.
