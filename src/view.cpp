@@ -30,8 +30,8 @@ namespace View {
 		};
 		glUniformMatrix4fv(ids[e_id_proj], 1, GL_TRUE, mat_proj);
 
-		float ct = cos(theta), st = sin(theta),
-			  cp = cos(phi/2), sp = sin(phi/2);
+		float ct = cos(-theta), st = sin(-theta),
+			  cp = cos(-phi/2), sp = sin(-phi/2);
 		float mat_model[]{
 				    ct,    0,    -st, 0,
 				-sp*st,   cp, -sp*ct, 0,
@@ -110,9 +110,10 @@ namespace View {
 		}
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_SAMPLES, 4);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		
-		if(!(win = glfwCreateWindow(512, 512, "View", NULL, NULL))) {
+		if(!(win = glfwCreateWindow(680, 680, "View", NULL, NULL))) {
 			std::cout << "Could not create window." << std::endl;
 			alive = false;
 			return;
@@ -125,6 +126,12 @@ namespace View {
 			return;
 		}
 		
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_MULTISAMPLE);
+		glEnable(GL_POLYGON_SMOOTH);
+		glHint(GL_POLYGON_SMOOTH, GL_NICEST);
+
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 
