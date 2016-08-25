@@ -30,8 +30,8 @@ namespace View {
 		};
 		glUniformMatrix4fv(ids[e_id_proj], 1, GL_TRUE, mat_proj);
 
-		float ct = cos(-theta), st = sin(-theta),
-			  cp = cos(-phi/2), sp = sin(-phi/2);
+		float ct = cos(-theta*1.5), st = sin(-theta*1.5),
+			  cp = cos(-phi), sp = sin(-phi);
 		float mat_model[]{
 				    ct,    0,    -st, 0,
 				-sp*st,   cp, -sp*ct, 0,
