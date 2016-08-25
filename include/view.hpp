@@ -11,7 +11,6 @@
 #include <GLFW/glfw3.h>
 
 #include "util.hpp"
-#include "view/input.hpp"
 #include "view/shade.hpp"
 
 namespace View {
