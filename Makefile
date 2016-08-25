@@ -99,7 +99,7 @@ LD_LIBRARY_PATH:=$(LD_LIBRARY_PATH):$(DIR_GL3W_LIB)
 LDFLAGS:=-L$(DIR_BOOST_LIB) -L$(DIR_GL3W_LIB) -lpthread\
 	-Wl,--gc-sections -Wl,-rpath,$(DIR_BOOST_LIB):$(DIR_GL3W_LIB)\
 	-lboost_coroutine -lboost_system
-RELEASE_LDFLAGS:=$(LDFLAGS) -lGL -lGLU -lglfw -ldl
+RELEASE_LDFLAGS:=$(LDFLAGS) -lSOIL -lGL -lGLU -lglfw -ldl
 #RELEASE_LDFLAGS:=$(LDFLAGS) $(MAIN_DLL_DIRS) $(MAIN_DLL_LINKS)\
 	-lGL -lGLU -lglfw -ldl
 

@@ -1,6 +1,10 @@
 #include "control.hpp"
 #include "model/ply.hpp"
 
+#include <GLFW/glfw3.h>
+#include <GL/glu.h>
+#include <SOIL/SOIL.h>
+
 #include <sstream>
 #include <cmath>
 
@@ -118,6 +122,5 @@ namespace Control {
 	control::control(std::atomic_bool &alive, const char *mpath,
 			const char *vert, const char *frag):
 		task(), mpath(mpath), viewer(alive, vert, frag) {
-			init(alive);
 		}
 }
