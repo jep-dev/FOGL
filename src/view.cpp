@@ -33,10 +33,10 @@ namespace View {
 		float ct = cos(-theta*1.5), st = sin(-theta*1.5),
 			  cp = cos(-phi), sp = sin(-phi);
 		float mat_model[]{
-				    ct,    0,    -st, 0,
-				-sp*st,   cp, -sp*ct, 0,
-				 cp*st,   sp,  cp*ct, 0,
-				     0,    0,      0, 1
+				    ct,  0,    -st, 0,
+				-sp*st, cp, -sp*ct, 0,
+				 cp*st, sp,  cp*ct, 0,
+				     0,  0,      0, 1
 		}, mat_view[]{
 				1, 0, 0, 0,
 				0, 1, 0, 0,
@@ -51,6 +51,7 @@ namespace View {
 	void view::redraw() {
 		static constexpr const unsigned int
 			offset = 3*sizeof(float),
+			//stride = offset,
 			stride = 2*offset,
 			bits = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
 		setUniforms();
@@ -61,14 +62,18 @@ namespace View {
 		glVertexAttribPointer(0, 3, GL_FLOAT,
 				GL_FALSE, stride, nullptr);
 		
-		glEnableVertexAttribArray(1);
+		///*
+ 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 3, GL_FLOAT,
 				GL_FALSE, stride, (void*) offset);
+		//*/
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ids[e_id_ibuf]);
 		glDrawElements(GL_TRIANGLES, nTriangles*3,
 				GL_UNSIGNED_INT, nullptr);
+		///*
 		glDisableVertexAttribArray(1);
+		//*/
 		glDisableVertexAttribArray(0);
 		glfwSwapBuffers(win);
 	}
