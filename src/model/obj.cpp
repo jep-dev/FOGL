@@ -14,8 +14,8 @@ namespace Model {
 		return os << "# " << std::string(comment.contents);
 	}
 	std::ostream& operator<<(std::ostream &os, obj_t::line_t const& line) {
-		return os << std::string("Line: ") << line.vertices[0] << ", "
-			<< line.vertices[1] << std::endl;
+		return os << std::string("Line: ")
+			<< line.vertices[0] << ", " << line.vertices[1];
 	}
 	std::ostream& operator<<(std::ostream &os, obj_t::face_t const& face) {
 		os << "Face: ";
@@ -28,13 +28,13 @@ namespace Model {
 				std::cout << c << " ";
 			}
 		}
-		return endl(os);
+		return os;
 	}
 	std::ostream& operator<<(std::ostream &os, obj_t::group_t const& group) {
-		return os << "Group: " << group.name << std::endl;
+		return os << "Group: " << group.name;
 	}
 	std::ostream& operator<<(std::ostream &os, obj_t::object_t const& obj) {
-		return os << "Object: " << obj.name << std::endl;
+		return os << "Object: " << obj.name;
 	}
 	obj_t::e_status obj_t::load(const char *fname, obj_t &obj) {
 		std::ifstream file;
@@ -70,7 +70,7 @@ namespace Model {
 					break;
 				} else if(word == group_t::prefix()) {
 					obj.groups.emplace_back(*it++);
-					obj.types.emplace_back(e_el_o);
+					obj.types.emplace_back(e_el_g);
 				} else if(word == line_t::prefix()) {
 					int index;
 					line_t line;
