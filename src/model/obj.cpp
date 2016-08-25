@@ -11,21 +11,21 @@
 namespace Model {
 	std::ostream& operator<<(std::ostream &os,
 			obj_t::comment_t const& comment) {
-		return os << "# " << std::string(comment.contents);
+		return os << obj_t::comment_t::prefix() << ' '
+			<< std::string(comment.contents);
 	}
 	std::ostream& operator<<(std::ostream &os, obj_t::line_t const& line) {
-		return os << std::string("Line: ")
+		return os << obj_t::line_t::prefix() << ' '
 			<< line.vertices[0] << ", " << line.vertices[1];
 	}
 	std::ostream& operator<<(std::ostream &os, obj_t::face_t const& face) {
-		os << "Face: ";
+		os << obj_t::face_t::prefix();
 		for(auto v : face.vertices) {
-			os << v << " ";
+			os << ' ' << v;
 		}
 		if(face.tex_coords) {
-			std::cout << "\n\tTex coords: ";
 			for(auto c : face.coordinates) {
-				std::cout << c << " ";
+				std::cout << ' ' << c;
 			}
 		}
 		return os;
@@ -33,8 +33,38 @@ namespace Model {
 	std::ostream& operator<<(std::ostream &os, obj_t::group_t const& group) {
 		return os << obj_t::group_t::prefix() << ' ' << group.name;
 	}
+	std::ostream& operator<<(std::ostream &os, obj_t::mtllib_t const &mtllib) {
+		return os << obj_t::mtllib_t::prefix() << ' ' << mtllib.path;
+	}
 	std::ostream& operator<<(std::ostream &os, obj_t::object_t const& obj) {
 		return os << obj_t::object_t::prefix() << ' ' << obj.name;
+	}
+	std::ostream& operator<<(std::ostream &os, obj_t::vertex_t const& vertex) {
+		os << obj_t::vertex_t::prefix();
+		for(auto p : vertex.point) {
+			os << ' ' << p;
+		}
+		return os;
+	}
+	std::ostream& operator<<(std::ostream &os,
+			obj_t::vertex_norm_t const &norm) {
+		os << obj_t::vertex_norm_t::prefix();
+		for(auto p : norm.point) {
+			os << ' ' << p;
+		}
+		return os;
+	}
+	std::ostream& operator<<(std::ostream &os,
+			obj_t::vertex_param_t const &param) {
+		os << obj_t::vertex_param_t::prefix();
+		for(auto p : param.point) {
+			os << ' ' << p;
+		}
+		return os;
+	}
+	std::ostream& operator<<(std::ostream &os,
+			obj_t::usemtl_t const &usemtl) {
+		return os << obj_t::usemtl_t::prefix() << ' ' << usemtl.name;
 	}
 	obj_t::e_status obj_t::load(const char *fname, obj_t &obj) {
 		std::ifstream file;

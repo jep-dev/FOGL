@@ -12,16 +12,16 @@ int main(int argc, const char **argv) {
 	endl(std::cout << "File: " << fname);
 	switch(obj_t::load(fname, obj)) {
 		case obj_t::e_err_io:
-			std::cout << "Status: I/O Error" << std::endl;
+			std::cout << "Status: I/O Error\n" << std::endl;
 			break;
 		case obj_t::e_ok:
-			std::cout << "Status: OK" << std::endl;
+			std::cout << "Status: OK\n" << std::endl;
 			break;
 		case obj_t::e_err_unknown:
-			std::cout << "Status: Unknown" << std::endl;
+			std::cout << "Status: Unknown\n" << std::endl;
 			break;
 		default:
-			std::cout << "(unknown status)" << std::endl;
+			std::cout << "(unknown status)\n" << std::endl;
 			break;
 	}
 	auto cit = std::begin(obj.comments);
@@ -36,52 +36,16 @@ int main(int argc, const char **argv) {
 	auto vpit = std::begin(obj.params);
 	for(auto t : obj.types) {
 		switch(t) {
-			case obj_t::e_el_c: {
-				std::cout << *cit++ << std::endl;
-			} break;
-			case obj_t::e_el_f: {
-				std::cout << *fit++ << std::endl;
-			} break;
-			case obj_t::e_el_g: {
-				std::cout << *git++ << std::endl;
-			} break;
-			case obj_t::e_el_l: {
-				std::cout << "Line: ";
-				for(auto iit : (*lit++).vertices) {
-					std::cout << iit << " ";
-				}
-				endl(std::cout);
-			} break;
-			case obj_t::e_el_mtllib: {
-				std::cout << "Mtllib: " << mit++->path << std::endl;
-			} break;
-			case obj_t::e_el_o: {
-				std::cout << "Object: " << (*oit++).name << std::endl;
-			} break;
-			case obj_t::e_el_usemtl: {
-				std::cout << "Usemtl: " << uit++->name << std::endl;
-			} break;
-			case obj_t::e_el_v: {
-				std::cout << "Vertex: ";
-				for(auto iit : (*vit++).point) {
-					std::cout << iit << " ";
-				}
-				endl(std::cout);
-			} break;
-			case obj_t::e_el_vn: {
-				std::cout << "Vertex norm: ";
-				for(auto iit : (*vnit++).point) {
-					std::cout << iit << " ";
-				}
-				endl(std::cout);
-			} break;
-			case obj_t::e_el_vp: {
-				std::cout << "Vertex params: ";
-				for(auto iit : (*vpit++).point) {
-					std::cout << iit << " ";
-				}
-				endl(std::cout);
-			} break;
+			case obj_t::e_el_c: endl(std::cout << *cit++); break;
+			case obj_t::e_el_f: endl(std::cout << *fit++); break;
+			case obj_t::e_el_g: endl(std::cout << *git++); break;
+			case obj_t::e_el_l: endl(std::cout << *lit++); break;
+			case obj_t::e_el_mtllib: endl(std::cout << *mit++); break;
+			case obj_t::e_el_o: endl(std::cout << *oit++); break;
+			case obj_t::e_el_usemtl: endl(std::cout << *uit++); break;
+			case obj_t::e_el_v: endl(std::cout << *vit++); break;
+			case obj_t::e_el_vn: endl(std::cout << *vnit++); break;
+			case obj_t::e_el_vp: endl(std::cout << *vpit++); break;
 			default: break;
 		}
 	}
