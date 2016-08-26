@@ -18,10 +18,10 @@ namespace Control {
 	} e_tid; ///< The ID of a task
 
 	/// A data structure controlling both model and view
-	struct control : virtual Util::task {
+	struct control : public Util::supertask {
 		const char *mpath;
 		View::view viewer;
-		Model::contour<Util::undef_t, GLfloat, GLclampf, GLclampf> model;
+		//Model::contour<Util::undef_t, GLfloat, GLclampf, GLclampf> model;
 		
 		void init(std::atomic_bool &alive) override;
 		void poll(std::atomic_bool &alive);
