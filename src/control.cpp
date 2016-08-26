@@ -10,15 +10,18 @@
 
 #include "omp.h"
 #include <chrono>
+#include <memory>
 
 namespace Control {
 	void control::init(std::atomic_bool &alive) {
-//-- Task 1: view before model (splash)
+		//using namespace Util;
+
+		// Task 1: view before model (splash)
 		using namespace View;
 		glfwSetInputMode(viewer.win, GLFW_STICKY_KEYS, 1);
 		glfwMakeContextCurrent(viewer.win);
 
-//-- Task 2: model loading
+		// Task 2: model loading
 		using namespace Model::Ply;
  		Header model(this -> mpath);
  		if(model.status) {
@@ -27,24 +30,23 @@ namespace Control {
 		}
 		auto start = begin(model.elements), 
 				 stop = end(model.elements);
-		auto getVertices = [](Element const& el) -> bool {
-			// TODO Change behavior based on the number of elements
-			return el.name == "vertex" && !el.has_list;
-		};
-		auto getIndices = [](Element const& el) -> bool {
-			int sz = el.properties.size();
-			return el.name == "face"
-				&& (el.has_list ? sz==1 : sz==3);
-		};
-		auto vertices = std::find_if(start, stop, getVertices),
-				 indices = std::find_if(start, stop, getIndices);
+		auto vertices = std::find_if(start, stop,
+			[](Element const& el) -> bool {
+				// TODO Change behavior based on the number of elements
+				return el.name == "vertex" && !el.has_list;
+		}), indices = std::find_if(start, stop,
+			[](Element const& el) -> bool {
+				int sz = el.properties.size();
+				return el.name == "face"
+					&& (el.has_list ? sz==1 : sz==3);
+		});
 		if(vertices == stop || indices == stop) {
 			std::cout << "The model is valid, but does not match "
 				"the anticipated structure." << std::endl;
 			return;
 		}
 
-//-- Task 3: view after model
+		// Task 3: view after model
 		glGenBuffers(1, &viewer.ids[view::e_id_vbuf]);
 		glBindBuffer(GL_ARRAY_BUFFER, viewer.ids[view::e_id_vbuf]);
 		glBufferData(GL_ARRAY_BUFFER, vertices->data.size(),
