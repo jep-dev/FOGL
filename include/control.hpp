@@ -24,7 +24,7 @@ namespace Control {
 		//Model::contour<Util::undef_t, GLfloat, GLclampf, GLclampf> model;
 		
 		void init(std::atomic_bool &alive) override;
-		void poll(std::atomic_bool &alive);
+		void poll(std::atomic_bool &alive) override;
 		void run(std::atomic_bool &alive) override;
 
 		/** Constructor; initializes and applies shaders
