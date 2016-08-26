@@ -10,11 +10,13 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 int main(int argc, const char **argv) {
+	using namespace Util;
+
 	glfwInit();
 	std::atomic_bool alive(true);
 	Control::control ctl(alive, "share/bunny.ply",
 			"share/shade.vert", "share/shade.frag");
-	Util::task::init(alive, &ctl);
-	Util::task::run(alive, &ctl);
+	task::init(alive, &ctl);
+	task::run(alive, &ctl);
 	return 0;
 }
