@@ -67,7 +67,7 @@ MAIN_OBJS=$(foreach mod,$(MAIN_MODULES) $(MAIN_SUBMODULE_PATHS),\
 MAIN_DLLS=$(foreach mod,main $(MAIN_SUBMODULES),\
 		  $(DIR_ROOT_LIB)lib$(mod)$(DLL_EXT))
 #MAIN_DLL_LINKS=$(foreach dll,$(MAIN_DLLS),$(dll:lib%$(DLL_EXT)=-l%))
-MAIN_DLL_LINKS=$(foreach mod,$(MAIN_MODULES) $(MAIN_SUBMODULES) main,\
+MAIN_DLL_LINKS=$(foreach mod,$(MAIN_SUBMODULES) main,\
 			   $(mod:%=-l%))
 #MAIN_DLLS=$(foreach dir,. $(MODULE_DIRS) $(MAIN_SUBMODULE_DIRS),\
 		  $(foreach src,$(wildcard $(DIR_ROOT_SRC)$(dir)*.cpp),\
@@ -95,7 +95,7 @@ CFLAGS=-fPIC -fdata-sections \
 	   -isystem $(DIR_GL3W_INCLUDE) -isystem $(DIR_GL3W_INCLUDE)
 CPPFLAGS:=$(CFLAGS) -std=c++11 -pthread -fopenmp=libomp\
 	-I$(DIR_BOOST_INCLUDE) -I$(DIR_ROOT_INCLUDE) 
-LD_LIBRARY_PATH:=$(LD_LIBRARY_PATH):$(DIR_GL3W_LIB)
+LD_LIBRARY_PATH:=$(LD_LIBRARY_PATH):$(DIR_ROOT_LIB):$(DIR_GL3W_LIB)
 LDFLAGS:=-L$(DIR_ROOT_LIB) -L$(DIR_BOOST_LIB) -L$(DIR_GL3W_LIB) -lpthread\
 	-Wl,--gc-sections -Wl,-rpath,$(DIR_BOOST_LIB):$(DIR_GL3W_LIB)\
 	-lboost_coroutine -lboost_system
@@ -175,11 +175,11 @@ endif
 endif
 endif
 
-release: $(MAIN_DLLS) $(RELEASE_OBJ) $(GL3W_OBJS) $(RELEASE_EXE);
+release: $(MAIN_DLLS) $(MAIN_OBJS) $(MAIN_DEPS) $(RELEASE_OBJ) $(GL3W_OBJS) $(RELEASE_EXE);
 #$(RELEASE_EXE): $(RELEASE_OBJ) $(MAIN_OBJS) $(MAIN_DLLS) $(GL3W_OBJS)
 $(RELEASE_EXE): $(RELEASE_OBJ) $(GL3W_OBJS) $(MAIN_DLLS)
 	$(LINK_CXX) -fPIE $(MAIN_DLL_LINKS)\
-		$(RELEASE_OBJ) $(GL3W_OBJS) $(RELEASE_LDFLAGS)\
+		$(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS) $(RELEASE_LDFLAGS)\
 		-o $@
 #$(LINK_CXX) -fPIE\
 		$(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS)\
