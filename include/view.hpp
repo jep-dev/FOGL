@@ -12,13 +12,14 @@
 
 #include "util.hpp"
 #include "view/shade.hpp"
+#include "view/pane.hpp"
 
 namespace View {
 	/// Loops over the queued GL errors and prints each (using GLU).
 	void printErrors(const char *prefix);
 
 	/// A view structure (state and implementation)
-	struct view : virtual Util::task {
+	struct view : public virtual Util::task {
 		typedef enum {
 			e_id_prog=0, e_id_va, 
 			e_id_vbuf,   e_id_ibuf, 
