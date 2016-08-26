@@ -38,20 +38,16 @@ MODULE_DIRS?=util/ system/ math/ model/ view/
 MAIN_MODULES?=util model view control
 SYSTEM_SUBMODULES?=net printer
 MATH_SUBMODULES?=affine
-VIEW_SUBMODULES?=shade pane
 MODEL_SUBMODULES?=ply obj
+VIEW_SUBMODULES?=shade pane
 MAIN_SUBMODULES?=$(SYSTEM_SUBMODULES) $(MATH_SUBMODULES)\
-		$(VIEW_SUBMODULES) $(MODEL_SUBMODULES) $(MAIN_MODULES)
+		$(MODEL_SUBMODULES) $(VIEW_SUBMODULES) $(MAIN_MODULES)
 # TODO automate this too?
 MAIN_SUBMODULE_PATHS?=\
 		$(foreach mod,$(SYSTEM_SUBMODULES),system/$(mod))\
 		$(foreach mod,$(MATH_SUBMODULES),math/$(mod))\
-		$(foreach mod,$(VIEW_SUBMODULES),view/$(mod))\
-		$(foreach mod,$(MODEL_SUBMODULES),model/$(mod))
-#MAIN_SUBMODULES?=system/net\
-				view/shade view/input\
-				math/affine math/quat math/dual\
-				model/ply model/obj
+		$(foreach mod,$(MODEL_SUBMODULES),model/$(mod))\
+		$(foreach mod,$(VIEW_SUBMODULES),view/$(mod))
 MAIN_H_ONLY?=util/types math math/quat math/dual system
 MAIN_INCLUDES?=$(foreach inc,$(MAIN_H_ONLY)\
 			   $(MAIN_MODULES) $(MAIN_SUBMODULE_PATHS),$(inc:%=%.hpp))
@@ -102,7 +98,6 @@ LDFLAGS:=-L$(DIR_BOOST_LIB) -L$(DIR_GL3W_LIB) -lpthread\
 RELEASE_LDFLAGS:=$(LDFLAGS) -lSOIL -lGL -lGLU -lglfw -ldl
 #RELEASE_LDFLAGS:=$(LDFLAGS) $(MAIN_DLL_DIRS) $(MAIN_DLL_LINKS)\
 	-lGL -lGLU -lglfw -ldl
-
 #DEBUG_LDFLAGS=$(LDFLAGS) -lboost_system
 TEST_LDFLAGS:=$(LDFLAGS) -lboost_unit_test_framework -lGL -lGLU -lglfw -ldl
 ###############################################################################
@@ -137,10 +132,12 @@ $(DIR_ROOT_LIB)%$(OBJ_EXT):\
 	$(COMPILE_CXX) $<\
 		-o $@
 
-$(DIR_ROOT_LIB)%$(DEP_EXT): $(DIR_ROOT_SRC)%.cpp $(DIR_ROOT_INCLUDE)%.hpp
+$(DIR_ROOT_LIB)%$(DEP_EXT):\
+		$(DIR_ROOT_SRC)%.cpp $(DIR_ROOT_INCLUDE)%.hpp
 	$(DEPEND_CXX) $<\
 		-o $@
-$(DIR_ROOT_LIB)*/%$(DEP_EXT): $(DIR_ROOT_SRC)*/%.cpp $(DIR_ROOT_INCLUDE)*/%.hpp
+$(DIR_ROOT_LIB)*/%$(DEP_EXT):\
+		$(DIR_ROOT_SRC)*/%.cpp $(DIR_ROOT_INCLUDE)*/%.hpp
 	$(DEPEND_CXX) $<\
 		-o $@
 
@@ -167,7 +164,9 @@ env:
 		RELEASE_LDFLAGS TEST_LDFLAGS MAIN_OBJS,\r$(var) = ${$(var)}\n)"
 
 ifneq ($(MAKECMDGOALS),clean)
+ifneq ($(MAKECMDGOALS),.sentinel)
 	-include $(MAIN_DEPS)
+endif
 endif
 
 release: $(RELEASE_EXE) $(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS);
