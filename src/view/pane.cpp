@@ -40,10 +40,11 @@ namespace View {
 		
 		ids[e_q_prog] = glCreateProgram();
 		// TODO Shader paths as members by ctor/init
-		if(!link("share/pane.vert","share/pane.frag", ids[e_q_prog])) {
+		if(!link("share/pane.vert", "share/pane.frag", ids[e_q_prog])) {
 			std::cout << "Exiting due to GLSL status" << std::endl;
 			alive = false;
 		}
+		ids[e_q_tex] = glGetUniformLocation(ids[e_q_prog], "tex");
 		glUseProgram(ids[e_q_prog]);
 	}
 
@@ -52,6 +53,7 @@ namespace View {
 		ids[e_dy] = dy;
 		ids[e_x0] = x0;
 		ids[e_y0] = y0;
+		glViewport(x0, y0, x0 + dx, y0 + dy);
 	}
 
 	void pane::run(std::atomic_bool &alive) {
