@@ -59,7 +59,7 @@ namespace System {
 		return stringify(t1) + " " + stringify(t2, tn...);
 	}
 
-	bool readFile(const char *fname, std::string &lines) {
+	/*bool readFile(const char *fname, std::string &lines) {
 		std::ifstream file(fname);
 		if(!file.is_open()) {
 			return false;
@@ -80,7 +80,7 @@ namespace System {
 		}
 		file.close();
 		return true;
-	}
+	}*/
 
 	int split(std::string const& line, std::vector<std::string> &words) {
 		int wc = 0;
