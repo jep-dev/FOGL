@@ -1,12 +1,15 @@
 #ifndef PLY_HPP
 #define PLY_HPP
 
+#include "model.hpp"
+
 #include <iosfwd>
 #include <vector>
 #include <string>
 
 namespace Model {
 	namespace Ply {
+		using namespace Model;
 		enum STATUS {
 			OK=0,
 			NO_FILE,   NO_PLY,
@@ -39,7 +42,7 @@ namespace Model {
 			operator<<(std::ostream& lhs, Property const& rhs);
 		};
 		
- 		/// A vector/stack of raw bytes (needs replacement)
+ 		/*/// A vector/stack of raw bytes (needs replacement)
 		struct Buffer {
 			std::vector<uint8_t> data;
 			template<typename T>
@@ -53,7 +56,7 @@ namespace Model {
 				push_back(s);
 				push_back(t...);
 			}
-		};
+		};*/
 
  		/// A group of properties
 		struct Element: public Buffer {

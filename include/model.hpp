@@ -5,8 +5,6 @@
 #include <GL/gl3w.h>
 
 #include "system.hpp"
-#include "model/ply.hpp"
-#include "model/obj.hpp"
 
 
 namespace Model {
@@ -28,6 +26,26 @@ namespace Model {
 	 	 */
 		void operator()(S *dest, U u, V v);
 	};
+
+ 	/// A vector/stack of raw bytes (needs replacement)
+	struct Buffer {
+		std::vector<uint8_t> data;
+		template<typename T>
+		void push_back(T const& t) {
+			static constexpr int N = sizeof(T);
+			auto buf = (uint8_t*) &t;
+			data.insert(data.end(), buf, buf+N);
+		}
+		template<typename S, typename... T>
+		void push_back(S const& s, T... t) {
+			push_back(s);
+			push_back(t...);
+		}
+	};
+
 }
+
+#include "model/ply.hpp"
+#include "model/obj.hpp"
 
 #endif
