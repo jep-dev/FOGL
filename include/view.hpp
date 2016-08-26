@@ -40,7 +40,7 @@ namespace View {
 		/** Polls for updates; move to control?
  		 * @param alive Shared state; false signals shutdown
  		 */
-		void poll(std::atomic_bool &alive);
+		void poll(std::atomic_bool &alive) override;
 
 		/*! Calculates and displays the next frame, potentially incorporating
  		 * the frame index (discrete time) and FPS
