@@ -18,5 +18,6 @@ int main(int argc, const char **argv) {
 			"share/shade.vert", "share/shade.frag");
 	task::init(alive, &ctl);
 	task::run(alive, &ctl);
+	glfwTerminate();
 	return 0;
 }
