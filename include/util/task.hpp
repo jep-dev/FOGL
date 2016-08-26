@@ -2,6 +2,7 @@
 #define UTIL_TASK_HPP
 
 #include <atomic>
+#include <deque>
 
 namespace Util {
 	struct task {
@@ -14,6 +15,7 @@ namespace Util {
  		 * @param alive Shared status; false signals shutdown
  		 */
 		virtual void run(std::atomic_bool& alive) =0;
+		virtual ~task(void) {}
 	
 		/** Initializes any resources deferred from constructor
  		 * @param alive Shared status; false signals shutdown
@@ -28,6 +30,21 @@ namespace Util {
 		static void run(std::atomic_bool &alive, task *t) {
 			t -> run(alive);
 		}
+	};
+
+	struct supertask : public virtual task {
+		std::deque<task*> tasks;
+		void init(std::atomic_bool& alive) {
+			for(auto t : tasks) {
+				t -> init(alive);
+			}
+		}
+		void run(std::atomic_bool& alive) {
+			for(auto t : tasks) {
+				t -> run(alive);
+			}
+		}
+		virtual ~supertask(void) {}
 	};
 }
 

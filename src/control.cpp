@@ -13,12 +13,13 @@
 
 namespace Control {
 	void control::init(std::atomic_bool &alive) {
+//-- Task 1: view before model (splash)
+		using namespace View;
 		glfwSetInputMode(viewer.win, GLFW_STICKY_KEYS, 1);
 		glfwMakeContextCurrent(viewer.win);
 
+//-- Task 2: model loading
 		using namespace Model::Ply;
-		using namespace View;
-
  		Header model(this -> mpath);
  		if(model.status) {
 			std::cout << model.statusContext << std::endl;
@@ -27,7 +28,7 @@ namespace Control {
 		auto start = begin(model.elements), 
 				 stop = end(model.elements);
 		auto getVertices = [](Element const& el) -> bool {
-			// TODO Change behavior based on the number of elements per vertex
+			// TODO Change behavior based on the number of elements
 			return el.name == "vertex" && !el.has_list;
 		};
 		auto getIndices = [](Element const& el) -> bool {
@@ -43,6 +44,7 @@ namespace Control {
 			return;
 		}
 
+//-- Task 3: view after model
 		glGenBuffers(1, &viewer.ids[view::e_id_vbuf]);
 		glBindBuffer(GL_ARRAY_BUFFER, viewer.ids[view::e_id_vbuf]);
 		glBufferData(GL_ARRAY_BUFFER, vertices->data.size(),
@@ -121,5 +123,5 @@ namespace Control {
 
 	control::control(std::atomic_bool &alive, const char *mpath,
 			const char *vert, const char *frag):
-		task(), mpath(mpath), viewer(alive, vert, frag) {}
+		supertask(), mpath(mpath), viewer(alive, vert, frag) {}
 }
