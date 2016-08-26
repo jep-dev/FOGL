@@ -34,13 +34,17 @@ TEST_EXT?=_test
 #DEBUG_EXT?=_debug
 RELEASE_EXT?=
 
-MODULE_DIRS?=util/ system/ math/ model/ view/
-MAIN_MODULES?=util model view control
+MAIN_MODULES?=util system math model view control
+MODULE_DIRS?=$(foreach mod,$(MAIN_MODULES),$(mod)/)
+MAIN_H_ONLY?=util/types math math/quat math/dual system
+
 SYSTEM_SUBMODULES?=net printer
 MATH_SUBMODULES?=affine
 MODEL_SUBMODULES?=ply obj
 VIEW_SUBMODULES?=shade pane
-MAIN_SUBMODULES?=$(SYSTEM_SUBMODULES) $(MATH_SUBMODULES)\
+MAIN_SUBMODULES?=$(foreach sub,SYSTEM MATH MODEL VIEW,\
+		 $($(sub)_SUBMODULES)) $(MAIN_MODULES)
+#$(SYSTEM_SUBMODULES) $(MATH_SUBMODULES)\
 		$(MODEL_SUBMODULES) $(VIEW_SUBMODULES) $(MAIN_MODULES)
 # TODO automate this too?
 MAIN_SUBMODULE_PATHS?=\
@@ -48,7 +52,6 @@ MAIN_SUBMODULE_PATHS?=\
 		$(foreach mod,$(MATH_SUBMODULES),math/$(mod))\
 		$(foreach mod,$(MODEL_SUBMODULES),model/$(mod))\
 		$(foreach mod,$(VIEW_SUBMODULES),view/$(mod))
-MAIN_H_ONLY?=util/types math math/quat math/dual system
 MAIN_INCLUDES?=$(foreach inc,$(MAIN_H_ONLY)\
 			   $(MAIN_MODULES) $(MAIN_SUBMODULE_PATHS),$(inc:%=%.hpp))
 
@@ -56,7 +59,7 @@ MAIN_SRCS?=$(foreach mod,$(MAIN_MODULES) $(MAIN_SUBMODULE_PATHS) main,\
 	  $(DIR_ROOT_SRC)$(mod).cpp)
 MAIN_OBJS=$(foreach mod,$(MAIN_MODULES) $(MAIN_SUBMODULE_PATHS),\
 	  $(mod:%=$(DIR_ROOT_LIB)%$(OBJ_EXT)))
-MAIN_DLL_DIRS=-L$(DIR_ROOT_LIB) $(foreach dir,$(MODULE_DIRS),\
+#MAIN_DLL_DIRS=-L$(DIR_ROOT_LIB) $(foreach dir,$(MODULE_DIRS),\
 		  -L$(DIR_ROOT_LIB)$(dir))
 #MAIN_DLLS=$(foreach dir,./ $(MODULE_DIRS),\
 		  $($(wildcard $(DIR_ROOT_SRC)$(dir)*.cpp):\
@@ -64,7 +67,8 @@ MAIN_DLL_DIRS=-L$(DIR_ROOT_LIB) $(foreach dir,$(MODULE_DIRS),\
 MAIN_DLLS=$(foreach mod,main $(MAIN_SUBMODULES),\
 		  $(DIR_ROOT_LIB)lib$(mod)$(DLL_EXT))
 #MAIN_DLL_LINKS=$(foreach dll,$(MAIN_DLLS),$(dll:lib%$(DLL_EXT)=-l%))
-MAIN_DLL_LINKS=$(foreach mod,$(MAIN_MODULES) $(MAIN_SUBMODULES) main,-l$(mod))
+MAIN_DLL_LINKS=$(foreach mod,$(MAIN_MODULES) $(MAIN_SUBMODULES) main,\
+			   $(mod:%=-l%))
 #MAIN_DLLS=$(foreach dir,. $(MODULE_DIRS) $(MAIN_SUBMODULE_DIRS),\
 		  $(foreach src,$(wildcard $(DIR_ROOT_SRC)$(dir)*.cpp),\
 	  $(src:$(DIR_ROOT_SRC)$(dir)%.cpp=$(DIR_ROOT_LIB)$(dir)lib%$(DLL_EXT))))
@@ -92,7 +96,7 @@ CFLAGS=-fPIC -fdata-sections \
 CPPFLAGS:=$(CFLAGS) -std=c++11 -pthread -fopenmp=libomp\
 	-I$(DIR_BOOST_INCLUDE) -I$(DIR_ROOT_INCLUDE) 
 LD_LIBRARY_PATH:=$(LD_LIBRARY_PATH):$(DIR_GL3W_LIB)
-LDFLAGS:=-L$(DIR_BOOST_LIB) -L$(DIR_GL3W_LIB) -lpthread\
+LDFLAGS:=-L$(DIR_ROOT_LIB) -L$(DIR_BOOST_LIB) -L$(DIR_GL3W_LIB) -lpthread\
 	-Wl,--gc-sections -Wl,-rpath,$(DIR_BOOST_LIB):$(DIR_GL3W_LIB)\
 	-lboost_coroutine -lboost_system
 RELEASE_LDFLAGS:=$(LDFLAGS) -lSOIL -lGL -lGLU -lglfw -ldl
@@ -125,7 +129,6 @@ $(DIR_GL3W)%$(OBJ_EXT): $(DIR_GL3W)$(DIR_SRC)*.c
 $(DIR_GL3W)lib%$(OBJ_EXT)$(DIR_GL3W)%$(DLL_EXT): $(DIR_GL3W)$(DIR_SRC)*.c
 	$(LINK_CC) $(CFLAGS) -shared $<\
 		-o $@
-
 
 $(DIR_ROOT_LIB)%$(OBJ_EXT):\
 		$(DIR_ROOT_SRC)%.cpp $(DIR_ROOT_INCLUDE)%.hpp
@@ -161,18 +164,24 @@ clean: clean-exes clean-dlls clean-deps clean-objs clean-pchs clean-sentinels;
 
 env:
 	@echo "$(foreach var,CC CXX CFLAGS CPPFLAGS WFLAGS\
-		RELEASE_LDFLAGS TEST_LDFLAGS MAIN_OBJS,\r$(var) = ${$(var)}\n)"
+		RELEASE_LDFLAGS TEST_LDFLAGS MAIN_OBJS\
+		MAIN_DLLS MAIN_DLL_LINKS,\r$(var) = ${$(var)}\n)"
 
 ifneq ($(MAKECMDGOALS),clean)
 ifneq ($(MAKECMDGOALS),.sentinel)
+ifneq ($(MAKECMDGOALS),env)
 	-include $(MAIN_DEPS)
 endif
 endif
+endif
 
-release: $(RELEASE_EXE) $(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS);
+release: $(MAIN_DLLS) $(RELEASE_OBJ) $(GL3W_OBJS) $(RELEASE_EXE);
 #$(RELEASE_EXE): $(RELEASE_OBJ) $(MAIN_OBJS) $(MAIN_DLLS) $(GL3W_OBJS)
-$(RELEASE_EXE): $(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS)
-	$(LINK_CXX) -fPIE\
+$(RELEASE_EXE): $(RELEASE_OBJ) $(GL3W_OBJS) $(MAIN_DLLS)
+	$(LINK_CXX) -fPIE $(MAIN_DLL_LINKS)\
+		$(RELEASE_OBJ) $(GL3W_OBJS) $(RELEASE_LDFLAGS)\
+		-o $@
+#$(LINK_CXX) -fPIE\
 		$(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS)\
 		$(RELEASE_LDFLAGS)\
 		-o $@
