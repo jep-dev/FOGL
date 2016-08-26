@@ -6,10 +6,10 @@
 
 namespace View {
 	struct pane : public virtual Util::task {
-		static constexpr const GLfloat points[] = {
+		/*static constexpr const GLfloat points[] = {
 			-1, 1, 0, 1, 1, 0, -1, -1, 0, // Up/left triangle
 			-1, -1, 0, 1, 1, 0, 1, -1, 0  // Down/right triangle
-		};
+		};*/
 
 		typedef enum : uint8_t {
 			e_dx=0, e_dy, e_x0, e_y0,

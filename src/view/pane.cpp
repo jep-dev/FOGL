@@ -36,6 +36,10 @@ namespace View {
 		glBindVertexArray(ids[e_q_va]);
 		glGenBuffers(1, &ids[e_q_vb]);
 		glBindBuffer(GL_ARRAY_BUFFER, ids[e_q_vb]);
+		static constexpr const GLfloat points[] = {
+			-1, 1, 0, 1, 1, 0, -1, -1, 0, // Up/left triangle
+			-1, -1, 0, 1, 1, 0, 1, -1, 0  // Down/right triangle
+		};
 		glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
 		
 		ids[e_q_prog] = glCreateProgram();
