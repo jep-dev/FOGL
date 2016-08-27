@@ -9,7 +9,7 @@
 #include <boost/lexical_cast.hpp>
 
 namespace Model {
-	std::ostream& operator<<(std::ostream &os,
+	/*std::ostream& operator<<(std::ostream &os,
 			obj_t::comment_t const& comment) {
 		return os << obj_t::comment_t::prefix << ' '
 			<< std::string(comment.contents);
@@ -65,7 +65,73 @@ namespace Model {
 	std::ostream& operator<<(std::ostream &os,
 			obj_t::usemtl_t const &usemtl) {
 		return os << obj_t::usemtl_t::prefix << ' ' << usemtl.name;
+	}*/
+
+	obj_t::e_el obj_t::parse_type(std::string word) {
+		if(word == comment_t::prefix) return e_el_c;
+		if(word == face_t::prefix) return e_el_f;
+		if(word == group_t::prefix) return e_el_g;
+		if(word == line_t::prefix) return e_el_l;
+		if(word == mtllib_t::prefix) return e_el_mtllib;
+		if(word == object_t::prefix) return e_el_o;
+		if(word == vertex_t::prefix) return e_el_v;
+		if(word == vertex_norm_t::prefix) return e_el_vn;
+		if(word == vertex_param_t::prefix) return e_el_vp;
+		return e_el_total;
 	}
+
+	obj_t::e_status obj_t::parse(std::string line, const char *delim) {
+		auto status = obj_t::e_status::e_ok;
+		boost::tokenizer<boost::char_separator<char>> tk(line,
+			boost::char_separator<char>(delim));
+		for(auto it = std::begin(tk); it != std::end(tk); ++it) {
+			auto word = *it++;
+			auto type = parse_type(word);
+			if((mask_has_strings & (1<<type)) != 0) {
+				std::string words;
+				while(it != std::end(tk)) {
+					words += *it++ + delim;
+				}
+				strings.emplace_back(words);
+				nFloats.emplace_back(0);
+				nInts.emplace_back(0);
+				nStrings.emplace_back(1);
+				types.emplace_back(type);
+				break;
+			} else if((mask_has_ints & (1<<type)) != 0) {
+				int index, nIndices = 0;
+				while(it != std::end(tk)) {
+					index = boost::lexical_cast<int>(*it++);
+					ints.push_back(index);
+					nIndices++;
+				}
+				nFloats.emplace_back(0);
+				nInts.emplace_back(nIndices);
+				nStrings.emplace_back(0);
+				types.emplace_back(type);
+				break;
+			} else if((mask_has_floats & (1<<type)) != 0) {
+				float val;
+				int nValues = 0;
+				while(it != std::end(tk)) {
+					val = boost::lexical_cast<float>(*it++);
+					floats.push_back(val);
+					nValues++;
+				}
+				nFloats.emplace_back(nValues);
+				nInts.push_back(0);
+				nStrings.push_back(0);
+				types.emplace_back(type);
+			} else {
+				std::cout << word << ": unknown element prefix"
+					<< std::endl;
+				status = e_err_unknown;
+			}
+			break;
+		}
+		return status;
+	}
+
 	obj_t::e_status obj_t::load(const char *fname, obj_t &obj) {
 		std::ifstream file;
 		file.open(fname, std::ios::in);
@@ -75,80 +141,13 @@ namespace Model {
 		e_el element;
 		e_status status = e_ok;
 
-		boost::char_separator<char> sep(" ");
 		for(std::string line; std::getline(file, line);) {
-			boost::tokenizer<boost::char_separator<char>> tk(line, sep);
-			for(auto it = std::begin(tk); it != std::end(tk); ++it) {
-				auto word = *it++;
-				if(word == comment_t::prefix) {
-					std::string comment;
-					while(it != std::end(tk)) {
-						comment += *it++ + ' ';
-					}
-					obj.comments.emplace_back(comment);
-					obj.types.emplace_back(e_el_c);
-					break;
-				} else if(word == face_t::prefix) {
-					int index;
-					face_t face;
-					while(it != std::end(tk)) {
-						index = boost::lexical_cast<int>(*it++);
-						face.vertices.push_back(index);
-					}
-					obj.faces.push_back(face);
-					obj.types.emplace_back(e_el_f);
-					break;
-				} else if(word == group_t::prefix) {
-					obj.groups.emplace_back(*it++);
-					obj.types.emplace_back(e_el_g);
-				} else if(word == line_t::prefix) {
-					int index;
-					line_t line;
-					for(int i = 0; i < 2 && it != std::end(tk); ++i, ++it) {
-						index = boost::lexical_cast<int>(*it);
-						line.vertices[i] = index;
-					}
-					obj.lines.push_back(line);
-					obj.types.emplace_back(e_el_l);
-				} else if(word == object_t::prefix) {
-					obj.objects.emplace_back(*it++);
-					obj.types.push_back(e_el_o);
-				} else if(word == vertex_t::prefix) {
-					float point;
-					vertex_t vertex;
-					while(it != std::end(tk)) {
-						point = boost::lexical_cast<float>(*it++);
-						vertex.point.push_back(point);
-					}
-					obj.vertices.push_back(vertex);
-					obj.types.emplace_back(e_el_v);
-				} else if(word == vertex_norm_t::prefix) {
-					vertex_norm_t norm;
-					float val;
-					while(it != std::end(tk)) {
-						val = boost::lexical_cast<float>(*it++);
-						norm.point.push_back(val);
-					}
-					obj.norms.push_back(norm);
-					obj.types.emplace_back(e_el_vn);
-				} else if(word == vertex_param_t::prefix) {
-					vertex_param_t param;
-					float val;
-					while(it != std::end(tk)) {
-						val = boost::lexical_cast<float>(*it++);
-						param.point.push_back(val);
-					}
-					obj.params.push_back(param);
-					obj.types.emplace_back(e_el_vp);
-				} else {
-					std::cout << word << ": unknown element prefix"
-						<< std::endl;
-					element = e_el_total;
-					status = e_err_unknown;
-				}
+			status = obj.parse(line);
+			if(status != e_ok) {
 				break;
 			}
 		}
+
 		file.close();
 		return status;
 	}
