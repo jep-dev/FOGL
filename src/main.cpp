@@ -14,7 +14,7 @@ int main(int argc, const char **argv) {
 
 	glfwInit();
 	std::atomic_bool alive(true);
-	Control::control ctl(alive, "share/icosahedron.obj",
+	Control::control ctl(alive, "share/lamp.obj",
 			"share/fallback.vert", "share/shade.frag");
 	task::init(alive, &ctl);
 	task::run(alive, &ctl);
