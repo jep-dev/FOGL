@@ -33,10 +33,10 @@ namespace Model {
 		} e_el;
 
 		static constexpr const unsigned int
-			mask_has_floats = (1<<e_el_v)|(1<<e_el_vn)|(1<<e_el_vp),
-			mask_has_ints = (1<<e_el_f)|(1<<e_el_l),
-			mask_has_strings = (1<<e_el_c)|(1<<e_el_g)
-				|(1<<e_el_mtllib)|(1<<e_el_o)|(e_el_usemtl);
+			mask_has_floats = (1<<e_el_v) | (1<<e_el_vn) | (1<<e_el_vp),
+			mask_has_ints = (1<<e_el_f) | (1<<e_el_l),
+			mask_has_strings = (1<<e_el_c) | (1<<e_el_g)
+				| (1<<e_el_mtllib) | (1<<e_el_o) | (e_el_usemtl);
 
 		/// The abstract base of each obj element
 		struct element_t {
