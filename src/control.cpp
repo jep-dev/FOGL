@@ -23,6 +23,7 @@ namespace Control {
 		// Task 2: wavefront obj model loading
 		using namespace Model;
 		obj_t object;
+		std::cout << "Loading model " << this -> mpath << std::endl;
 		auto status = obj_t::load(this -> mpath, object);
 		if(status != obj_t::e_ok) {
 			std::cout << "The model failed to load." << std::endl;
