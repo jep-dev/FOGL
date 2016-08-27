@@ -14,10 +14,11 @@ int main(int argc, const char **argv) {
 
 	glfwInit();
 	std::atomic_bool alive(true);
-	Control::control ctl(alive, "share/bunny.ply",
-			"share/shade.vert", "share/shade.frag");
+	Control::control ctl(alive, "share/test.obj",
+			"share/fallback.vert", "share/shade.frag");
 	task::init(alive, &ctl);
 	task::run(alive, &ctl);
 	glfwTerminate();
+
 	return 0;
 }

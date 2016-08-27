@@ -85,10 +85,9 @@ namespace Model {
 		e_status status = e_ok;
 
 		for(std::string line; std::getline(file, line);) {
-			status = obj.parse(line);
-			if(status != e_ok) {
-				break;
-			}
+			auto st = obj.parse(line);
+			if(status == e_ok) status = st;
+			// TODO Break or no?
 		}
 
 		file.close();

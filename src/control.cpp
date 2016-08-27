@@ -21,6 +21,28 @@ namespace Control {
 		glfwSetInputMode(viewer.win, GLFW_STICKY_KEYS, 1);
 		glfwMakeContextCurrent(viewer.win);
 
+		// Task 2: wavefront obj model loading
+		using namespace Model;
+		obj_t object;
+		auto status = obj_t::load(this -> mpath, object);
+		if(status != obj_t::e_ok) {
+			std::cout << "The model failed to load." << std::endl;
+			return;
+		}
+		glGenBuffers(1, &viewer.ids[view::e_id_vbuf]);
+		glBindBuffer(GL_ARRAY_BUFFER, viewer.ids[view::e_id_vbuf]);
+		glBufferData(GL_ARRAY_BUFFER, object.floats.size(),
+				(void*)(&object.floats[0]), GL_STATIC_DRAW);
+
+		glGenBuffers(1, &viewer.ids[view::e_id_ibuf]);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,
+				viewer.ids[view::e_id_ibuf]);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, object.ints.size(),
+				(void*)(&object.ints[0]), GL_STATIC_DRAW);
+		viewer.nTriangles = object.floats.size()/3;
+		glUseProgram(viewer.ids[view::e_id_prog]);
+
+		/*
 		// Task 2: model loading
 		using namespace Model::Ply;
  		Header model(this -> mpath);
@@ -44,9 +66,7 @@ namespace Control {
 			std::cout << "The model is valid, but does not match "
 				"the anticipated structure." << std::endl;
 			return;
-		}
-
-		// Task 3: view after model
+		Task 3: view after model
 		glGenBuffers(1, &viewer.ids[view::e_id_vbuf]);
 		glBindBuffer(GL_ARRAY_BUFFER, viewer.ids[view::e_id_vbuf]);
 		glBufferData(GL_ARRAY_BUFFER, vertices->data.size(),
@@ -58,7 +78,7 @@ namespace Control {
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices->data.size(),
 				(void*)(&indices->data[0]), GL_STATIC_DRAW);
 		viewer.nTriangles = indices -> instances;
-		glUseProgram(viewer.ids[view::e_id_prog]);
+		glUseProgram(viewer.ids[view::e_id_prog]);*/
 	}
 
 	void control::poll(std::atomic_bool &alive) {
