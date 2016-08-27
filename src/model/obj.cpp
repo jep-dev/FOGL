@@ -9,16 +9,17 @@
 #include <boost/lexical_cast.hpp>
 
 namespace Model {
-	obj_t::e_el obj_t::parse_type(std::string word) {
-		if(word == comment_t::prefix) return e_el_c;
-		if(word == face_t::prefix) return e_el_f;
-		if(word == group_t::prefix) return e_el_g;
-		if(word == line_t::prefix) return e_el_l;
-		if(word == mtllib_t::prefix) return e_el_mtllib;
-		if(word == object_t::prefix) return e_el_o;
-		if(word == vertex_t::prefix) return e_el_v;
-		if(word == vertex_norm_t::prefix) return e_el_vn;
-		if(word == vertex_param_t::prefix) return e_el_vp;
+	e_el obj_t::parse_type(std::string word) {
+		if(word == element_t<e_el_c>::prefix) return e_el_c;
+		if(word == element_t<e_el_f>::prefix) return e_el_f;
+		if(word == element_t<e_el_g>::prefix) return e_el_g;
+		if(word == element_t<e_el_l>::prefix) return e_el_l;
+		if(word == element_t<e_el_m>::prefix) return e_el_m;
+		if(word == element_t<e_el_o>::prefix) return e_el_o;
+		if(word == element_t<e_el_u>::prefix) return e_el_u;
+		if(word == element_t<e_el_v>::prefix) return e_el_v;
+		if(word == element_t<e_el_vn>::prefix) return e_el_vn;
+		if(word == element_t<e_el_vp>::prefix) return e_el_vp;
 		return e_el_total;
 	}
 

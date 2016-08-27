@@ -28,6 +28,7 @@ int main(int argc, const char **argv) {
 	for(auto beg = std::begin(obj.types); beg != std::end(obj.types); beg++) {
 		int nf = obj.nFloats[counter], ni = obj.nInts[counter],
 				ns = obj.nStrings[counter];
+		std::cout << *beg << " ";
 		for(int i = 0; i < nf; ++i) {
 			std::cout << obj.floats[fCounter++] << " ";
 		}
