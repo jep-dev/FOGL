@@ -31,11 +31,12 @@ namespace Model {
 			auto word = *it++;
 			auto type = parse_type(word);
 			if((mask_has_strings & (1<<type)) != 0) {
-				std::string words;
+				std::ostringstream oss;
+				//std::string words;
 				while(it != std::end(tk)) {
-					words += *it++ + delim;
+					oss << *it++ << delim;
 				}
-				strings.emplace_back(words);
+				strings.emplace_back(oss.str());
 				nFloats.emplace_back(0);
 				nInts.emplace_back(0);
 				nStrings.emplace_back(1);
