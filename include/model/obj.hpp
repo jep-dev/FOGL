@@ -92,7 +92,7 @@ namespace Model {
 				element_t<e_el_vn>::prefix : element_t<e_el_vp>::prefix);
 	}
 
-	/// An object 
+	/// A wavefront object container/parser
 	struct obj_t {
 		/*! The enumeration and count of possible states */
 		typedef enum {
