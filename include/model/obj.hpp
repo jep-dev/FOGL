@@ -106,7 +106,7 @@ namespace Model {
 			mask_has_floats = (1<<e_el_v) | (1<<e_el_vn) | (1<<e_el_vp),
 			mask_has_ints = (1<<e_el_f) | (1<<e_el_l),
 			mask_has_strings = (1<<e_el_c) | (1<<e_el_g)
-				| (1<<e_el_m) | (1<<e_el_o) | (e_el_u);
+				| (1<<e_el_m) | (1<<e_el_o) | (1<<e_el_u);
 		
 		/** Loads an obj file with the given path into a vector of elements
 		 * @param fname The path to the obj file

@@ -1,4 +1,6 @@
 # Hello, world!
+mtllib cube.mtl
+usemtl Material
 v -1 0 -1
 vp 1 0 0
 vn 1 0 0
