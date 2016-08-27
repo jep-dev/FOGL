@@ -81,7 +81,7 @@ TEST_EXES?=$(foreach mod,math model,\
 RELEASE_EXE?=$(DIR_ROOT_BIN)$(EXE_BASE)$(RELEASE_EXT)$(EXE_EXT)
 EXES?=$(TEST_EXES) $(RELEASE_EXE)
 
-GL3W_OBJS?=$(DIR_GL3W_LIB)gl3w$(OBJ_EXT) $(DIR_GL3W_LIB)libgl3w$(DLL_EXT)
+GL3W_OBJS?=$(DIR_GL3W_LIB)gl3w$(OBJ_EXT) #$(DIR_GL3W_LIB)libgl3w$(DLL_EXT)
 TEST_OBJ?=$(DIR_ROOT_LIB)main$(TEST_EXT)$(OBJ_EXT)
 #DEBUG_OBJ=$(DIR_ROOT)$(DIR_LIB)main$(DEBUG_EXT).o
 RELEASE_OBJ?=$(DIR_ROOT_LIB)main$(RELEASE_EXT)$(OBJ_EXT)
@@ -97,7 +97,7 @@ CPPFLAGS:=$(CFLAGS) -std=c++11 -pthread -fopenmp=libomp\
 LD_LIBRARY_PATH:=$(LD_LIBRARY_PATH):$(DIR_ROOT_LIB):$(DIR_GL3W_LIB)
 LDFLAGS:=-L$(DIR_ROOT_LIB) -L$(DIR_BOOST_LIB) -L$(DIR_GL3W_LIB) -lpthread\
 	-Wl,-rpath,$(DIR_BOOST_LIB):$(DIR_GL3W_LIB)\
-	-lboost_coroutine -lboost_system
+	-lboost_coroutine -lboost_system -lgl3w
 RELEASE_LDFLAGS:=$(LDFLAGS) -Wl,--gc-sections -lSOIL -lGL -lGLU -lglfw -ldl
 #RELEASE_LDFLAGS:=$(LDFLAGS) $(MAIN_DLL_DIRS) $(MAIN_DLL_LINKS)\
 	-lGL -lGLU -lglfw -ldl
