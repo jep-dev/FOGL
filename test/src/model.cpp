@@ -29,16 +29,13 @@ int main(int argc, const char **argv) {
 		int nf = obj.nFloats[counter], ni = obj.nInts[counter],
 				ns = obj.nStrings[counter];
 		for(int i = 0; i < nf; ++i) {
-			//std::cout << "i = " << i << ", fc = " << fCounter << std::endl;
-			std::cout << obj.floats[i+fCounter++] << " ";
+			std::cout << obj.floats[fCounter++] << " ";
 		}
 		for(int i = 0; i < ni; ++i) {
-			//std::cout << "i = " << i << ", ic = " << iCounter << std::endl;
-			std::cout << obj.ints[i+iCounter++] << " ";
+			std::cout << obj.ints[iCounter++] << " ";
 		}
 		for(int i = 0; i < ns; ++i) {
-			//std::cout << "i = " << i << ", sc = " << sCounter << std::endl;
-			std::cout << obj.strings[i+sCounter++] << " ";
+			std::cout << obj.strings[sCounter++] << " ";
 		}
 		counter++;
 		endl(std::cout);

@@ -9,64 +9,6 @@
 #include <boost/lexical_cast.hpp>
 
 namespace Model {
-	/*std::ostream& operator<<(std::ostream &os,
-			obj_t::comment_t const& comment) {
-		return os << obj_t::comment_t::prefix << ' '
-			<< std::string(comment.contents);
-	}
-	std::ostream& operator<<(std::ostream &os, obj_t::line_t const& line) {
-		return os << obj_t::line_t::prefix << ' '
-			<< line.vertices[0] << ", " << line.vertices[1];
-	}
-	std::ostream& operator<<(std::ostream &os, obj_t::face_t const& face) {
-		os << obj_t::face_t::prefix;
-		for(auto v : face.vertices) {
-			os << ' ' << v;
-		}
-		if(face.tex_coords) {
-			for(auto c : face.coordinates) {
-				std::cout << ' ' << c;
-			}
-		}
-		return os;
-	}
-	std::ostream& operator<<(std::ostream &os, obj_t::group_t const& group) {
-		return os << obj_t::group_t::prefix << ' ' << group.name;
-	}
-	std::ostream& operator<<(std::ostream &os, obj_t::mtllib_t const &mtllib) {
-		return os << obj_t::mtllib_t::prefix << ' ' << mtllib.path;
-	}
-	std::ostream& operator<<(std::ostream &os, obj_t::object_t const& obj) {
-		return os << obj_t::object_t::prefix << ' ' << obj.name;
-	}
-	std::ostream& operator<<(std::ostream &os, obj_t::vertex_t const& vertex) {
-		os << obj_t::vertex_t::prefix;
-		for(auto p : vertex.point) {
-			os << ' ' << p;
-		}
-		return os;
-	}
-	std::ostream& operator<<(std::ostream &os,
-			obj_t::vertex_norm_t const &norm) {
-		os << obj_t::vertex_norm_t::prefix;
-		for(auto p : norm.point) {
-			os << ' ' << p;
-		}
-		return os;
-	}
-	std::ostream& operator<<(std::ostream &os,
-			obj_t::vertex_param_t const &param) {
-		os << obj_t::vertex_param_t::prefix;
-		for(auto p : param.point) {
-			os << ' ' << p;
-		}
-		return os;
-	}
-	std::ostream& operator<<(std::ostream &os,
-			obj_t::usemtl_t const &usemtl) {
-		return os << obj_t::usemtl_t::prefix << ' ' << usemtl.name;
-	}*/
-
 	obj_t::e_el obj_t::parse_type(std::string word) {
 		if(word == comment_t::prefix) return e_el_c;
 		if(word == face_t::prefix) return e_el_f;
