@@ -15,7 +15,6 @@
 namespace Control {
 	void control::init(std::atomic_bool &alive) {
 		//using namespace Util;
-
 		// Task 1: view before model (splash)
 		using namespace View;
 		glfwSetInputMode(viewer.win, GLFW_STICKY_KEYS, 1);
@@ -29,6 +28,7 @@ namespace Control {
 			std::cout << "The model failed to load." << std::endl;
 			return;
 		}
+
 		glGenBuffers(1, &viewer.ids[view::e_id_vbuf]);
 		glBindBuffer(GL_ARRAY_BUFFER, viewer.ids[view::e_id_vbuf]);
 		glBufferData(GL_ARRAY_BUFFER, object.floats.size(),
@@ -39,7 +39,7 @@ namespace Control {
 				viewer.ids[view::e_id_ibuf]);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, object.ints.size(),
 				(void*)(&object.ints[0]), GL_STATIC_DRAW);
-		viewer.nTriangles = object.floats.size()/3;
+		viewer.nTriangles = object.ints.size()/3;
 		glUseProgram(viewer.ids[view::e_id_prog]);
 
 		/*

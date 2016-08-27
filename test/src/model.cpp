@@ -40,4 +40,12 @@ int main(int argc, const char **argv) {
 		counter++;
 		endl(std::cout);
 	}
+	/*std::cout << "Contiguous data: " << std::endl;
+	endl(std::cout << "Floats:" << obj.floats.size());
+	for(auto it : obj.floats) std::cout << it << " ";
+	endl(std::cout << "\nIntegers:" << obj.ints.size());
+	for(auto it : obj.ints) std::cout << it << " ";
+	endl(std::cout << "\nStrings:" << obj.strings.size());
+	for(auto it : obj.strings) std::cout << it << " ";
+	endl(std::cout);*/
 }
