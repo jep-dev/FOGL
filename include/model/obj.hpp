@@ -21,7 +21,6 @@ namespace Model {
 		e_el_total ///< The total number of supported types
 	} e_el;
 
-	struct obj_t;
 	/// The abstract base of each obj element
 	template<e_el type>
 	struct element_t {
@@ -90,8 +89,7 @@ namespace Model {
 				element_t<e_el_o>::prefix : rhs == e_el_u ?
 				element_t<e_el_u>::prefix : rhs == e_el_v ?
 				element_t<e_el_v>::prefix : rhs == e_el_vn ? 
-				element_t<e_el_vn>::prefix :
-				element_t<e_el_vp>::prefix);
+				element_t<e_el_vn>::prefix : element_t<e_el_vp>::prefix);
 	}
 
 	/// An object 
