@@ -5,12 +5,13 @@
 #include <GL/glu.h>
 #include <SOIL/SOIL.h>
 
-#include <sstream>
+#include <chrono>
 #include <cmath>
+#include <iostream>
+#include <memory>
+#include <sstream>
 
 #include "omp.h"
-#include <chrono>
-#include <memory>
 
 namespace Control {
 	void control::init(std::atomic_bool &alive) {

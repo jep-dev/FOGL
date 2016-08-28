@@ -1,6 +1,13 @@
 #ifndef MAIN_HPP
 #define MAIN_HPP
 
+#include <iosfwd>
+
+#include "util.hpp"
+#include "control.hpp"
+#include "system.hpp"
+#include "math.hpp"
+
 /**
  * Entry point of the program
  * @param argc Number of args (1+)

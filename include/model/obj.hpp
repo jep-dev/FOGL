@@ -2,7 +2,6 @@
 #define OBJ_HPP
 
 #include "model.hpp"
-#include <vector>
 
 namespace Model {
 	/*! An enumeration of supported types */

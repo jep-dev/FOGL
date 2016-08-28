@@ -2,9 +2,6 @@
 #define MTL_HPP
 
 #include "model.hpp"
-#include <iosfwd>
-#include <string>
-#include <vector>
 
 namespace Model {
 	typedef enum {

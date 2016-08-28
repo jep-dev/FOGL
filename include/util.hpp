@@ -2,6 +2,7 @@
 #define UTIL_HPP
 
 #include <functional>
+#include <atomic>
 
 #ifndef FWD
 #define FWD(X,Y) std::forward<X>(Y)

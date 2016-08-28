@@ -8,17 +8,20 @@
 #ifndef OBJ_PATH
 #define OBJ_PATH "share/cube.obj"
 #endif
-#ifdef MTL_PATH
+#ifndef MTL_PATH
 #define MTL_PATH "share/cube.mtl"
+#endif
 
 int main(int argc, const char **argv) {
 	using namespace Model;
-	const char *obj_fname, mtl_fname;
+	const char *obj_fname, *mtl_fname;
+	if(argc >= 3) {
+		mtl_fname = argv[2];
+	} else {
+		mtl_fname = MTL_PATH;
+	}
 	if(argc >= 2) {
 		obj_fname = argv[1];
-		if(argc >= 3) {
-			mtl_fname = argv[2];
-		}
 	} else {
 		obj_fname = OBJ_PATH;
 	}
@@ -53,6 +56,20 @@ int main(int argc, const char **argv) {
 		}
 		counter++;
 		endl(std::cout);
+	}
+	material_t mtl;
+	std::cout << "\nFile: " << mtl_fname << std::endl;
+	switch(mtl.load(mtl_fname, mtl)) {
+		case material_t::e_ok: {
+			std::cout << "Status: OK" << std::endl;
+		} break;
+		case material_t::e_err_io: {
+			std::cout << "Status: I/O error" << std::endl;
+		} break;
+		case material_t::e_err_unknown: {
+			std::cout << "Status: Unknown" << std::endl;
+		} break;
+		default: {} break;
 	}
 	/*std::cout << "Contiguous data: " << std::endl;
 	endl(std::cout << "Floats:" << obj.floats.size());
