@@ -43,5 +43,6 @@ namespace Model {
 }
 #include "model/ply.hpp"
 #include "model/obj.hpp"
+#include "model/mtl.hpp"
 
 #endif
