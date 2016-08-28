@@ -68,7 +68,6 @@ namespace Model {
 		static constexpr const char *prefix = "usemtl";
 	};
 
-
 	/// A single point, containing at least x, y, z coordinates
 	template<> struct element_t<e_el_v> {
 		static constexpr const char *prefix = "v";

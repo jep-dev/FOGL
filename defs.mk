@@ -40,7 +40,7 @@ MAIN_H_ONLY?=util/types math math/quat math/dual system
 
 SYSTEM_SUBMODULES?=net printer
 MATH_SUBMODULES?=affine
-MODEL_SUBMODULES?=ply obj
+MODEL_SUBMODULES?=ply obj mtl
 VIEW_SUBMODULES?=shade pane
 CONTROL_SUBMODULES?=
 MAIN_SUBMODULES?=$(foreach sub,SYSTEM MATH MODEL VIEW CONTROL,\
