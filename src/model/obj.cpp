@@ -38,6 +38,7 @@ namespace Model {
 					oss << *it++ << " ";
 				}
 				strings.emplace_back(oss.str());
+				nBools.emplace_back(0);
 				nFloats.emplace_back(0);
 				nInts.emplace_back(0);
 				nStrings.emplace_back(1);
@@ -50,6 +51,7 @@ namespace Model {
 					ints.push_back(index);
 					nIndices++;
 				}
+				nBools.emplace_back(0);
 				nFloats.emplace_back(0);
 				nInts.emplace_back(nIndices);
 				nStrings.emplace_back(0);
@@ -63,11 +65,21 @@ namespace Model {
 					floats.push_back(val);
 					nValues++;
 				}
+				nBools.emplace_back(0);
 				nFloats.emplace_back(nValues);
 				nInts.emplace_back(0);
 				nStrings.emplace_back(0);
 				types.emplace_back(type);
+			} else if(type == e_el_s) {
+				auto word = *it++;
+				bools.emplace_back(word == "1" || word == "on");
+				nBools.emplace_back(1);
+				nFloats.emplace_back(0);
+				nInts.emplace_back(0);
+				nStrings.emplace_back(0);
+				types.emplace_back(type);
 			} else if(type < e_el_total && type >= e_el_c) {
+				nBools.emplace_back(0);
 				nFloats.emplace_back(0);
 				nInts.emplace_back(0);
 				nStrings.emplace_back(0);

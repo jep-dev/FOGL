@@ -9,16 +9,16 @@ namespace Model {
 	/*! An enumeration of supported types */
 	typedef enum {
 		e_el_c=0,  ///< \ref element_t
-		e_el_f,    ///< \ref face_t
-		e_el_g,    ///< \ref group_t
-		e_el_l,    ///< \ref line_t
-		e_el_m,    ///< \ref mtllib_t
-		e_el_o,    ///< \ref object_t
-		e_el_s,    ///< \ref smooth_t
-		e_el_u,    ///< \ref usemtl_t
-		e_el_v,    ///< \ref vertex_t
-		e_el_vn,   ///< \ref vertex_norm_t
-		e_el_vp,   ///< \ref vertex_param_t
+		e_el_f,    ///< \ref element_t<e_el_f>
+		e_el_g,    ///< \ref element_t<e_el_g>
+		e_el_l,    ///< \ref element_t<e_el_l>
+		e_el_m,    ///< \ref element_t<e_el_m>
+		e_el_o,    ///< \ref element_t<e_el_m>
+		e_el_s,    ///< \ref element_t<e_el_s>
+		e_el_u,    ///< \ref element_t<e_el_u>
+		e_el_v,    ///< \ref element_t<e_el_v>
+		e_el_vn,   ///< \ref element_t<e_el_vn>
+		e_el_vp,   ///< \ref element_t<e_el_vp>
 		e_el_total ///< The total number of supported types
 	} e_el;
 
@@ -54,7 +54,7 @@ namespace Model {
 		static constexpr const char *prefix = "mtllib";
 	};
 
-	/// An object; see \ref group_t
+	/// An object; see \ref element_t<e_el_g>
 	template<> struct element_t<e_el_o> {
 		static constexpr const char *prefix = "o";
 	};
@@ -109,11 +109,19 @@ namespace Model {
 			e_err_total    ///< The total number of statuses
 		} e_status;
 
+		/// Mask for boolean storage types
 		static constexpr const unsigned int
-			mask_has_floats = (1<<e_el_v) | (1<<e_el_vn) | (1<<e_el_vp),
-			mask_has_ints = (1<<e_el_f) | (1<<e_el_l),
+			mask_has_bools = (1<<e_el_s);
+		/// Mask for floating point storage types
+		static constexpr const unsigned int
+			mask_has_floats = (1<<e_el_v) | (1<<e_el_vn) | (1<<e_el_vp);
+		/// Mask for integer storage types
+		static constexpr unsigned int
+			mask_has_ints = (1<<e_el_f) | (1<<e_el_l);
+		/// Mask for string storage types
+		static constexpr unsigned int
 			mask_has_strings = (1<<e_el_c) | (1<<e_el_g)
-				| (1<<e_el_m) | (1<<e_el_o) | (1<<e_el_s) | (1<<e_el_u);
+				| (1<<e_el_m) | (1<<e_el_o) | (1<<e_el_u);
 		
 		/** Loads an obj file with the given path into a vector of elements
 		 * @param fname The path to the obj file
@@ -124,10 +132,11 @@ namespace Model {
 		static e_el parse_type(std::string word);
 		e_status parse(std::string line, const char *delim = " ");
 
-		std::vector<std::string> strings;
-		std::vector<GLint> ints;
+		std::vector<bool> bools;
 		std::vector<GLfloat> floats;
-		std::vector<GLuint> nStrings, nInts, nFloats;
+		std::vector<GLint> ints;
+		std::vector<std::string> strings;
+		std::vector<GLuint> nBools, nStrings, nInts, nFloats;
 		std::vector<e_el> types;
 	};
 	
