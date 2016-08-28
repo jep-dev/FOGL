@@ -1,10 +1,6 @@
 #ifndef SYSTEM_HPP
 #define SYSTEM_HPP
 
-#include <algorithm>
-#include <fstream>
-#include <iomanip>
-#include <sstream>
 #include <string>
 #include <vector>
 
