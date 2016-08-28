@@ -1,9 +1,6 @@
 #ifndef PANE_HPP
 #define PANE_HPP
 
-#include "util.hpp"
-#include <atomic>
-
 namespace View {
 	struct pane : public virtual Util::task {
 		/*static constexpr const GLfloat points[] = {
