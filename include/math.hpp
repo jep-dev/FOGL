@@ -62,7 +62,7 @@ namespace Math {
 
 namespace Math {
 
-	template<typename R> std::ostream&
+	template<typename R> inline std::ostream&
 	operator<<(std::ostream& lhs, quat<R> const& rhs) {
 		if(rhs == quat<R>(rhs.w)) {
 			return lhs << rhs.w;
@@ -71,7 +71,7 @@ namespace Math {
 			<< rhs.y << ", " << rhs.z;
 	}
 
-	template<typename R> std::ostream&
+	template<typename R> inline std::ostream&
 	operator<<(std::ostream &lhs, dual<R> const& rhs) {
 		static constexpr const char *labels[]{
 			"1", "i", "j", "k",

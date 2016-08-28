@@ -51,8 +51,8 @@ namespace View {
 	void view::redraw() {
 		static constexpr const unsigned int
 			offset = 3*sizeof(float),
-			//stride = offset,
-			stride = 2*offset,
+			stride = offset,
+			//stride = 2*offset,
 			bits = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
 		setUniforms();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -62,18 +62,18 @@ namespace View {
 		glVertexAttribPointer(0, 3, GL_FLOAT,
 				GL_FALSE, stride, nullptr);
 		
-		///*
+		/*
  		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 3, GL_FLOAT,
 				GL_FALSE, stride, (void*) offset);
-		//*/
+		*/
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ids[e_id_ibuf]);
 		glDrawElements(GL_TRIANGLES, nTriangles*3,
 				GL_UNSIGNED_INT, nullptr);
-		///*
+		/*
 		glDisableVertexAttribArray(1);
-		//*/
+		*/
 		glDisableVertexAttribArray(0);
 		glfwSwapBuffers(win);
 	}

@@ -17,6 +17,7 @@ namespace Model {
 		if(word == element_t<e_el_m>::prefix) return e_el_m;
 		if(word == element_t<e_el_o>::prefix) return e_el_o;
 		if(word == element_t<e_el_u>::prefix) return e_el_u;
+		if(word == element_t<e_el_s>::prefix) return e_el_s;
 		if(word == element_t<e_el_v>::prefix) return e_el_v;
 		if(word == element_t<e_el_vn>::prefix) return e_el_vn;
 		if(word == element_t<e_el_vp>::prefix) return e_el_vp;
@@ -31,11 +32,12 @@ namespace Model {
 			auto word = *it++;
 			auto type = parse_type(word);
 			if((mask_has_strings & (1<<type)) != 0) {
-				std::string words;
+				std::ostringstream oss;
+				//std::string words;
 				while(it != std::end(tk)) {
-					words += *it++ + delim;
+					oss << *it++ << " ";
 				}
-				strings.emplace_back(words);
+				strings.emplace_back(oss.str());
 				nFloats.emplace_back(0);
 				nInts.emplace_back(0);
 				nStrings.emplace_back(1);
@@ -62,9 +64,13 @@ namespace Model {
 					nValues++;
 				}
 				nFloats.emplace_back(nValues);
-				nInts.push_back(0);
-				nStrings.push_back(0);
+				nInts.emplace_back(0);
+				nStrings.emplace_back(0);
 				types.emplace_back(type);
+			} else if(type < e_el_total && type >= e_el_c) {
+				nFloats.emplace_back(0);
+				nInts.emplace_back(0);
+				nStrings.emplace_back(0);
 			} else {
 				std::cout << word << ": unknown element prefix"
 					<< std::endl;
@@ -85,10 +91,9 @@ namespace Model {
 		e_status status = e_ok;
 
 		for(std::string line; std::getline(file, line);) {
-			status = obj.parse(line);
-			if(status != e_ok) {
-				break;
-			}
+			auto st = obj.parse(line, " /");
+			if(status == e_ok) status = st;
+			// TODO Break or no?
 		}
 
 		file.close();
