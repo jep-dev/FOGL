@@ -2,13 +2,10 @@
 #define SYSTEM_PRINTER_HPP
 
 #include "util.hpp"
-#include <iomanip>
 
+#include <iomanip>
 #include <algorithm>
-#include <fstream>
 #include <sstream>
-#include <string>
-#include <vector>
 
 namespace System {
 
