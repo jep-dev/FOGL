@@ -1,8 +1,10 @@
 #ifndef MTL_HPP
 #define MTL_HPP
 
+#include "model.hpp"
 #include <iosfwd>
 #include <string>
+#include <vector>
 
 namespace Model {
 	typedef enum {
@@ -139,6 +141,34 @@ namespace Model {
 			: rhs == e_mtl_refl? mtl_t<e_mtl_refl>::prefix
 			: mtl_t<e_mtl_tr>::prefix);
 	}
+
+	struct material_t {
+		typedef enum {
+			e_ok=0,
+			e_err_io,
+			e_err_unknown,
+			e_err_total
+		} e_status;
+
+		static constexpr const unsigned int
+			mask_has_bools = 0;
+		static constexpr const unsigned int
+			mask_has_floats = (1<<e_mtl_d)
+				| (1<<e_mtl_ka) | (1<<e_mtl_kd) | (1<<e_mtl_ks);
+		static constexpr const unsigned int
+			mask_has_ints = 0;
+		static constexpr const unsigned int
+			mask_has_strings = (e_mtl_total - 1) ^ mask_has_floats;
+
+		e_status parse(std::string line, const char *delim = " ");
+		e_status load(const char *fname, material_t &material);
+
+		std::vector<bool> bools;
+		std::vector<float> floats;
+		std::vector<int> ints;
+		std::vector<std::string> strings;
+		std::vector<e_mtl> types;
+	};
 }
 
 #endif

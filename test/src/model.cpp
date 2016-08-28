@@ -6,20 +6,25 @@
 #include <type_traits>
 
 #ifndef OBJ_PATH
-#define OBJ_PATH "share/icosahedron.obj"
+#define OBJ_PATH "share/cube.obj"
 #endif
+#ifdef MTL_PATH
+#define MTL_PATH "share/cube.mtl"
 
 int main(int argc, const char **argv) {
 	using namespace Model;
-	const char *fname;
-	if(argc == 2) {
-		fname = argv[1];
+	const char *obj_fname, mtl_fname;
+	if(argc >= 2) {
+		obj_fname = argv[1];
+		if(argc >= 3) {
+			mtl_fname = argv[2];
+		}
 	} else {
-		fname = OBJ_PATH;
+		obj_fname = OBJ_PATH;
 	}
 	obj_t obj;
-	endl(std::cout << "File: " << fname);
-	switch(obj_t::load(fname, obj)) {
+	endl(std::cout << "File: " << obj_fname);
+	switch(obj_t::load(obj_fname, obj)) {
 		case obj_t::e_err_io:
 			std::cout << "Status: I/O Error\n" << std::endl;
 			break;
