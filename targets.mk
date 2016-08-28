@@ -27,6 +27,13 @@ $(DIR_ROOT_LIB)*/%$(DEP_EXT):\
 		$(DIR_ROOT_SRC)*/%.cpp $(DIR_ROOT_INCLUDE)*/%.hpp
 	$(DEPEND_CXX) $<\
 		-o $@
+$(DIR_ROOT_LIB)main$(OBJ_EXT):\
+		$(DIR_ROOT_SRC)main.cpp $(DIR_ROOT_INCLUDE)main.hpp
+	$(COMPILE_CXX) $<\
+		-D OBJ_PATH=$(OBJ_PATH)\
+		-D FRAG_PATH=$(FRAG_PATH)\
+		-D VERT_PATH=$(VERT_PATH)\
+		-o $@
 
 lib%$(DLL_EXT): $(MAIN_SRCS)
 	$(LINK_CXX) -shared $<\
