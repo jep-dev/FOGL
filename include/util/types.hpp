@@ -95,6 +95,7 @@ namespace Util {
 	};
 	template<typename... PREV, typename CUR, typename... NEXT>
 	struct pack_merge<pack_t<PREV...>, pack_t<CUR, NEXT...>> {
+		/// Type of the conditional on merging
 		typedef typename std::conditional<
 					index_of(pack_t<PREV...>{}, CUR{}) >= 0,
 					pack_t<PREV...>, pack_t<PREV..., CUR>
