@@ -2,10 +2,7 @@
 #define MODEL_HPP
 
 #include <vector>
-#include <GL/gl3w.h>
-
-#include "system.hpp"
-
+#include <stdint.h>
 
 namespace Model {
 	
@@ -15,17 +12,17 @@ namespace Model {
 	 * @tparam U The type of the first input dimension
 	 * @tparam V The type of the second input dimension
 	 */
-	template<typename S, typename T = GLfloat,
+	/*template<typename S, typename T = GLfloat,
 		typename U = GLclampf, typename V = U>
 	struct contour {
-		/**
+		**
  		 * A surface with parameters 0 <= u,v < 1
 	 	 * @param dest The destination for the output value
 	 	 * @param u The value of the first parameter
 	 	 * @param v The value of the second parameter
-	 	 */
+	 	 *
 		void operator()(S *dest, U u, V v);
-	};
+	};*/
 
  	/// A vector/stack of raw bytes (needs replacement)
 	struct Buffer {
@@ -44,7 +41,6 @@ namespace Model {
 	};
 
 }
-
 #include "model/ply.hpp"
 #include "model/obj.hpp"
 

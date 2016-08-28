@@ -1,9 +1,8 @@
 #ifndef OBJ_HPP
 #define OBJ_HPP
 
+#include "model.hpp"
 #include <vector>
-#include <memory>
-#include <GL/gl3w.h>
 
 namespace Model {
 	/*! An enumeration of supported types */
@@ -133,10 +132,10 @@ namespace Model {
 		e_status parse(std::string line, const char *delim = " ");
 
 		std::vector<bool> bools;
-		std::vector<GLfloat> floats;
-		std::vector<GLint> ints;
+		std::vector<float> floats;
+		std::vector<int> ints;
 		std::vector<std::string> strings;
-		std::vector<GLuint> nBools, nStrings, nInts, nFloats;
+		std::vector<unsigned int> nBools, nStrings, nInts, nFloats;
 		std::vector<e_el> types;
 	};
 	

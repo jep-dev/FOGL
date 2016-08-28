@@ -33,7 +33,6 @@ namespace Model {
 			auto type = parse_type(word);
 			if((mask_has_strings & (1<<type)) != 0) {
 				std::ostringstream oss;
-				//std::string words;
 				while(it != std::end(tk)) {
 					oss << *it++ << " ";
 				}
@@ -71,8 +70,12 @@ namespace Model {
 				nStrings.emplace_back(0);
 				types.emplace_back(type);
 			} else if(type == e_el_s) {
-				auto word = *it++;
-				bools.emplace_back(word == "1" || word == "on");
+				if(it == std::end(tk)) {
+					bools.emplace_back(true);
+				} else {
+					auto word = *it++;
+					bools.emplace_back(word == "1" || word == "on");
+				}
 				nBools.emplace_back(1);
 				nFloats.emplace_back(0);
 				nInts.emplace_back(0);
@@ -84,8 +87,6 @@ namespace Model {
 				nInts.emplace_back(0);
 				nStrings.emplace_back(0);
 			} else {
-				std::cout << word << ": unknown element prefix"
-					<< std::endl;
 				status = e_err_unknown;
 			}
 			break;

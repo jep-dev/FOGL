@@ -4,7 +4,7 @@ vpath %.hpp $(DIR_ROOT_INCLUDE)
 vpath %.cpp $(DIR_ROOT_SRC)
 
 OBJ_PATH:=\"share/icosahedron.obj\"
-VERT_PATH:=\"share/shade.vert\"
+VERT_PATH:=\"share/fallback.vert\"
 FRAG_PATH:=\"share/shade.frag\"
 
 -include defs.mk

@@ -1,5 +1,5 @@
 #include "control.hpp"
-#include "model/ply.hpp"
+#include "model.hpp"
 
 #include <GLFW/glfw3.h>
 #include <GL/glu.h>
