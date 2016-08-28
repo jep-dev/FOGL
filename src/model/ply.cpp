@@ -1,5 +1,5 @@
-#include "model/ply.hpp"
 #include "model.hpp"
+#include "system.hpp"
 #include <iostream>
 
 namespace Model {
