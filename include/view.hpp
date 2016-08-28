@@ -5,8 +5,6 @@
 #define _USE_MATH_DEFINES
 #endif
 
-#include <atomic>
-#include <functional>
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
 
