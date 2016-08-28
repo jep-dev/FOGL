@@ -14,6 +14,7 @@ namespace Model {
 		e_el_l,    ///< \ref line_t
 		e_el_m,    ///< \ref mtllib_t
 		e_el_o,    ///< \ref object_t
+		e_el_s,    ///< \ref smooth_t
 		e_el_u,    ///< \ref usemtl_t
 		e_el_v,    ///< \ref vertex_t
 		e_el_vn,   ///< \ref vertex_norm_t
@@ -58,6 +59,11 @@ namespace Model {
 		static constexpr const char *prefix = "o";
 	};
 
+	/// Smooth shading option
+	template<> struct element_t<e_el_s> {
+		static constexpr const char *prefix = "s";
+	};
+
 	/// A reference to a loaded material
 	template<> struct element_t<e_el_u> {
 		static constexpr const char *prefix = "usemtl";
@@ -80,16 +86,17 @@ namespace Model {
 	};
 
 	inline std::ostream& operator<<(std::ostream& lhs, e_el const& rhs) {
-		return lhs << std::string(rhs == e_el_c ?
-				element_t<e_el_c>::prefix : rhs == e_el_f ?
-				element_t<e_el_f>::prefix : rhs == e_el_g ?
-				element_t<e_el_g>::prefix : rhs == e_el_l ?
-				element_t<e_el_l>::prefix : rhs == e_el_m ?
-				element_t<e_el_m>::prefix : rhs == e_el_o ?
-				element_t<e_el_o>::prefix : rhs == e_el_u ?
-				element_t<e_el_u>::prefix : rhs == e_el_v ?
-				element_t<e_el_v>::prefix : rhs == e_el_vn ? 
-				element_t<e_el_vn>::prefix : element_t<e_el_vp>::prefix);
+		return lhs << std::string(rhs == e_el_c ? element_t<e_el_c>::prefix
+				: rhs == e_el_f ? element_t<e_el_f>::prefix
+				: rhs == e_el_g ? element_t<e_el_g>::prefix
+				: rhs == e_el_l ? element_t<e_el_l>::prefix
+				: rhs == e_el_m ? element_t<e_el_m>::prefix
+				: rhs == e_el_o ? element_t<e_el_o>::prefix
+				: rhs == e_el_s ? element_t<e_el_s>::prefix
+				: rhs == e_el_u ? element_t<e_el_u>::prefix
+				: rhs == e_el_v ? element_t<e_el_v>::prefix
+				: rhs == e_el_vn ? element_t<e_el_vn>::prefix
+				: element_t<e_el_vp>::prefix);
 	}
 
 	/// A wavefront object container/parser
