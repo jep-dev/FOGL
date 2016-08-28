@@ -5,12 +5,15 @@
 #include <sstream>
 #include <type_traits>
 
+#ifndef OBJ_PATH
+#define OBJ_PATH "share/icosahedron.obj"
+#endif
+
 int main(int argc, const char **argv) {
 	using namespace Model;
 	obj_t obj;
-	auto fname = "share/icosahedron.obj";
-	endl(std::cout << "File: " << fname);
-	switch(obj_t::load(fname, obj)) {
+	endl(std::cout << "File: " << OBJ_PATH);
+	switch(obj_t::load(OBJ_PATH, obj)) {
 		case obj_t::e_err_io:
 			std::cout << "Status: I/O Error\n" << std::endl;
 			break;

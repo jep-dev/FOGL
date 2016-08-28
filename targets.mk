@@ -30,9 +30,7 @@ $(DIR_ROOT_LIB)*/%$(DEP_EXT):\
 $(DIR_ROOT_LIB)main$(OBJ_EXT):\
 		$(DIR_ROOT_SRC)main.cpp $(DIR_ROOT_INCLUDE)main.hpp
 	$(COMPILE_CXX) $<\
-		-D OBJ_PATH=$(OBJ_PATH)\
-		-D FRAG_PATH=$(FRAG_PATH)\
-		-D VERT_PATH=$(VERT_PATH)\
+		$(RELEASE_CPPFLAGS)\
 		-o $@
 
 lib%$(DLL_EXT): $(MAIN_SRCS)
@@ -70,10 +68,6 @@ $(RELEASE_EXE): $(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS)
 	$(LINK_CXX) -fPIE\
 		$(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS) $(RELEASE_LDFLAGS)\
 		-o $@
-#$(LINK_CXX) -fPIE\
-		$(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS)\
-		$(RELEASE_LDFLAGS)\
-		-o $@
 
 test: $(TEST_EXES) ; # use --log_level=error
 $(DIR_ROOT_BIN)math$(TEST_EXT)$(EXE_EXT):\
@@ -88,6 +82,7 @@ $(DIR_ROOT_BIN)model$(TEST_EXT)$(EXE_EXT):\
 	$(LINK_CXX) -fPIE\
 		$< $(MAIN_OBJS) $(GL3W_OBJS)\
 		$(TEST_LDFLAGS)\
+		$(MODEL_CPPFLAGS)\
 		-o $@
 
 .PHONY: all depends env release test debug\
