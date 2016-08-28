@@ -117,6 +117,7 @@ namespace Model {
 		static constexpr const char *prefix = "tr";
 	};
 
+	/// Stream insertion operator for material values
 	inline std::ostream& operator<<(std::ostream& lhs, e_mtl const& rhs) {
 		return lhs << std::string(
 			rhs == e_mtl_bump ? mtl_t<e_mtl_bump>::prefix
@@ -139,6 +140,7 @@ namespace Model {
 			: mtl_t<e_mtl_tr>::prefix);
 	}
 
+	/// The serialization/deserialization for wavefront materials
 	struct material_t {
 		typedef enum {
 			e_ok=0,
@@ -157,7 +159,25 @@ namespace Model {
 		static constexpr const unsigned int
 			mask_has_strings = (e_mtl_total - 1) ^ mask_has_floats;
 
+		/** Parse a single type from the head of a line
+		 * @param word The first word of a line in a material file
+		 * @return The material value, or e_mtl_total
+		 */
+		e_mtl parse_type(std::string word);
+
+
+		/** Parse and store line using the given delimiter string
+		 * @param line A whole line of text from a material file
+		 * @param delim The delimiter used by Boost::tokenizer
+		 * @return \ref e_ok if and only if the line was parsed successfully
+		 */
 		e_status parse(std::string line, const char *delim = " ");
+
+		/** Load and store a file into the given material
+ 		 * @param fname The path to a material file (.mtl)
+ 		 * @param material The destination of the loaded material(s)
+ 		 * @return \ref e_ok if and only if the file was parsed successfully
+ 		 */
 		e_status load(const char *fname, material_t &material);
 
 		std::vector<bool> bools;
