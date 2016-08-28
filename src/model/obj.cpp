@@ -33,7 +33,6 @@ namespace Model {
 			auto type = parse_type(word);
 			if((mask_has_strings & (1<<type)) != 0) {
 				std::ostringstream oss;
-				//std::string words;
 				while(it != std::end(tk)) {
 					oss << *it++ << " ";
 				}
@@ -88,8 +87,6 @@ namespace Model {
 				nInts.emplace_back(0);
 				nStrings.emplace_back(0);
 			} else {
-				std::cout << word << ": unknown element prefix"
-					<< std::endl;
 				status = e_err_unknown;
 			}
 			break;
