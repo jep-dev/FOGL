@@ -110,10 +110,11 @@ namespace Model {
 		} e_status;
 
 		static constexpr const unsigned int
+			mask_has_bools = (1<<e_el_s),
 			mask_has_floats = (1<<e_el_v) | (1<<e_el_vn) | (1<<e_el_vp),
 			mask_has_ints = (1<<e_el_f) | (1<<e_el_l),
 			mask_has_strings = (1<<e_el_c) | (1<<e_el_g)
-				| (1<<e_el_m) | (1<<e_el_o) | (1<<e_el_s) | (1<<e_el_u);
+				| (1<<e_el_m) | (1<<e_el_o) | (1<<e_el_u);
 		
 		/** Loads an obj file with the given path into a vector of elements
 		 * @param fname The path to the obj file
@@ -124,10 +125,11 @@ namespace Model {
 		static e_el parse_type(std::string word);
 		e_status parse(std::string line, const char *delim = " ");
 
-		std::vector<std::string> strings;
-		std::vector<GLint> ints;
+		std::vector<bool> bools;
 		std::vector<GLfloat> floats;
-		std::vector<GLuint> nStrings, nInts, nFloats;
+		std::vector<GLint> ints;
+		std::vector<std::string> strings;
+		std::vector<GLuint> nBools, nStrings, nInts, nFloats;
 		std::vector<e_el> types;
 	};
 	
