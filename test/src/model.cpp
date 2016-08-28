@@ -11,9 +11,15 @@
 
 int main(int argc, const char **argv) {
 	using namespace Model;
+	const char *fname;
+	if(argc == 2) {
+		fname = argv[1];
+	} else {
+		fname = OBJ_PATH;
+	}
 	obj_t obj;
-	endl(std::cout << "File: " << OBJ_PATH);
-	switch(obj_t::load(OBJ_PATH, obj)) {
+	endl(std::cout << "File: " << fname);
+	switch(obj_t::load(fname, obj)) {
 		case obj_t::e_err_io:
 			std::cout << "Status: I/O Error\n" << std::endl;
 			break;
