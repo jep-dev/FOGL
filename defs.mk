@@ -35,6 +35,7 @@ TEST_EXT?=_test
 RELEASE_EXT?=
 
 MAIN_MODULES?=util system math model view control
+MODULES?=UTIL SYSTEM MATH MODEL VIEW CONTROL
 MODULE_DIRS?=$(foreach mod,$(MAIN_MODULES),$(mod)/)
 MAIN_H_ONLY?=util/types math math/quat math/dual system
 
@@ -50,9 +51,9 @@ CONTROL_SUBMODULES?=
 CONTROL_H_ONLY?=
 UTIL_SUBMODULES?=
 UTIL_H_ONLY?=util/types.hpp util/task.hpp util/functional.hpp
-MAIN_SUBMODULES?=$(foreach sub,SYSTEM MATH MODEL VIEW CONTROL,\
+MAIN_SUBMODULES?=$(foreach sub,$(MODULES),\
 		 $($(sub)_SUBMODULES)) $(MAIN_MODULES)
-MAIN_INCLUDES?=$(foreach sub,UTIL SYSTEM MATH MODEL VIEW CONTROL,\
+MAIN_INCLUDES?=$(foreach sub,$(MODULES),\
 		$($(sub)_H_ONLY:%=%.hpp))
 MAIN_SRCS?=$(foreach mod,$(MAIN_MODULES) $(MAIN_SUBMODULES) main,\
 	  $(DIR_ROOT_SRC)$(mod).cpp)
