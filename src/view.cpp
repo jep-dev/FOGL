@@ -109,10 +109,6 @@ namespace View {
 		if(!alive) {
 			return;
 		}
-		if(glfwInit() == 0) {
-			alive = false;
-			return;
-		}
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_SAMPLES, 4);
