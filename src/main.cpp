@@ -1,10 +1,6 @@
 #include <iostream>
 #include "main.hpp"
 
-#include "omp.h"
-#include <boost/asio.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
-
 #ifndef OBJ_PATH
 #define OBJ_PATH "share/icosahedron.obj"
 #endif
