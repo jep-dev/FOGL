@@ -38,25 +38,25 @@ MAIN_MODULES?=util system math model view control
 MODULE_DIRS?=$(foreach mod,$(MAIN_MODULES),$(mod)/)
 MAIN_H_ONLY?=util/types math math/quat math/dual system
 
-SYSTEM_SUBMODULES?=net printer
-MATH_SUBMODULES?=affine
-MODEL_SUBMODULES?=ply obj mtl
-VIEW_SUBMODULES?=shade pane
+SYSTEM_SUBMODULES?=system/net system/printer
+SYSTEM_H_ONLY?=
+MATH_SUBMODULES?=math/affine
+MATH_H_ONLY?=math/quat.hpp math/dual.hpp
+MODEL_SUBMODULES?=model/ply model/obj model/mtl
+MODEL_H_ONLY?=
+VIEW_SUBMODULES?=view/shade view/pane
+VIEW_H_ONLY?=
 CONTROL_SUBMODULES?=
+CONTROL_H_ONLY?=
+UTIL_SUBMODULES?=
+UTIL_H_ONLY?=util/types.hpp util/task.hpp util/functional.hpp
 MAIN_SUBMODULES?=$(foreach sub,SYSTEM MATH MODEL VIEW CONTROL,\
 		 $($(sub)_SUBMODULES)) $(MAIN_MODULES)
-
-MAIN_SUBMODULE_PATHS?=\
-		$(foreach mod,$(SYSTEM_SUBMODULES),system/$(mod))\
-		$(foreach mod,$(MATH_SUBMODULES),math/$(mod))\
-		$(foreach mod,$(MODEL_SUBMODULES),model/$(mod))\
-		$(foreach mod,$(VIEW_SUBMODULES),view/$(mod))
-MAIN_INCLUDES?=$(foreach inc,$(MAIN_H_ONLY)\
-			   $(MAIN_MODULES) $(MAIN_SUBMODULE_PATHS),$(inc:%=%.hpp))
-
-MAIN_SRCS?=$(foreach mod,$(MAIN_MODULES) $(MAIN_SUBMODULE_PATHS) main,\
+MAIN_INCLUDES?=$(foreach sub,UTIL SYSTEM MATH MODEL VIEW CONTROL,\
+		$($(sub)_H_ONLY:%=%.hpp))
+MAIN_SRCS?=$(foreach mod,$(MAIN_MODULES) $(MAIN_SUBMODULES) main,\
 	  $(DIR_ROOT_SRC)$(mod).cpp)
-MAIN_OBJS=$(foreach mod,$(MAIN_MODULES) $(MAIN_SUBMODULE_PATHS),\
+MAIN_OBJS=$(foreach mod,$(MAIN_SUBMODULES),\
 	  $(mod:%=$(DIR_ROOT_LIB)%$(OBJ_EXT)))
 #MAIN_DLL_DIRS=-L$(DIR_ROOT_LIB) $(foreach dir,$(MODULE_DIRS),\
 		  -L$(DIR_ROOT_LIB)$(dir))
