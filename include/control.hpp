@@ -12,7 +12,7 @@ namespace Control {
 	} e_tid; ///< The ID of a task
 
 	/// A data structure controlling both model and view
-	struct control : public Util::supertask {
+	struct control : public Util::task {
 		const char *mpath;
 		View::view viewer;
 		//Model::contour<Util::undef_t, GLfloat, GLclampf, GLclampf> model;
