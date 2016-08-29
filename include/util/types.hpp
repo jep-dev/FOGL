@@ -200,6 +200,7 @@ namespace Util {
 		typedef T1 type;
 	};
 
+	// TODO infix with primitives like pack_get_t
 	template<template<typename...> class C,
 		typename A, typename B>
 	struct infix_t {typedef C<A, B> type;};
