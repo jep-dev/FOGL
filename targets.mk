@@ -1,5 +1,5 @@
 default:.sentinel release
-all:default test #debug
+all:default $(MAIN_OBJS) test #debug
 vpath %.hpp $(DIR_ROOT_INCLUDE)
 vpath %.cpp $(DIR_ROOT_SRC)
 
@@ -71,18 +71,19 @@ $(RELEASE_EXE): $(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS)
 
 $(DIR_ROOT_LIB)util$(OBJ_EXT): $(UTIL_H_ONLY)
 
-test: $(TEST_EXES) ; # use --log_level=error
+test: $(MAIN_OBJS) $(TEST_EXES) ; # use --log_level=error
 
 # TODO Thread-safe use of MAIN_OBJS
 $(DIR_TEST)$(DIR_BIN)%$(TEST_EXT)$(EXE_EXT):\
-		$(DIR_TEST)$(DIR_SRC)%.cpp $(DIR_ROOT_LIB)%$(OBJ_EXT)
+		$(DIR_TEST)$(DIR_SRC)%.cpp $(DIR_ROOT_LIB)%$(OBJ_EXT) $(MAIN_OBJS)
 	$(LINK_CXX) $(TEST_CPPFLAGS) -fPIE\
 		$< $(MAIN_OBJS) $(GL3W_OBJS)\
 		$(TEST_LDFLAGS)\
 		-o $@
 
 $(DIR_TEST)$(DIR_BIN)model$(TEST_EXT)$(EXE_EXT):\
-		$(DIR_TEST)$(DIR_SRC)model.cpp $(DIR_ROOT_LIB)model$(OBJ_EXT)
+		$(DIR_TEST)$(DIR_SRC)model.cpp $(DIR_ROOT_LIB)model$(OBJ_EXT)\
+		$(MAIN_OBJS)
 	$(LINK_CXX) $(TEST_CPPFLAGS) -fPIE\
 		$< $(MAIN_OBJS) $(GL3W_OBJS)\
 		$(TEST_LDFLAGS)\
