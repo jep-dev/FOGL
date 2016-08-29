@@ -90,5 +90,8 @@ int main(int argc, const char **argv) {
 	typedef decltype(G_verts {} + edge_t<0,1>{}) G_e01;
 	static_assert(!contains(G_verts::edges{}, edge_t<0, 1>{}), "");
 	static_assert(contains(G_e01::edges{}, edge_t<0, 1>{}), "");
-	static_assert(!contains(G_e01::edges{}, edge_t<1, 2>{}), "");
+	auto E_12 = edge_t<1,2>{};
+	auto G_e12 = G_e01{} + E_12;
+	static_assert(!contains(G_e01::edges{}, E_12), "");
+	static_assert(contains(decltype(G_e12)::edges{}, E_12), "");
 }
