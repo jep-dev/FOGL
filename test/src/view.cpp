@@ -20,4 +20,7 @@ int main(int argc, const char **argv) {
 	view v(alive, "share/shade.vert", "share/shade.frag");
 	v.init(alive);
 	v.run(alive);
+	glfwTerminate();
+
+	// TODO Determine why GLFW can init but cannot terminate
 }
