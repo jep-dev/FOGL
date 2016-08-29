@@ -17,8 +17,12 @@
 
 int main(int argc, const char **argv) {
 	using namespace Util;
-	glfwInit();
 	std::atomic_bool alive(true);
+	if(glfwInit() == 0) {
+		std::cout << "Failed to initialize GLFW "
+			<< glfwGetVersionString() << std::endl;
+		return 1;
+	}
 	Control::control ctl(alive, OBJ_PATH, VERT_PATH, FRAG_PATH);
 	task::init(alive, &ctl);
 	task::run(alive, &ctl);
