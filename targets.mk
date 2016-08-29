@@ -72,14 +72,14 @@ $(RELEASE_EXE): $(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS)
 test: $(TEST_EXES) ; # use --log_level=error
 
 $(DIR_TEST)$(DIR_BIN)%$(TEST_EXT)$(EXE_EXT):\
-		$(DIR_TEST)$(DIR_SRC)%.cpp $(MAIN_OBJS)
+		$(DIR_TEST)$(DIR_SRC)%.cpp $(DIR_ROOT_LIB)%$(OBJ_EXT)
 	$(LINK_CXX) -fPIE\
 		$< $(MAIN_OBJS) $(GL3W_OBJS)\
 		$(TEST_LDFLAGS)\
 		-o $@
 
 $(DIR_TEST)$(DIR_BIN)model$(TEST_EXT)$(EXE_EXT):\
-		$(DIR_TEST)$(DIR_SRC)model.cpp $(MAIN_OBJS)
+		$(DIR_TEST)$(DIR_SRC)model.cpp $(DIR_ROOT_LIB)model$(OBJ_EXT)
 	$(LINK_CXX) -fPIE\
 		$< $(MAIN_OBJS) $(GL3W_OBJS)\
 		$(TEST_LDFLAGS)\
