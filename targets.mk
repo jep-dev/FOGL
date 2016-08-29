@@ -69,6 +69,9 @@ $(RELEASE_EXE): $(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS)
 		$(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS) $(RELEASE_LDFLAGS)\
 		-o $@
 
+$(DIR_ROOT_LIB)util$(OBJ_EXT): $(UTIL_H_ONLY)
+
+
 test: $(TEST_EXES) ; # use --log_level=error
 
 $(DIR_TEST)$(DIR_BIN)%$(TEST_EXT)$(EXE_EXT):\
