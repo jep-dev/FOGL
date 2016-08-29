@@ -52,7 +52,7 @@ clean: clean-exes clean-dlls clean-deps clean-objs clean-pchs clean-sentinels;
 
 env:; @echo "$(foreach var,CC CXX CFLAGS CPPFLAGS WFLAGS\
 		RELEASE_LDFLAGS TEST_LDFLAGS MAIN_OBJS\
-		MAIN_DLLS MAIN_DLL_LINKS,\r$(var) = ${$(var)}\n)"
+		MAIN_DLLS MAIN_DLL_LINKS,\r$(var) = ${$(var)}\n\n)"
 
 ifneq ($(MAKECMDGOALS),clean)
 ifneq ($(MAKECMDGOALS),.sentinel)
@@ -71,19 +71,19 @@ $(RELEASE_EXE): $(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS)
 
 $(DIR_ROOT_LIB)util$(OBJ_EXT): $(UTIL_H_ONLY)
 
-
 test: $(TEST_EXES) ; # use --log_level=error
 
+# TODO Thread-safe use of MAIN_OBJS
 $(DIR_TEST)$(DIR_BIN)%$(TEST_EXT)$(EXE_EXT):\
 		$(DIR_TEST)$(DIR_SRC)%.cpp $(DIR_ROOT_LIB)%$(OBJ_EXT)
-	$(LINK_CXX) -fPIE\
+	$(LINK_CXX) $(TEST_CPPFLAGS) -fPIE\
 		$< $(MAIN_OBJS) $(GL3W_OBJS)\
 		$(TEST_LDFLAGS)\
 		-o $@
 
 $(DIR_TEST)$(DIR_BIN)model$(TEST_EXT)$(EXE_EXT):\
 		$(DIR_TEST)$(DIR_SRC)model.cpp $(DIR_ROOT_LIB)model$(OBJ_EXT)
-	$(LINK_CXX) -fPIE\
+	$(LINK_CXX) $(TEST_CPPFLAGS) -fPIE\
 		$< $(MAIN_OBJS) $(GL3W_OBJS)\
 		$(TEST_LDFLAGS)\
 		$(MODEL_CPPFLAGS)\
