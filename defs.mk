@@ -76,7 +76,7 @@ MAIN_DEPS=$(MAIN_OBJS:%$(OBJ_EXT)=%$(DEP_EXT))
 SENTINEL_DIRS?=$(DIR_BIN) $(foreach outer,$(DIR_LIB),\
 			   $(foreach inner,. $(MODULE_DIRS),$(outer)$(inner)))
 
-TEST_EXES?=$(foreach mod,math model,\
+TEST_EXES?=$(foreach mod,$(MAIN_MODULES),\
 		   $(DIR_ROOT_BIN)$(mod)$(TEST_EXT)$(EXE_EXT))
 #DEBUG_EXE?=$(DIR_ROOT)$(DIR_BIN)$(EXE_BASE)$(DEBUG_EXT)$(EXE_EXT)
 RELEASE_EXE?=$(DIR_ROOT_BIN)$(EXE_BASE)$(RELEASE_EXT)$(EXE_EXT)
