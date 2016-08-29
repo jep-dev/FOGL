@@ -8,8 +8,17 @@
 #include "system.hpp"
 #include <boost/test/included/unit_test.hpp>
 
-BOOST_AUTO_TEST_CASE(all) {
-	using namespace System;
-	BOOST_REQUIRE(Printer_Base::uni_special(0xc0));
-	BOOST_REQUIRE(!Printer_Base::uni_special(0xb9));
+using namespace System;
+
+BOOST_AUTO_TEST_CASE(uni_special) {
+	BOOST_REQUIRE(Printer_Base::uni_special(0x80));
+	BOOST_REQUIRE(!Printer_Base::uni_special(0x79));
+}
+
+BOOST_AUTO_TEST_CASE(uni_strlen) {
+	BOOST_REQUIRE_EQUAL(Printer_Base::uni_strlen("A"),1);
+}
+
+BOOST_AUTO_TEST_CASE(strlen_) {
+	BOOST_REQUIRE_EQUAL(Printer_Base::strlen("\e[38;5;190mA\e[0m"),1);
 }
