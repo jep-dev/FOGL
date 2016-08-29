@@ -27,6 +27,7 @@ namespace Control {
 		auto status = obj_t::load(this -> mpath, object);
 		if(status != obj_t::e_ok) {
 			std::cout << "The model failed to load." << std::endl;
+			alive = false;
 			return;
 		}
 
