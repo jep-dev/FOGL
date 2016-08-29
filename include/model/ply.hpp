@@ -3,10 +3,6 @@
 
 #include "model.hpp"
 
-#include <iosfwd>
-#include <vector>
-#include <string>
-
 namespace Model {
 	namespace Ply {
 		using namespace Model;

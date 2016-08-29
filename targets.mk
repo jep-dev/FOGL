@@ -70,8 +70,9 @@ $(RELEASE_EXE): $(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS)
 		-o $@
 
 test: $(TEST_EXES) ; # use --log_level=error
-$(DIR_ROOT_BIN)math$(TEST_EXT)$(EXE_EXT):\
-		$(DIR_TEST)$(DIR_SRC)math.cpp $(MAIN_OBJS)
+
+$(DIR_ROOT_BIN)%$(TEST_EXT)$(EXE_EXT):\
+		$(DIR_TEST)$(DIR_SRC)%.cpp $(MAIN_OBJS)
 	$(LINK_CXX) -fPIE\
 		$< $(MAIN_OBJS) $(GL3W_OBJS)\
 		$(TEST_LDFLAGS)\

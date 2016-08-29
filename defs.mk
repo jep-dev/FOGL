@@ -40,7 +40,7 @@ MAIN_H_ONLY?=util/types math math/quat math/dual system
 
 SYSTEM_SUBMODULES?=net printer
 MATH_SUBMODULES?=affine
-MODEL_SUBMODULES?=ply obj
+MODEL_SUBMODULES?=ply obj mtl
 VIEW_SUBMODULES?=shade pane
 CONTROL_SUBMODULES?=
 MAIN_SUBMODULES?=$(foreach sub,SYSTEM MATH MODEL VIEW CONTROL,\
@@ -76,7 +76,7 @@ MAIN_DEPS=$(MAIN_OBJS:%$(OBJ_EXT)=%$(DEP_EXT))
 SENTINEL_DIRS?=$(DIR_BIN) $(foreach outer,$(DIR_LIB),\
 			   $(foreach inner,. $(MODULE_DIRS),$(outer)$(inner)))
 
-TEST_EXES?=$(foreach mod,math model,\
+TEST_EXES?=$(foreach mod,$(MAIN_MODULES),\
 		   $(DIR_ROOT_BIN)$(mod)$(TEST_EXT)$(EXE_EXT))
 #DEBUG_EXE?=$(DIR_ROOT)$(DIR_BIN)$(EXE_BASE)$(DEBUG_EXT)$(EXE_EXT)
 RELEASE_EXE?=$(DIR_ROOT_BIN)$(EXE_BASE)$(RELEASE_EXT)$(EXE_EXT)
@@ -101,6 +101,7 @@ LDFLAGS:=-L$(DIR_ROOT_LIB) -L$(DIR_BOOST_LIB) -L$(DIR_GL3W_LIB) -lpthread\
 	-lboost_coroutine -lboost_system -lgl3w
 RELEASE_CPPFLAGS:=\
 		-D OBJ_PATH=$(OBJ_PATH)\
+		-D MTL_PATH=$(MTL_PATH)\
 		-D FRAG_PATH=$(FRAG_PATH)\
 		-D VERT_PATH=$(VERT_PATH)
 MODEL_CPPFLAGS:=$(RELEASE_CPPFLAGS)

@@ -2,7 +2,6 @@
 #define OBJ_HPP
 
 #include "model.hpp"
-#include <vector>
 
 namespace Model {
 	/*! An enumeration of supported types */
@@ -67,7 +66,6 @@ namespace Model {
 	template<> struct element_t<e_el_u> {
 		static constexpr const char *prefix = "usemtl";
 	};
-
 
 	/// A single point, containing at least x, y, z coordinates
 	template<> struct element_t<e_el_v> {

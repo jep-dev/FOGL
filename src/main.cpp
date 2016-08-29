@@ -1,9 +1,5 @@
-#include "system.hpp"
-#include "control.hpp"
-#include "math.hpp"
-#include "main.hpp"
-
 #include <iostream>
+#include "main.hpp"
 
 #include "omp.h"
 #include <boost/asio.hpp>

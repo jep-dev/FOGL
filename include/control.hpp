@@ -1,12 +1,6 @@
 #ifndef CONTROL_HPP
 #define CONTROL_HPP
 
-#include <atomic>
-#include <iostream>
-#include <thread>
-#include <GL/gl3w.h>
-
-#include "util.hpp"
 #include "model.hpp"
 #include "view.hpp"
 

@@ -3,7 +3,8 @@ all:default test #debug
 vpath %.hpp $(DIR_ROOT_INCLUDE)
 vpath %.cpp $(DIR_ROOT_SRC)
 
-OBJ_PATH:=\"share/icosahedron.obj\"
+OBJ_PATH:=\"share/cube.obj\"
+MTL_PATH:=\"share/cube.mtl\"
 VERT_PATH:=\"share/fallback.vert\"
 FRAG_PATH:=\"share/shade.frag\"
 
