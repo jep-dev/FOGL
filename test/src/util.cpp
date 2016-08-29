@@ -81,14 +81,22 @@ int main(int argc, const char **argv) {
 
 	auto packed2 = 3 <pack_with> 4.0f;
 	static_assert(inner_value(packed2 <same_as> VIF), "");
+	static_assert(!inner_value(3.0f <pack_with> 4.0f <same_as> VIF),"");
 
 	static_assert(inner_value(rotate(T_IFD{}) <same_as> T_FDI{}), "");
 
 	graph_t<T_void, T_void> G_void;
 	typedef decltype(G_void + node_t<T_void>{}
 		+ node_t<T_I>{} + node_t<T_F>{}) G_verts;
-	typedef decltype(G_verts {} + edge_t<0,1>{}) G_e01;
-	static_assert(!contains(G_verts::edges{}, edge_t<0, 1>{}), "");
-	static_assert(contains(G_e01::edges{}, edge_t<0, 1>{}), "");
-	static_assert(!contains(G_e01::edges{}, edge_t<1, 2>{}), "");
+
+	auto E_01 = edge_t<0,1>{};
+	auto E_12 = edge_t<1,2>{};
+	auto G_e01 = G_verts {} + E_01;
+	static_assert(!contains(G_verts::edges{}, E_01), "");
+	static_assert(contains(decltype(G_e01)::edges{}, E_01), "");
+	static_assert(!contains(decltype(G_e01)::edges{}, E_12), "");
+	static_assert(contains(decltype(G_e01 + E_12)::edges{}, E_12), "");
+
+	auto edge0 = pack_get_t<decltype(G_e01)::edges, 0>::type{};
+	static_assert(inner_value(edge0 <same_as> E_01), "");
 }

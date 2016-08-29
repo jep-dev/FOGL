@@ -193,11 +193,14 @@ namespace Util {
 
 	template<typename T1, typename... TN, int I>
 	struct pack_get_t<pack_t<T1, TN...>, I> {
-		typedef typename std::conditional<I==0, T1,
-				typename pack_get_t<pack_t<TN...>, I-1>::type
-			>::type type;
+		typedef typename pack_get_t<pack_t<TN...>, I-1>::type type;
+	};
+	template<typename T1, typename... TN>
+	struct pack_get_t<pack_t<T1, TN...>, 0> {
+		typedef T1 type;
 	};
 
+	// TODO infix with primitives like pack_get_t
 	template<template<typename...> class C,
 		typename A, typename B>
 	struct infix_t {typedef C<A, B> type;};
@@ -207,7 +210,6 @@ namespace Util {
 	
 	template<template<typename...> class C, typename A>
 	constexpr infix_t<C, A> operator<(A, infix_t<C>) {return {};}
-
 
 }
 
