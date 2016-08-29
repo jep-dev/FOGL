@@ -97,6 +97,6 @@ int main(int argc, const char **argv) {
 	static_assert(!contains(decltype(G_e01)::edges{}, E_12), "");
 	static_assert(contains(decltype(G_e01 + E_12)::edges{}, E_12), "");
 
-	static_assert(inner_value(pack_get_t<decltype(G_e01)::edges, 0>::type{}
-			<same_as> E_01), "");
+	auto edge0 = pack_get_t<decltype(G_e01)::edges, 0>::type{};
+	static_assert(inner_value(edge0 <same_as> E_01), "");
 }
