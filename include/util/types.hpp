@@ -199,6 +199,10 @@ namespace Util {
 	struct pack_get_t<pack_t<T1, TN...>, 0> {
 		typedef T1 type;
 	};
+	template<int I>
+	struct pack_get_t<pack_t<>, I> {
+		typedef undef_t type;
+	};
 
 	// TODO infix with primitives like pack_get_t
 	template<template<typename...> class C,
