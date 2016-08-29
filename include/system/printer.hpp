@@ -27,6 +27,8 @@ namespace System {
 		static int uni_strlen(const char *word);
 		static int uni_strlen(const std::string &word);
 		static int strlen(const char *word);
+		static int split(const std::string &line,
+				std::vector<std::string> &words);
 		
 		static string repeat(int N, char C = ' ');
 		template<typename T> static std::string

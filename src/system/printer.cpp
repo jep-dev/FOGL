@@ -2,10 +2,10 @@
 #include "system.hpp"
 
 namespace System {
-	bool uni_special(char ch) {
+	bool Printer_Base::uni_special(char ch) {
 		return (ch & 0xc0) == 0x80;
 	}
-	int uni_strlen(const char *word) {
+	int Printer_Base::uni_strlen(const char *word) {
 		int len = 0;
 		for(; *word; word++) {
 			if(!uni_special(*word)) {
@@ -14,11 +14,11 @@ namespace System {
 		}
 		return len;
 	}
-	int uni_strlen(const std::string &word) {
+	int Printer_Base::uni_strlen(const std::string &word) {
 		return uni_strlen(word.c_str());
 	}
 
-	int strlen(const char *word) {
+	int Printer_Base::strlen(const char *word) {
 		int len = 0;
 		bool escape = false, bracket = false;
 		for(; *word; word++) {
@@ -42,20 +42,21 @@ namespace System {
 		return len;
 	}
 
-	std::string repeat(int w, char c) {
+	std::string Printer_Base::repeat(int w, char c) {
 		std::ostringstream oss;
 		oss << std::setw(w) << std::setfill(c);
 		return oss.str();
 	}
 
 	template<typename T>
-	std::string stringify(const T &t) {
+	std::string Printer_Base::stringify(const T &t) {
 		std::ostringstream oss;
 		oss << t;
 		return oss.str();
 	}
 	template<typename T1, typename T2, typename... TN>
-	std::string stringify(const T1 &t1, const T2 &t2, const TN &... tn) {
+	std::string Printer_Base::stringify(const T1 &t1,
+			const T2 &t2, const TN &... tn) {
 		return stringify(t1) + " " + stringify(t2, tn...);
 	}
 
@@ -82,7 +83,8 @@ namespace System {
 		return true;
 	}*/
 
-	int split(std::string const& line, std::vector<std::string> &words) {
+	int Printer_Base::split(std::string const& line,
+			std::vector<std::string> &words) {
 		int wc = 0;
 		std::string word;
 		std::istringstream iss(line);
