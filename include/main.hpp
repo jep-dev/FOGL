@@ -3,7 +3,6 @@
 
 #include <iosfwd>
 
-#include "util.hpp"
 #include "control.hpp"
 #include "system.hpp"
 #include "math.hpp"
