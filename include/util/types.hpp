@@ -183,6 +183,13 @@ namespace Util {
 		operator+(node_t<T>) const {
 			return {};
 		}
+
+		template<typename... TN>
+		constexpr graph_t<decltype(vertices{} + pack_t<TN...>{}), edges>
+		operator+(pack_t<node_t<TN>...>) const {
+			return {};
+		}
+
 		template<int S, int D>
 		constexpr graph_t<vertices, decltype(
 				prune(edges {} + pack_t<edge_t<S, D>> {}))>
