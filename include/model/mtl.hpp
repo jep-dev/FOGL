@@ -91,6 +91,11 @@ namespace Model {
 	template<> struct mtl_t<e_mtl_map_kd> {
 		static constexpr const char *prefix = "map_Kd";
 	};
+	
+	/// Diffuse map
+	template<> struct mtl_t<e_mtl_map_ks> {
+		static constexpr const char *prefix = "map_Ks";
+	};
 
 	/// Specular highlight map
 	template<> struct mtl_t<e_mtl_map_ns> {
