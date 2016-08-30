@@ -31,32 +31,35 @@ namespace Model {
 		for(auto it = std::begin(tk); it != std::end(tk); ++it) {
 			auto word = *it++;
 			auto type = parse_type(word);
+			auto has_strings=false, has_floats=false,
+				 has_ints = false, has_bools = false;
 			if((mask_has_strings & (1<<type)) != 0) {
+				has_strings = true;
 				std::ostringstream oss;
 				while(it != std::end(tk)) {
 					oss << *it++ << " ";
 				}
 				strings.emplace_back(oss.str());
-				nBools.emplace_back(0);
-				nFloats.emplace_back(0);
-				nInts.emplace_back(0);
 				nStrings.emplace_back(1);
-				types.emplace_back(type);
-				break;
-			} else if((mask_has_ints & (1<<type)) != 0) {
+				//break;
+			} else {
+				nStrings.emplace_back(0);
+			}
+			if((mask_has_ints & (1<<type)) != 0) {
+				has_ints = true;
 				int index, nIndices = 0;
 				while(it != std::end(tk)) {
 					index = boost::lexical_cast<int>(*it++);
 					ints.push_back(index);
 					nIndices++;
 				}
-				nBools.emplace_back(0);
-				nFloats.emplace_back(0);
 				nInts.emplace_back(nIndices);
-				nStrings.emplace_back(0);
-				types.emplace_back(type);
-				break;
-			} else if((mask_has_floats & (1<<type)) != 0) {
+				//break;
+			} else {
+				nInts.emplace_back(0);
+			}
+			if((mask_has_floats & (1<<type)) != 0) {
+				has_floats = true;
 				float val;
 				int nValues = 0;
 				while(it != std::end(tk)) {
@@ -64,12 +67,12 @@ namespace Model {
 					floats.push_back(val);
 					nValues++;
 				}
-				nBools.emplace_back(0);
 				nFloats.emplace_back(nValues);
-				nInts.emplace_back(0);
-				nStrings.emplace_back(0);
-				types.emplace_back(type);
-			} else if(type == e_el_s) {
+			} else {
+				nFloats.emplace_back(0);
+			}
+			if(type == e_el_s) {
+				has_bools = true;
 				if(it == std::end(tk)) {
 					bools.emplace_back(true);
 				} else {
@@ -77,11 +80,11 @@ namespace Model {
 					bools.emplace_back(word == "1" || word == "on");
 				}
 				nBools.emplace_back(1);
-				nFloats.emplace_back(0);
-				nInts.emplace_back(0);
-				nStrings.emplace_back(0);
-				types.emplace_back(type);
-			} else if(type < e_el_total && type >= e_el_c) {
+			} else {
+				nBools.emplace_back(0);
+			}
+			if(!has_bools && !has_floats && !has_ints && !has_strings
+					&& type < e_el_total && type >= e_el_c) {
 				nBools.emplace_back(0);
 				nFloats.emplace_back(0);
 				nInts.emplace_back(0);
@@ -89,6 +92,7 @@ namespace Model {
 			} else {
 				status = e_err_unknown;
 			}
+			types.emplace_back(type);
 			break;
 		}
 		return status;
