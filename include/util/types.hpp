@@ -213,15 +213,14 @@ namespace Util {
 
 	// TODO infix with primitives like pack_get_t
 	template<template<typename...> class C,
-		typename A, typename B>
+		class A, class B>
 	struct infix_t {typedef C<A, B> type;};
 	
-	template<template<typename...> class C, typename A, typename B>
+	template<template<class...> class C, class A, class B>
 	constexpr C<A,B> operator>(infix_t<C, A>, B) {return {};}
 	
-	template<template<typename...> class C, typename A>
+	template<template<class...> class C, class A>
 	constexpr infix_t<C, A> operator<(A, infix_t<C>) {return {};}
-
 }
 
 #endif
