@@ -38,7 +38,7 @@ lib%$(DLL_EXT): $(MAIN_SRCS)
 		-o $@ $(LDFLAGS)
 
 %.hpp$(PCH_EXT): %.hpp
-	$(COMPILE_HPP) $<\
+	$(COMPILE_HPP) $(CPPFLAGS) $(RELEASE_CPPFLAGS)  $<\
 		-o $@
 
 clean-deps:; $(RM) $(EXE_OBJS:.o=.d) $(MAIN_DEPS) 
@@ -51,8 +51,8 @@ clean-gl3w:; $(RM) $(GL3W_OBJS)
 clean: clean-exes clean-dlls clean-deps clean-objs clean-pchs clean-sentinels;
 
 env:; @echo "$(foreach var,CC CXX CFLAGS CPPFLAGS WFLAGS\
-		RELEASE_LDFLAGS TEST_LDFLAGS MAIN_OBJS\
-		MAIN_DLLS MAIN_DLL_LINKS,\r$(var) = ${$(var)}\n\n)"
+		RELEASE_LDFLAGS TEST_LDFLAGS MAIN_OBJS MAIN_DLLS MAIN_DLL_LINKS\
+		MAIN_INCLUDES MODULES MAIN_SUBMODULES, \r$(var) = ${$(var)}\n\n)"
 
 ifneq ($(MAKECMDGOALS),clean)
 ifneq ($(MAKECMDGOALS),.sentinel)
@@ -64,9 +64,13 @@ endif
 
 release: $(MAIN_OBJS) $(MAIN_DEPS)\
 		$(RELEASE_OBJ) $(GL3W_OBJS) $(RELEASE_EXE);
-$(RELEASE_EXE): $(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS)
-	$(LINK_CXX) -fPIE\
+$(RELEASE_EXE): $(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS) $(MAIN_PCHS)
+	$(LINK_CXX) -fPIE -include $(MAIN_PCHS)\
 		$(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS) $(RELEASE_LDFLAGS)\
+		-o $@
+
+$(DIR_ROOT_INCLUDE)main$(PCH_EXT): $(DIR_ROOT_INCLUDE)main.hpp $(MAIN_INCLUDES)
+	$(COMPILE_HPP) $(RELEASE_CPPFLAGS) $<\
 		-o $@
 
 $(DIR_ROOT_LIB)util$(OBJ_EXT): $(UTIL_H_ONLY)
@@ -90,5 +94,5 @@ $(DIR_TEST)$(DIR_BIN)model$(TEST_EXT)$(EXE_EXT):\
 		$(MODEL_CPPFLAGS)\
 		-o $@
 
-.PHONY: all depends env release test debug\
-	clean clean-exes clean-dlls clean-deps clean-objs clean-sentinels
+.PHONY: all depends env release test debug clean clean-exes clean-dlls\
+	clean-deps clean-pchs clean-objs clean-sentinels
