@@ -72,6 +72,8 @@ int main(int argc, const char **argv) {
 		default: {} break;
 	}
 	/*std::cout << "Contiguous data: " << std::endl;
+	endl(std::cout << "Bools:" << obj.bools.size());
+	for(auto it : obj.bools) std::cout << it << " ";
 	endl(std::cout << "Floats:" << obj.floats.size());
 	for(auto it : obj.floats) std::cout << it << " ";
 	endl(std::cout << "\nIntegers:" << obj.ints.size());
