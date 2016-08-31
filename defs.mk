@@ -93,10 +93,7 @@ LDFLAGS:=-L$(DIR_ROOT_LIB) -L$(DIR_BOOST_LIB) -L$(DIR_GL3W_LIB) -lpthread\
 	-Wl,-rpath,$(DIR_BOOST_LIB):$(DIR_GL3W_LIB)\
 	-lboost_coroutine -lboost_system -lgl3w
 RELEASE_CPPFLAGS:=-O3\
-		-D OBJ_PATH=$(OBJ_PATH)\
-		-D MTL_PATH=$(MTL_PATH)\
-		-D FRAG_PATH=$(FRAG_PATH)\
-		-D VERT_PATH=$(VERT_PATH)
+	$(foreach path,OBJ MTL FRAG VERT,-D $(path)_PATH=$($(path)_PATH))
 TEST_CPPFLAGS:=-O0
 MODEL_CPPFLAGS:=$(RELEASE_CPPFLAGS)
 RELEASE_LDFLAGS:=$(LDFLAGS) -Wl,--gc-sections -lSOIL -lGL -lGLU -lglfw -ldl

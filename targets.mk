@@ -52,7 +52,8 @@ clean: clean-exes clean-dlls clean-deps clean-objs clean-pchs clean-sentinels;
 
 env:; @echo "$(foreach var,CC CXX CFLAGS CPPFLAGS WFLAGS\
 		RELEASE_LDFLAGS TEST_LDFLAGS MAIN_OBJS MAIN_DLLS MAIN_DLL_LINKS\
-		MAIN_INCLUDES MODULES MAIN_SUBMODULES, \r$(var) = ${$(var)}\n\n)"
+		MAIN_INCLUDES MODULES MAIN_SUBMODULES RELEASE_CPPFLAGS,\
+		\r$(var) = ${$(var)}\n\n)"
 
 ifneq ($(MAKECMDGOALS),clean)
 ifneq ($(MAKECMDGOALS),.sentinel)
@@ -65,7 +66,8 @@ endif
 release: $(MAIN_OBJS) $(MAIN_DEPS)\
 		$(RELEASE_OBJ) $(GL3W_OBJS) $(RELEASE_EXE);
 $(RELEASE_EXE): $(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS) $(MAIN_PCHS)
-	$(LINK_CXX) -fPIE -include $(MAIN_PCHS)\
+	$(LINK_CXX) -fPIE \
+		-include $(MAIN_PCHS) $(RELEASE_CPPFLAGS)\
 		$(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS) $(RELEASE_LDFLAGS)\
 		-o $@
 
