@@ -1,5 +1,6 @@
 #include "model/obj.hpp"
 
+#include <cstring>
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -11,7 +12,7 @@
 namespace Model {
 	e_el obj_t::parse_type(std::string word) {
 		if(word == element_t<e_el_c>::prefix) return e_el_c;
-		if(word == element_t<e_el_f>::prefix) return e_el_f;
+		if(word == element_t<e_el_f0>::prefix) return e_el_f0;
 		if(word == element_t<e_el_g>::prefix) return e_el_g;
 		if(word == element_t<e_el_l>::prefix) return e_el_l;
 		if(word == element_t<e_el_m>::prefix) return e_el_m;
@@ -26,37 +27,25 @@ namespace Model {
 
 	obj_t::e_status obj_t::parse(std::string line, const char *delim) {
 		auto status = obj_t::e_status::e_ok;
-		boost::tokenizer<boost::char_separator<char>> tk(line,
-			boost::char_separator<char>(delim));
+		boost::tokenizer<boost::char_separator<char>>
+			tk(line, boost::char_separator<char>(delim)),
+			s_tk(line, boost::char_separator<char>(" /"));
 		for(auto it = std::begin(tk); it != std::end(tk); ++it) {
 			auto word = *it++;
 			auto type = parse_type(word);
-			auto has_strings=false, has_floats=false,
+			auto has_strings = false, has_floats = false,
 				 has_ints = false, has_bools = false;
-			if((mask_has_strings & (1<<type)) != 0) {
-				has_strings = true;
-				std::ostringstream oss;
-				while(it != std::end(tk)) {
-					oss << *it++ << " ";
+			if(type == e_el_s) {
+				has_bools = true;
+				if(it == std::end(tk)) {
+					bools.emplace_back(true);
+				} else {
+					auto word = *it++;
+					bools.emplace_back(word == "1" || word == "on");
 				}
-				strings.emplace_back(oss.str());
-				nStrings.emplace_back(1);
-				//break;
+				nBools.emplace_back(1);
 			} else {
-				nStrings.emplace_back(0);
-			}
-			if((mask_has_ints & (1<<type)) != 0) {
-				has_ints = true;
-				int index, nIndices = 0;
-				while(it != std::end(tk)) {
-					index = boost::lexical_cast<int>(*it++);
-					ints.push_back(index);
-					nIndices++;
-				}
-				nInts.emplace_back(nIndices);
-				//break;
-			} else {
-				nInts.emplace_back(0);
+				nBools.emplace_back(0);
 			}
 			if((mask_has_floats & (1<<type)) != 0) {
 				has_floats = true;
@@ -71,27 +60,61 @@ namespace Model {
 			} else {
 				nFloats.emplace_back(0);
 			}
-			if(type == e_el_s) {
-				has_bools = true;
-				if(it == std::end(tk)) {
-					bools.emplace_back(true);
+			if((mask_has_ints & (1<<type)) != 0) {
+				has_ints = true;
+				int index, nIndices = 0;
+				if(type == e_el_f0) {
+					it++;
+					word = *it;
+					auto firstSlash = word.find("/"),
+						 lastSlash = word.rfind("/");
+					if(firstSlash != std::string::npos) {
+						if(firstSlash == lastSlash) {
+							type = e_el_f1;
+						} else if(firstSlash == lastSlash-1) {
+							type = e_el_f2;
+						} else {
+							type = e_el_f3;
+						}
+					} else {
+						type = e_el_f0;
+					}
+					auto s_it = std::begin(s_tk);
+					s_it++;
+					while(s_it != std::end(s_tk)) {
+						index = boost::lexical_cast<int>(*s_it++);
+						ints.push_back(index);
+						nIndices++;
+					}
 				} else {
-					auto word = *it++;
-					bools.emplace_back(word == "1" || word == "on");
+					while(it != std::end(tk)) {
+						index = boost::lexical_cast<int>(*it++);
+						ints.push_back(index);
+						nIndices++;
+					}
 				}
-				nBools.emplace_back(1);
+				nInts.emplace_back(nIndices);
 			} else {
-				nBools.emplace_back(0);
+				nInts.emplace_back(0);
 			}
-			if(!has_bools && !has_floats && !has_ints && !has_strings
-					&& type < e_el_total && type >= e_el_c) {
+			if((mask_has_strings & (1<<type)) != 0) {
+				has_strings = true;
+				std::ostringstream oss;
+				while(it != std::end(tk)) {
+					oss << *it++ << " ";
+				}
+				strings.emplace_back(oss.str());
+				nStrings.emplace_back(1);
+			} else {
+				nStrings.emplace_back(0);
+			}
+			if(!has_bools && !has_floats && !has_ints && !has_strings) {
 				nBools.emplace_back(0);
 				nFloats.emplace_back(0);
 				nInts.emplace_back(0);
 				nStrings.emplace_back(0);
-			} else {
 				status = e_err_unknown;
-			}
+			} 
 			types.emplace_back(type);
 			break;
 		}
@@ -108,7 +131,7 @@ namespace Model {
 		e_status status = e_ok;
 
 		for(std::string line; std::getline(file, line);) {
-			auto st = obj.parse(line, " /");
+			auto st = obj.parse(line, " ");
 			if(status == e_ok) status = st;
 			// TODO Break or no?
 		}
