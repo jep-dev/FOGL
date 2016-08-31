@@ -1,9 +1,5 @@
-#ifndef BOOST_TEST_DYN_LINK
 #define BOOST_TEST_DYN_LINK
-#endif
-#ifndef BOOST_TEST_MODULE
 #define BOOST_TEST_MODULE Math
-#endif
 
 #include "math.hpp"
 #include "math/quat.hpp"

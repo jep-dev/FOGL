@@ -88,18 +88,20 @@ namespace Util {
 	-> pack_t<TN..., T1> {
 		return {};
 	}
-	
+	/// Merges two type packs
 	template<typename... PREV>
 	struct pack_merge<pack_t<PREV...>, pack_t<>> {
 		typedef pack_t<PREV...> type;
 	};
+	/// Merges two type packs
 	template<typename... PREV, typename CUR, typename... NEXT>
 	struct pack_merge<pack_t<PREV...>, pack_t<CUR, NEXT...>> {
-		/// Type of the conditional on merging
+		// Type of the conditional on merging
 		typedef typename std::conditional<
 					index_of(pack_t<PREV...>{}, CUR{}) >= 0,
 					pack_t<PREV...>, pack_t<PREV..., CUR>
 				>::type cond_type;
+		// Contents of the merge
 		typedef typename pack_merge<cond_type, pack_t<NEXT...>>::type type;
 	};
 
@@ -212,16 +214,14 @@ namespace Util {
 	};
 
 	// TODO infix with primitives like pack_get_t
-	template<template<typename...> class C,
-		typename A, typename B>
-	struct infix_t {typedef C<A, B> type;};
+	template<template<class...> class C, class... T>
+	struct infix_t {/*typedef C<T...> type;*/};
 	
-	template<template<typename...> class C, typename A, typename B>
-	constexpr C<A,B> operator>(infix_t<C, A>, B) {return {};}
-	
-	template<template<typename...> class C, typename A>
+	template<template<class...> class C, class A>
 	constexpr infix_t<C, A> operator<(A, infix_t<C>) {return {};}
-
+	
+	template<template<class...> class C, class A, class B>
+	constexpr C<A,B> operator>(infix_t<C, A>, B) {return {};}
 }
 
 #endif

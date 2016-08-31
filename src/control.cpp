@@ -147,5 +147,5 @@ namespace Control {
 
 	control::control(std::atomic_bool &alive, const char *mpath,
 			const char *vert, const char *frag):
-		supertask(), mpath(mpath), viewer(alive, vert, frag) {}
+		task(), mpath(mpath), viewer(alive, vert, frag) {}
 }

@@ -11,7 +11,7 @@ namespace Util {
  		 * @param alive Shared status; false signals shutdown
  		 */
 		virtual void init(std::atomic_bool& alive) =0;
-		/** Polls for changes
+		/** Polls for changes since init or last poll
  		 * @param alive Shared status; false signals shutdown
  		 */
 		virtual void poll(std::atomic_bool &alive) =0;
@@ -23,10 +23,15 @@ namespace Util {
 	
 		/** Initializes any resources deferred from constructor
  		 * @param alive Shared status; false signals shutdown
- 		 * @param t The task to initialize */
+ 		 * @param t The task to initialize
+ 		 */
 		static void init(std::atomic_bool &alive, task *t) {
 			t -> init(alive);
 		}
+		/** Polls for changes since init or last poll
+ 		 * @param alive Shared status; false signals shutdown
+ 		 * @param t The task to poll
+ 		 */
 		static void poll(std::atomic_bool &alive, task *t) {
 			t -> poll(alive);
 		}

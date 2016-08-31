@@ -7,7 +7,10 @@ namespace Model {
 	/*! An enumeration of supported types */
 	typedef enum {
 		e_el_c=0,  ///< \ref element_t
-		e_el_f,    ///< \ref element_t<e_el_f>
+		e_el_f0,    ///< \ref element_t<e_el_f0>
+		e_el_f1,   ///< \ref element_t<e_el_f1>
+		e_el_f2,   ///< \ref element_t<e_el_f2>
+		e_el_f3,  ///< \ref element_t<e_el_f3>
 		e_el_g,    ///< \ref element_t<e_el_g>
 		e_el_l,    ///< \ref element_t<e_el_l>
 		e_el_m,    ///< \ref element_t<e_el_m>
@@ -32,8 +35,20 @@ namespace Model {
 		static constexpr const char *prefix = "#";
 	};
 
-	/// A set of vertices with or without texture coordinates
-	template<> struct element_t<e_el_f> {
+	/// A set of vertices (without texture or normal indices)
+	template<> struct element_t<e_el_f0> {
+		static constexpr const char *prefix = "f";
+	};
+	/// A set of vertices with texture indices
+	template<> struct element_t<e_el_f1> {
+		static constexpr const char *prefix = "f";
+	};
+	/// A set of vertices with normal indices
+	template<> struct element_t<e_el_f2> {
+		static constexpr const char *prefix = "f";
+	};
+	/// A set of vertices with both texture and normal indices
+	template<> struct element_t<e_el_f3> {
 		static constexpr const char *prefix = "f";
 	};
 
@@ -84,7 +99,10 @@ namespace Model {
 
 	inline std::ostream& operator<<(std::ostream& lhs, e_el const& rhs) {
 		return lhs << std::string(rhs == e_el_c ? element_t<e_el_c>::prefix
-				: rhs == e_el_f ? element_t<e_el_f>::prefix
+				: rhs == e_el_f0 ? element_t<e_el_f0>::prefix
+				: rhs == e_el_f1 ? element_t<e_el_f1>::prefix
+				: rhs == e_el_f2 ? element_t<e_el_f2>::prefix
+				: rhs == e_el_f3 ? element_t<e_el_f3>::prefix
 				: rhs == e_el_g ? element_t<e_el_g>::prefix
 				: rhs == e_el_l ? element_t<e_el_l>::prefix
 				: rhs == e_el_m ? element_t<e_el_m>::prefix
@@ -114,7 +132,8 @@ namespace Model {
 			mask_has_floats = (1<<e_el_v) | (1<<e_el_vn) | (1<<e_el_vp);
 		/// Mask for integer storage types
 		static constexpr unsigned int
-			mask_has_ints = (1<<e_el_f) | (1<<e_el_l);
+			mask_has_ints = (1<<e_el_f0) | (1<<e_el_f1)
+				| (1<<e_el_f2) | (e_el_f3) | (1<<e_el_l);
 		/// Mask for string storage types
 		static constexpr unsigned int
 			mask_has_strings = (1<<e_el_c) | (1<<e_el_g)

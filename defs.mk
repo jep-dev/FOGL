@@ -37,7 +37,7 @@ RELEASE_EXT?=
 MAIN_MODULES?=util system math model view control
 MODULES?=UTIL SYSTEM MATH MODEL VIEW CONTROL
 MODULE_DIRS?=$(foreach mod,$(MAIN_MODULES),$(mod)/)
-MAIN_H_ONLY?=util/types math math/quat math/dual system
+#MAIN_H_ONLY?=util/types.hpp math.hpp math/quat.hpp math/dual.hpp system.hpp
 
 SYSTEM_SUBMODULES?=system/net system/printer
 SYSTEM_H_ONLY?=
@@ -52,26 +52,18 @@ CONTROL_H_ONLY?=
 UTIL_SUBMODULES?=
 UTIL_H_ONLY?=util/types.hpp util/task.hpp util/functional.hpp
 MAIN_SUBMODULES?=$(foreach sub,$(MODULES),\
-		 $($(sub)_SUBMODULES)) $(MAIN_MODULES)
-MAIN_INCLUDES?=$(foreach sub,$(MODULES),\
-		$($(sub)_H_ONLY:%=%.hpp))
+		$($(sub)_SUBMODULES)) $(MAIN_MODULES)
+MAIN_INCLUDES?=$(foreach mod,$(MAIN_SUBMODULES),$(mod:%=%.hpp))\
+	$(foreach mod,$(MODULES),$($(mod)_H_ONLY))
 MAIN_SRCS?=$(foreach mod,$(MAIN_MODULES) $(MAIN_SUBMODULES) main,\
 	  $(DIR_ROOT_SRC)$(mod).cpp)
-MAIN_OBJS=$(foreach mod,$(MAIN_SUBMODULES),\
+MAIN_OBJS?=$(foreach mod,$(MAIN_SUBMODULES),\
 	  $(mod:%=$(DIR_ROOT_LIB)%$(OBJ_EXT)))
-#MAIN_DLL_DIRS=-L$(DIR_ROOT_LIB) $(foreach dir,$(MODULE_DIRS),\
-		  -L$(DIR_ROOT_LIB)$(dir))
-#MAIN_DLLS=$(foreach dir,./ $(MODULE_DIRS),\
-		  $($(wildcard $(DIR_ROOT_SRC)$(dir)*.cpp):\
-		  $(DIR_ROOT_SRC)$(dir)%.cpp=$(DIR_ROOT_LIB)$(dir)lib%$(DLL_EXT)))
-MAIN_DLLS=$(foreach mod,main $(MAIN_SUBMODULES),\
+MAIN_PCHS?=$(DIR_ROOT_INCLUDE)main$(PCH_EXT)
+#MAIN_DLLS=$(foreach mod,main $(MAIN_SUBMODULES),\
 		  $(DIR_ROOT_LIB)lib$(mod)$(DLL_EXT))
-#MAIN_DLL_LINKS=$(foreach dll,$(MAIN_DLLS),$(dll:lib%$(DLL_EXT)=-l%))
-MAIN_DLL_LINKS=$(foreach mod,$(MAIN_SUBMODULES) main,\
+#MAIN_DLL_LINKS=$(foreach mod,$(MAIN_SUBMODULES) main,\
 			   $(mod:%=-l%))
-#MAIN_DLLS=$(foreach dir,. $(MODULE_DIRS) $(MAIN_SUBMODULE_DIRS),\
-		  $(foreach src,$(wildcard $(DIR_ROOT_SRC)$(dir)*.cpp),\
-	  $(src:$(DIR_ROOT_SRC)$(dir)%.cpp=$(DIR_ROOT_LIB)$(dir)lib%$(DLL_EXT))))
 MAIN_DEPS=$(MAIN_OBJS:%$(OBJ_EXT)=%$(DEP_EXT))
 
 SENTINEL_DIRS?=$(DIR_BIN) $(foreach outer,$(DIR_LIB),\
@@ -100,11 +92,12 @@ LD_LIBRARY_PATH:=$(LD_LIBRARY_PATH):$(DIR_ROOT_LIB):$(DIR_GL3W_LIB)
 LDFLAGS:=-L$(DIR_ROOT_LIB) -L$(DIR_BOOST_LIB) -L$(DIR_GL3W_LIB) -lpthread\
 	-Wl,-rpath,$(DIR_BOOST_LIB):$(DIR_GL3W_LIB)\
 	-lboost_coroutine -lboost_system -lgl3w
-RELEASE_CPPFLAGS:=\
+RELEASE_CPPFLAGS:=-O3\
 		-D OBJ_PATH=$(OBJ_PATH)\
 		-D MTL_PATH=$(MTL_PATH)\
 		-D FRAG_PATH=$(FRAG_PATH)\
 		-D VERT_PATH=$(VERT_PATH)
+TEST_CPPFLAGS:=-O0
 MODEL_CPPFLAGS:=$(RELEASE_CPPFLAGS)
 RELEASE_LDFLAGS:=$(LDFLAGS) -Wl,--gc-sections -lSOIL -lGL -lGLU -lglfw -ldl
 #RELEASE_LDFLAGS:=$(LDFLAGS) $(MAIN_DLL_DIRS) $(MAIN_DLL_LINKS)\

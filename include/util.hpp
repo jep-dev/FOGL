@@ -21,11 +21,9 @@ namespace Util { // --> util/types.hpp
 
 	/*! A type that allows a binary template to be infixed
 	 * @tparam C The binary template type
-	 * @tparam A The left hand side, used as the first template argument
-	 * @tparam B The right hand side, used as the second template argument
+	 * @tparam T Template arguments into C
 	 */
-	template<template<class... TN> class C,
-		class A = undef_t, class B = undef_t>
+	template<template<class... TN> class C, class... T>
 	struct infix_t;
 
 	/*! A type used to find the static dimension of a type
