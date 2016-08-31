@@ -20,9 +20,8 @@ namespace View {
 	struct view : public virtual Util::task {
 		typedef enum {
 			e_id_prog=0, e_id_va, 
-			e_id_vbuf,   e_id_ibuf, 
-			e_id_model,  e_id_view,
-			e_id_proj,
+			e_id_vbuf,   e_id_vnbuf, e_id_fbuf, //e_id_ibuf,
+			e_id_model,  e_id_view,  e_id_proj,
 			e_id_total
 		} e_id_index; 
 		GLuint ids[e_id_total];

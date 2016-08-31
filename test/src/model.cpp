@@ -68,7 +68,7 @@ int main(int argc, const char **argv) {
 	for(auto it : obj.strings) std::cout << it << " ";
 	endl(std::cout);*/
 
-	/*auto f_it = std::begin(obj.floats);
+	auto f_it = std::begin(obj.floats);
 	auto i_it = std::begin(obj.ints);
 	auto nf_it = std::begin(obj.nFloats);
 	auto ni_it = std::begin(obj.nInts);
@@ -104,7 +104,7 @@ int main(int argc, const char **argv) {
 		nf_it++;
 		ni_it++;
 	}
-	std::cout << "\n\n";*/
+	std::cout << "\n\n";
 
 	material_t mtl;
 	std::cout << "\nFile: " << mtl_fname << std::endl;

@@ -148,6 +148,8 @@ namespace Model {
 		static e_el parse_type(std::string word);
 		e_status parse(std::string line, const char *delim = " ");
 
+		std::vector<int> v_beg, v_end, vt_beg, vt_end,
+			vn_beg, vn_end, f_beg, f_end;
 		std::vector<bool> bools;
 		std::vector<float> floats;
 		std::vector<int> ints;

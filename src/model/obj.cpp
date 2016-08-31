@@ -30,6 +30,8 @@ namespace Model {
 		boost::tokenizer<boost::char_separator<char>>
 			tk(line, boost::char_separator<char>(delim)),
 			s_tk(line, boost::char_separator<char>(" /"));
+		int i = 0, j = 0;
+		auto prev = e_el_total;
 		for(auto it = std::begin(tk); it != std::end(tk); ++it) {
 			auto word = *it++;
 			auto type = parse_type(word);
@@ -116,7 +118,61 @@ namespace Model {
 				status = e_err_unknown;
 			} 
 			types.emplace_back(type);
+			if(type != prev) {
+				switch(prev) {
+					case e_el_v:
+						v_end.emplace_back(i);
+						break;
+					case e_el_vn:
+						vn_end.emplace_back(i);
+						break;
+					case e_el_vp:
+						vt_end.emplace_back(i);
+						break;
+					case e_el_f2:
+						f_end.emplace_back(j);
+						break;
+					default:
+						break;
+				}
+				switch(type) {
+					case e_el_v:
+						v_beg.emplace_back(i);
+						break;
+					case e_el_vn:
+						vn_beg.emplace_back(i);
+						break;
+					case e_el_vp:
+						vt_beg.emplace_back(i);
+						break;
+					case e_el_f2:
+						f_beg.emplace_back(j);
+						break;
+					default:
+						break;
+				}
+			}
+			if(mask_has_floats & (1<<type)) {
+				i++;
+			}
+			if(mask_has_ints & (1<<type)) {
+				j++;
+			}
+			prev = type;
 			break;
+		}
+		switch(prev) {
+			case e_el_v:
+				v_end.emplace_back(i);
+				break;
+			case e_el_vn:
+				vn_end.emplace_back(i);
+				break;
+			case e_el_vp:
+				vt_end.emplace_back(i);
+				break;
+			default:
+				break;
 		}
 		return status;
 	}
