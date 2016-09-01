@@ -48,13 +48,13 @@ namespace System {
 		return oss.str();
 	}
 
-	template<typename T>
+	/*template<typename T>
 	std::string Printer_Base::stringify(const T &t) {
 		std::ostringstream oss;
 		oss << t;
 		return oss.str();
 	}
-	/*template<typename T1, typename T2, typename... TN>
+	template<typename T1, typename T2, typename... TN>
 	std::string Printer_Base::stringify(const T1 &t1,
 			const T2 &t2, const TN &... tn) {
 		return stringify(t1) + " " + stringify(t2, tn...);
