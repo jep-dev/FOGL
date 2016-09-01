@@ -15,11 +15,11 @@ namespace System {
 	/*! String cast (lexical cast operator) template
  	 * \tparam The type of the instance to convert to a string
  	 */
-	/*template<class T> std::string stringify(const T &t);*/
+	template<class T> std::string stringify(const T &t);
 
 	/// \copydoc stringify
-	/*template<class T1, class T2, class... TN>
-	std::string stringify(const T1 &t1, const T2 &t2, const TN &... tn);*/
+	template<class T1, class T2, class... TN>
+	std::string stringify(const T1 &t1, const T2 &t2, const TN &... tn);
 }
 
 #include "system/printer.hpp"
