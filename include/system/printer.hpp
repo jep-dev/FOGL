@@ -4,7 +4,6 @@
 #include "util.hpp"
 
 #include <cstring>
-#include <iostream>
 #include <iomanip>
 #include <algorithm>
 #include <sstream>
@@ -19,9 +18,9 @@ namespace System {
 		enum Alignment {LEFT, CENTER, RIGHT};
 		static constexpr const char
 			border_nw='.', border_n='-', border_ne='.',
-			border_w='\'', space=' ', border_e='\'',
+			border_w='|', space=' ', border_e='|',
 			border_sw='\'', border_s='-', border_se='\'',
-			divider_n=border_ne, divider_c='\'', divider_s=border_se,
+			divider_n=border_ne, divider_c='|', divider_s=border_se,
 			padding_nw=border_n, padding_w=space, padding_sw=border_s,
 			padding_ne=border_n, padding_e=space, padding_se=border_s;
 
@@ -33,10 +32,6 @@ namespace System {
 				std::vector<std::string> &words);
 		
 		static string repeat(int N, char C = ' ');
-		template<typename T> static std::string
-		stringify(const T &t);
-		template<typename T1, typename T2, typename... TN>
-		static string stringify(const T1 &t1, const T2 &t2, const TN &... tn);
 
 		template<typename R>
 		static string align(const R &value, int width, 
@@ -147,7 +142,7 @@ namespace System {
 			});
 			for(int row = 0; row < H && row < diff; ++row) {
 				lines[row] << align(row < H ?
-					start[row] : "", maxlen, RIGHT);
+					start[row] : "", maxlen, CENTER);
 			}
 			return self();
 		}
@@ -181,7 +176,7 @@ namespace System {
 				insert(0, align(word, span, CENTER, border_n));
 				for(int row = 0; row < ROWS; ++row) {
 					insert(row+1, align(data[row*COLS+col], 
-								span, RIGHT, space));
+								span, CENTER, space));
 				}
 				insert(ROWS+1, align("", span, LEFT, border_s));
 				push(&innerE[0], &innerE[0] + ROWS + 2);
@@ -208,8 +203,6 @@ namespace System {
 			typedef Printer<H,NoCRTP<H>> SELF;
 	};
 
-	bool readFile(const char *fname, std::string &lines);
-	bool readFile(const char *fname, std::vector<std::string> &lines);
 	int split(std::string const& line, std::vector<std::string> &words);
 }
 
