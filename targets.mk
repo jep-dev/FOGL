@@ -60,7 +60,9 @@ env:; @echo "$(foreach var,CC CXX CFLAGS CPPFLAGS WFLAGS\
 ifneq ($(MAKECMDGOALS),clean)
 ifneq ($(MAKECMDGOALS),.sentinel)
 ifneq ($(MAKECMDGOALS),env)
+ifneq ($(MAKECMDGOALS),gl3w)
 	-include $(MAIN_DEPS)
+endif
 endif
 endif
 endif
