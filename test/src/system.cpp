@@ -10,8 +10,7 @@ int main(int argc, const char **argv) {
 	int width = 25;
 	char filler = '_';
 	double val = 1.234567901234;
-	std::cout <<
-		Printer_Base::align("Left-aligned", width,
+	std::cout << Printer_Base::align("Left-aligned", width,
 				Printer_Base::LEFT, filler) << "\r\n"
 			<< Printer_Base::align("Centered", width,
 				Printer_Base::CENTER, filler) << "\r\n"
