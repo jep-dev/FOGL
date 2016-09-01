@@ -7,11 +7,11 @@ vpath %.cpp $(DIR_ROOT_SRC)
 	$(MKDIR) $(SENTINEL_DIRS)
 	@touch .sentinel
 
-$(DIR_GL3W)%$(OBJ_EXT): $(DIR_GL3W)$(DIR_SRC)*.c
-	$(COMPILE_CC) -fPIC $<\
-		-o $@
-$(DIR_GL3W)lib%$(OBJ_EXT)$(DIR_GL3W)%$(DLL_EXT): $(DIR_GL3W)$(DIR_SRC)*.c
-	$(LINK_CC) $(CFLAGS) -shared $<\
+
+#$(DIR_GL3W)lib%$(OBJ_EXT)$(DIR_GL3W)%$(DLL_EXT): $(DIR_GL3W)$(DIR_SRC)*.c\
+		$(DIR_GL3W)$(DIR_INCLUDE)GL/*.h
+#	@echo GL3W_LDFLAGS={$(GL3W_LDFLAGS)}
+#	$(LINK_CC) $(CFLAGS) $(GL3W_LDFLAGS) -shared $<\
 		-o $@
 
 $(DIR_ROOT_LIB)%$(OBJ_EXT):\
@@ -51,8 +51,11 @@ clean-gl3w:; $(RM) $(GL3W_OBJS)
 clean: clean-exes clean-dlls clean-deps clean-objs clean-pchs clean-sentinels;
 
 env:; @echo "$(foreach var,CC CXX CFLAGS CPPFLAGS WFLAGS\
+		COMPILE_CC LINK_CC COMPILE_CXX COMPILE_HPP LINK_CXX\
 		RELEASE_LDFLAGS TEST_LDFLAGS MAIN_OBJS MAIN_DLLS MAIN_DLL_LINKS\
-		MAIN_INCLUDES MODULES MAIN_SUBMODULES, \r$(var) = ${$(var)}\n\n)"
+		MAIN_INCLUDES MODULES MAIN_SUBMODULES RELEASE_CPPFLAGS \
+		GL3W_OBJS GL3W_DLLS,\
+		\r$(var) = ${$(var)}\n\n)"
 
 ifneq ($(MAKECMDGOALS),clean)
 ifneq ($(MAKECMDGOALS),.sentinel)
@@ -62,10 +65,12 @@ endif
 endif
 endif
 
-release: $(MAIN_OBJS) $(MAIN_DEPS)\
-		$(RELEASE_OBJ) $(GL3W_OBJS) $(RELEASE_EXE);
-$(RELEASE_EXE): $(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS) $(MAIN_PCHS)
-	$(LINK_CXX) -fPIE -include $(MAIN_PCHS)\
+release: gl3w $(MAIN_OBJS) $(MAIN_DEPS)\
+		$(RELEASE_OBJ) $(RELEASE_EXE);
+$(RELEASE_EXE): $(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS)\
+		$(MAIN_PCHS)
+	$(LINK_CXX) -fPIE \
+		-include $(MAIN_PCHS) $(RELEASE_CPPFLAGS)\
 		$(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS) $(RELEASE_LDFLAGS)\
 		-o $@
 
@@ -76,6 +81,15 @@ $(DIR_ROOT_INCLUDE)main$(PCH_EXT): $(DIR_ROOT_INCLUDE)main.hpp $(MAIN_INCLUDES)
 $(DIR_ROOT_LIB)util$(OBJ_EXT): $(UTIL_H_ONLY)
 
 test: $(MAIN_OBJS) $(TEST_EXES) ; # use --log_level=error
+
+gl3w: $(GL3W_OBJS)
+$(DIR_GL3W)%$(OBJ_EXT): $(DIR_GL3W)$(DIR_SRC)*.c\
+		$(DIR_GL3W)$(DIR_INCLUDE)GL/*.h
+	$(COMPILE_CC) $(CFLAGS) $<\
+		-o $@
+$(GL3W_DLLS): $(DIR_GL3W)$(DIR_SRC)*.c $(DIR_GL3W)$(DIR_INCLUDE)GL/*.h
+	$(LINK_CC) $(CFLAGS) $(GL3W_LDFLAGS) -shared $<\
+		-o $@
 
 # TODO Thread-safe use of MAIN_OBJS
 $(DIR_TEST)$(DIR_BIN)%$(TEST_EXT)$(EXE_EXT):\
@@ -94,5 +108,6 @@ $(DIR_TEST)$(DIR_BIN)model$(TEST_EXT)$(EXE_EXT):\
 		$(MODEL_CPPFLAGS)\
 		-o $@
 
-.PHONY: all depends env release test debug clean clean-exes clean-dlls\
-	clean-deps clean-pchs clean-objs clean-sentinels
+.PHONY: all depends env release test debug gl3w\
+	clean clean-exes clean-dlls clean-deps clean-pchs \
+	clean-objs clean-sentinels

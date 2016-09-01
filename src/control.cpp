@@ -31,17 +31,24 @@ namespace Control {
 			return;
 		}
 
-		glGenBuffers(1, &viewer.ids[view::e_id_vbuf]);
+		glGenBuffers(view::e_id_model-view::e_id_vbuf,
+				&viewer.ids[view::e_id_vbuf]);
 		glBindBuffer(GL_ARRAY_BUFFER, viewer.ids[view::e_id_vbuf]);
-		glBufferData(GL_ARRAY_BUFFER, object.floats.size(),
-				(void*)(&object.floats[0]), GL_STATIC_DRAW);
+		/*glBufferData(GL_ARRAY_BUFFER, object.floats.size(),
+				(void*)(&object.floats[0]), GL_STATIC_DRAW);*/
+		glBindBuffer(GL_ARRAY_BUFFER, viewer.ids[view::e_id_vnbuf]);
+		/*glBufferData(GL_ARRAY_BUFFER, object.floats.size(),
+				(void*)(&object.floats[0]), GL_STATIC_DRAW);*/
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, viewer.ids[view::e_id_fbuf]);
+		/*glBufferData(GL_ELEMENT_ARRAY_BUFFER, object.ints.size(),
+				(void*)(&object.ints[0]), GL_STATIC_DRAW);*/
 
-		glGenBuffers(1, &viewer.ids[view::e_id_ibuf]);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,
+
+		/*glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,
 				viewer.ids[view::e_id_ibuf]);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, object.ints.size(),
-				(void*)(&object.ints[0]), GL_STATIC_DRAW);
-		viewer.nTriangles = object.ints.size()/3;
+				(void*)(&object.ints[0]), GL_STATIC_DRAW);*/
+		viewer.nTriangles = object.f_beg.size()/3;
 		glUseProgram(viewer.ids[view::e_id_prog]);
 
 		/*

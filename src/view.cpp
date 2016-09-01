@@ -68,9 +68,9 @@ namespace View {
 				GL_FALSE, stride, (void*) offset);
 		*/
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ids[e_id_ibuf]);
+		/*glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ids[e_id_ibuf]);
 		glDrawElements(GL_TRIANGLES, nTriangles*3,
-				GL_UNSIGNED_INT, nullptr);
+				GL_UNSIGNED_INT, nullptr);*/
 		/*
 		glDisableVertexAttribArray(1);
 		*/

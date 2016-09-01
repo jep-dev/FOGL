@@ -1,5 +1,6 @@
 #include "model/obj.hpp"
 
+#include <iomanip>
 #include <iostream>
 #include <ostream>
 #include <sstream>
@@ -42,9 +43,12 @@ int main(int argc, const char **argv) {
 	}
 	int counter = 0, fCounter = 0, iCounter = 0, sCounter = 0;
 	for(auto beg = std::begin(obj.types); beg != std::end(obj.types); beg++) {
-		int nf = obj.nFloats[counter], ni = obj.nInts[counter],
-				ns = obj.nStrings[counter];
-		std::cout << *beg << " ";
+		int nb = obj.nBools[counter], nf = obj.nFloats[counter],
+			ni = obj.nInts[counter], ns = obj.nStrings[counter];
+		std::cout << std::setw(4) << counter << ". " << *beg << " ";
+		for(int i = 0; i < nb; ++i) {
+			std::cout << obj.bools[fCounter++] << " ";
+		}
 		for(int i = 0; i < nf; ++i) {
 			std::cout << obj.floats[fCounter++] << " ";
 		}
@@ -105,6 +109,40 @@ int main(int argc, const char **argv) {
 		ni_it++;
 	}
 	std::cout << "\n\n";*/
+
+	for(int i = 0; i < 7; i++) {
+		std::vector<int> begs, ends;
+		switch(i) {
+			case 0: begs = obj.v_beg; ends = obj.v_end;
+				std::cout << "Vertex range: " << std::endl;
+				break;
+			case 1: begs = obj.vn_beg; ends = obj.vn_end;
+				std::cout << "Normal range: " << std::endl;
+				break;
+			case 2: begs = obj.vp_beg; ends = obj.vp_end;
+				std::cout << "Texture range: " << std::endl;
+				break;
+			case 3: begs = obj.f0_beg; ends = obj.f0_end;
+				std::cout << "Face range: " << std::endl;
+				break;
+			case 4: begs = obj.f1_beg; ends = obj.f1_end;
+				std::cout << "Face range: " << std::endl;
+				break;
+			case 5: begs = obj.f2_beg; ends = obj.f2_end;
+				std::cout << "Face range: " << std::endl;
+				break;
+			case 6: begs = obj.f3_beg; ends = obj.f3_end;
+				std::cout << "Face range: " << std::endl;
+				break;
+			default: break;
+		}
+		auto beg_start = std::begin(begs), beg_stop = std::end(begs),
+			 end_start = std::begin(ends), end_stop = std::end(ends);
+		while(beg_start != beg_stop) {
+			std::cout << "{" << *beg_start++ << ", "
+				<< *end_start++ << "}" << std::endl;
+		}
+	}
 
 	material_t mtl;
 	std::cout << "\nFile: " << mtl_fname << std::endl;

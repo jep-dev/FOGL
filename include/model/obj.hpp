@@ -7,10 +7,10 @@ namespace Model {
 	/*! An enumeration of supported types */
 	typedef enum {
 		e_el_c=0,  ///< \ref element_t
-		e_el_f0,    ///< \ref element_t<e_el_f0>
+		e_el_f0,   ///< \ref element_t<e_el_f0>
 		e_el_f1,   ///< \ref element_t<e_el_f1>
 		e_el_f2,   ///< \ref element_t<e_el_f2>
-		e_el_f3,  ///< \ref element_t<e_el_f3>
+		e_el_f3,   ///< \ref element_t<e_el_f3>
 		e_el_g,    ///< \ref element_t<e_el_g>
 		e_el_l,    ///< \ref element_t<e_el_l>
 		e_el_m,    ///< \ref element_t<e_el_m>
@@ -111,7 +111,7 @@ namespace Model {
 				: rhs == e_el_u ? element_t<e_el_u>::prefix
 				: rhs == e_el_v ? element_t<e_el_v>::prefix
 				: rhs == e_el_vn ? element_t<e_el_vn>::prefix
-				: element_t<e_el_vp>::prefix);
+				: rhs == e_el_vp ? element_t<e_el_vp>::prefix : "");
 	}
 
 	/// A wavefront object container/parser
@@ -146,8 +146,10 @@ namespace Model {
 		 */
 		static e_status load(const char *fname, obj_t &elements);
 		static e_el parse_type(std::string word);
-		e_status parse(std::string line, const char *delim = " ");
+		e_status parse(std::string line, e_el type);
 
+		std::vector<int> v_beg, v_end, vp_beg, vp_end, vn_beg, vn_end,
+			f0_beg, f0_end, f1_beg, f1_end, f2_beg, f2_end, f3_beg, f3_end;
 		std::vector<bool> bools;
 		std::vector<float> floats;
 		std::vector<int> ints;
