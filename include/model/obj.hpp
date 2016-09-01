@@ -145,7 +145,14 @@ namespace Model {
 		 * @return e_status_ok (0) if and only if the load was successful
 		 */
 		static e_status load(const char *fname, obj_t &elements);
-		static e_el parse_type(std::string word);
+		/** Parses a single type from a complete line
+ 		 * @param line A single line from a wavefront obj
+ 		 */
+		static e_el parse_type(std::string line);
+		/** Parses data from a complete line and a type
+ 		 * @param line A complete line from a wavefront obj
+ 		 * @param type The type at the head of the line
+ 		 */
 		e_status parse(std::string line, e_el type);
 
 		std::vector<int> v_beg, v_end, vp_beg, vp_end, vn_beg, vn_end,
