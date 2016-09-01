@@ -17,6 +17,7 @@ namespace Model {
 		if(word == element_t<e_el_c>::prefix) return e_el_c;
 		if(word == element_t<e_el_f0>::prefix) {
 			auto type = e_el_f0;
+			iss >> word;
 			auto firstSlash = word.find("/"),
 			 	 lastSlash = word.rfind("/");
 			if(firstSlash != std::string::npos) {
@@ -71,7 +72,8 @@ namespace Model {
 			}
 			if(mask_has_ints & (1<<type)) {
 				int index;
-				if(type == e_el_f0) {
+				if(type == e_el_f0 || type == e_el_f1
+						|| type == e_el_f2 || type == e_el_f3) {
 					auto s_it = std::begin(s_tk);
 					s_it++;
 					while(s_it != std::end(s_tk)) {
