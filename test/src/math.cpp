@@ -2,8 +2,6 @@
 #define BOOST_TEST_MODULE Math
 
 #include "math.hpp"
-#include "math/quat.hpp"
-#include "math/dual.hpp"
 
 #include <iostream>
 #include <ostream>
