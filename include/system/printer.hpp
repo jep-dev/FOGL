@@ -59,34 +59,22 @@ namespace System {
 			for(int i = 0; i < lhalf; i++) {
 				switch(dir) {
 					case RIGHT:
-						word = " " + word;
+						word = filler + word;
 						break;
 					default:
-						word += " ";
+						word += filler;
 				}
 			}
 			for(int i = 0; i < rhalf; i++) {
 				switch(dir) {
 					case LEFT:
-						word += " ";
+						word += filler;
 						break;
 					default:
-						word = " " + word;
+						word = filler + word;
 				}
 			}
 			return word;
-		}
-		template<typename... V>
-		static string left(int width, const V&... v) {
-			return align(stringify(v...), width, LEFT, ' ');
-		}
-		template<typename... V>
-		static string center(int width, const V&... v) {
-			return align(stringify(v...), width, CENTER, ' ');
-		}
-		template<typename... V>
-		static string right(int width, const V&... v) {
-			return align(stringify(v...), width, RIGHT, ' ');
 		}
 	};
 
