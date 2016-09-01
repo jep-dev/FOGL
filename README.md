@@ -14,7 +14,9 @@ Asynchronous model/view/controller engine/framework; under construction.
 
 Several of these requirements can be installed via the command line rather than manually (download/configure/build/install):
 
-`sudo apt-get install python3 libboost-all-dev libgl1-mesa-dev libglu1-mesa-dev libsoil-dev doxygen graphviz`
+`sudo apt-get install python3 libboost-all-dev libgl1-mesa-dev libglu1-mesa-dev libsoil-dev`
+
+`sudo apt-get install doxygen graphviz texlive-latex-base latex-make latex-mk`
 
 You cannot install gl3w the same way; it must be run locally (see Building)
 
