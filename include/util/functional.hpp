@@ -49,6 +49,7 @@ namespace Util {
 			::result_type result_type;
 	};
 
+	/// \copydoc for_all_t
 	template<int SEQ, typename FN, typename T1, typename... TN>
 	struct for_all_t<SEQ, FN, T1, TN...> {
 		typedef for_all_t<SEQ-1, FN, T1, TN...> NEXT;
