@@ -44,7 +44,7 @@ namespace System {
 
 	std::string Printer_Base::repeat(int w, char c) {
 		std::ostringstream oss;
-		oss << std::setw(w) << std::setfill(c);
+		oss << std::setw(w) << std::setfill(c) << "";
 		return oss.str();
 	}
 
