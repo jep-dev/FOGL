@@ -3,6 +3,8 @@
 
 #include "util.hpp"
 
+#include <cstring>
+#include <iostream>
 #include <iomanip>
 #include <algorithm>
 #include <sstream>
@@ -41,29 +43,38 @@ namespace System {
 				Alignment dir = LEFT, char filler = space,
 				int precision = 3) {
 			OSS oss;
-			if(std::is_floating_point<R>::value) {
-				oss << std::setprecision(precision) << std::fixed 
-					<< (dir == LEFT ? std::left : std::right)
-					<< std::setw(width) << std::setfill(filler)
-					<< value;
-				return oss.str().substr(0,width);
- 			}
-			oss << value;
-			string word = oss.str();
-			int diff = width - word.size();
-			if(diff <= 0) {
+			bool numerical = std::is_floating_point<R>::value
+					|| std::is_integral<R>::value;
+			if(numerical) {
+				oss << std::setprecision(precision) << std::fixed << value;
+			} else {
+				oss << value;
+			}
+			auto word = oss.str();
+			int diff = width - word.length(),
+				lhalf = diff/2, rhalf = diff - lhalf;
+			if(diff < 0) {
 				return word.substr(0, width);
 			}
-			string blank = repeat(diff, filler);
-			switch(dir) {
-			case LEFT:
-				return word+blank;
-			case RIGHT:
-				return blank+word;
-			default:
-				return blank.substr(0, diff/2) + word
-					+ blank.substr(diff/2);
+			for(int i = 0; i < lhalf; i++) {
+				switch(dir) {
+					case RIGHT:
+						word = " " + word;
+						break;
+					default:
+						word += " ";
+				}
 			}
+			for(int i = 0; i < rhalf; i++) {
+				switch(dir) {
+					case LEFT:
+						word += " ";
+						break;
+					default:
+						word = " " + word;
+				}
+			}
+			return word;
 		}
 		template<typename... V>
 		static string left(int width, const V&... v) {
