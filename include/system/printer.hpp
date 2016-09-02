@@ -47,27 +47,18 @@ namespace System {
 			}
 			auto word = oss.str();
 			int diff = width - uni_strlen(word),
-				lhalf = diff/2, rhalf = diff - lhalf;
+				rhalf = diff/2, lhalf = diff - rhalf;
 			if(diff < 0) {
 				return word.substr(0, width);
 			}
-			for(int i = 0; i < lhalf; i++) {
-				switch(dir) {
-					case RIGHT:
-						word = filler + word;
-						break;
-					default:
-						word += filler;
-				}
+			auto lhs = repeat(lhalf, filler), rhs = repeat(rhalf, filler);
+			switch(dir) {
+				case RIGHT: word = lhs + word; break;
+				default: word += lhs; break;
 			}
-			for(int i = 0; i < rhalf; i++) {
-				switch(dir) {
-					case LEFT:
-						word += filler;
-						break;
-					default:
-						word = filler + word;
-				}
+			switch(dir) {
+				case LEFT: word += rhs; break;
+				default: word = rhs + word; break;
 			}
 			return word;
 		}
