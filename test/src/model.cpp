@@ -123,16 +123,16 @@ int main(int argc, const char **argv) {
 				std::cout << "Texture range: " << std::endl;
 				break;
 			case 3: begs = obj.f0_beg; ends = obj.f0_end;
-				std::cout << "Face range: " << std::endl;
+				std::cout << "Face(0) range: " << std::endl;
 				break;
 			case 4: begs = obj.f1_beg; ends = obj.f1_end;
-				std::cout << "Face range: " << std::endl;
+				std::cout << "Face(1) range: " << std::endl;
 				break;
 			case 5: begs = obj.f2_beg; ends = obj.f2_end;
-				std::cout << "Face range: " << std::endl;
+				std::cout << "Face(2) range: " << std::endl;
 				break;
 			case 6: begs = obj.f3_beg; ends = obj.f3_end;
-				std::cout << "Face range: " << std::endl;
+				std::cout << "Face(3) range: " << std::endl;
 				break;
 			default: break;
 		}

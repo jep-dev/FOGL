@@ -3,10 +3,12 @@
 
 namespace Util {
 
+	/// \copydoc sized_t
 	template<typename T, int N>
 	struct sized_t<T (&) [N]> {
 		static constexpr int SIZE = N;
 	};
+	/// \copydoc sized_t
 	template<template<typename...> class C, typename... T>
 	struct sized_t<C<T...>> {
 		static constexpr int SIZE = C<T...>::size;
@@ -21,6 +23,7 @@ namespace Util {
 		static constexpr int SIZE = sized_t<T1>::SIZE
 			* sizes_t<TN...>::SIZE;
 	};
+	/// \copydoc sizes_t
 	template<typename... TN>
 	struct sizes_t<delim_t, TN...> {
 		static constexpr int SIZE = 1;
@@ -107,15 +110,18 @@ namespace Util {
 
 	template<typename PRE, typename DEL, typename POST>
 	struct pack_remove;
+	/// \copydoc pack_remove
 	template<typename... PRE, typename... POST>
 	struct pack_remove<pack_t<PRE...>, pack_t<>, pack_t<POST...>> {
 		typedef pack_t<PRE..., POST...> type;
 	};
+	/// \copydoc pack_remove
 	template<typename DEL_1, typename... DEL_N, typename... POST>
 	struct pack_remove<pack_t<>, pack_t<DEL_1, DEL_N...>, pack_t<POST...>> {
 		typedef typename pack_remove<pack_t<POST...>,
 				pack_t<DEL_N...>, pack_t<>>::type type;
 	};
+	/// \copydoc pack_remove
 	template<typename PRE_1, typename... PRE_N,
 		typename DEL_1, typename... DEL_N, typename... POST>
 	struct pack_remove<pack_t<PRE_1, PRE_N...>,
@@ -174,6 +180,7 @@ namespace Util {
 	template<typename T>
 	struct node_t: pack_t<T> {};
 
+	/// \copydoc graph_t
 	template<typename... V, typename... E, bool BIDI>
 	struct graph_t<pack_t<V...>, pack_t<E...>, BIDI> {
 		typedef pack_t<V...> vertices;
@@ -200,14 +207,17 @@ namespace Util {
 		}
 	};
 
+	/// \copydoc pack_get_t
 	template<typename T1, typename... TN, int I>
 	struct pack_get_t<pack_t<T1, TN...>, I> {
 		typedef typename pack_get_t<pack_t<TN...>, I-1>::type type;
 	};
+	/// \copydoc pack_get_t
 	template<typename T1, typename... TN>
 	struct pack_get_t<pack_t<T1, TN...>, 0> {
 		typedef T1 type;
 	};
+	/// \copydoc pack_get_t
 	template<int I>
 	struct pack_get_t<pack_t<>, I> {
 		typedef undef_t type;
@@ -215,7 +225,7 @@ namespace Util {
 
 	// TODO infix with primitives like pack_get_t
 	template<template<class...> class C, class... T>
-	struct infix_t {/*typedef C<T...> type;*/};
+	struct infix_t {};
 	
 	template<template<class...> class C, class A>
 	constexpr infix_t<C, A> operator<(A, infix_t<C>) {return {};}

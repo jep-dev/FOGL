@@ -44,11 +44,11 @@ namespace System {
 
 	std::string Printer_Base::repeat(int w, char c) {
 		std::ostringstream oss;
-		oss << std::setw(w) << std::setfill(c);
+		oss << std::setw(w) << std::setfill(c) << "";
 		return oss.str();
 	}
 
-	template<typename T>
+	/*template<typename T>
 	std::string Printer_Base::stringify(const T &t) {
 		std::ostringstream oss;
 		oss << t;
@@ -60,38 +60,15 @@ namespace System {
 		return stringify(t1) + " " + stringify(t2, tn...);
 	}
 
-	/*bool readFile(const char *fname, std::string &lines) {
-		std::ifstream file(fname);
-		if(!file.is_open()) {
-			return false;
-		}
-		for(std::string line; std::getline(file, line);) {
-			lines.append(line + "\r\n");
-		}
-		file.close();
-		return true;
-	}
-	bool readFile(const char *fname, std::vector<std::string> &lines) {
-		std::ifstream file(fname);
-		if(!file.is_open()) {
-			return false;
-		}
-		for(std::string line; std::getline(file, line);) {
-			lines.push_back(line);
-		}
-		file.close();
-		return true;
-	}*/
-
 	int Printer_Base::split(std::string const& line,
 			std::vector<std::string> &words) {
 		int wc = 0;
 		std::string word;
 		std::istringstream iss(line);
 		while(iss >> word) {
-			words.push_back(word);
+			words.emplace_back(word);
 			wc++;
 		}
 		return wc;
-	}
+	}*/
 }

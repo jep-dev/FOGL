@@ -14,7 +14,9 @@ Asynchronous model/view/controller engine/framework; under construction.
 
 Several of these requirements can be installed via the command line rather than manually (download/configure/build/install):
 
-`sudo apt-get install python3 libboost-all-dev libgl1-mesa-dev libglu1-mesa-dev libsoil-dev doxygen graphviz`
+`sudo apt-get install python3 libboost-all-dev libgl1-mesa-dev libglu1-mesa-dev libsoil-dev`
+
+`sudo apt-get install doxygen graphviz texlive-latex-base latex-make latex-mk`
 
 You cannot install gl3w the same way; it must be run locally (see Building)
 
@@ -46,6 +48,3 @@ All of the requirements support Linux, Windows, and OS X. This project only supp
 #### Todo:
 - [ ] include/util/types.hpp (152) Distinguish between permutations with and without duplicates; the current permutation test relies on the exclusive-or of two parameter packs, not necessarily sets
 - [x] include/system.hpp (13) Remove file reading function and more in favor of in-place ifstream, etc.
-- [ ] Makefile (45) Automate submodule targets; requires iteration over pairs (module directories with submodule targets)
-
-

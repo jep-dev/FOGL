@@ -2,7 +2,8 @@
 #define MATH_DUAL_HPP
 
 #ifndef _E_of
-#define _E_of(X) X "\u0190"
+#define _E_of(X) X "E"
+//#define _E_of(X) X "\u0190"
 #endif
 
 #include <boost/operators.hpp>
@@ -58,14 +59,14 @@ namespace Math {
 				r.w*p.x + r.x*p.w + r.y*p.z - r.z*p.y,
 				r.w*p.y - r.x*p.z + r.y*p.w + r.z*p.x,
 				r.w*p.z + r.x*p.y - r.y*p.x + r.z*p.w,
-				r.w*q.w - r.x*q.x - r.y*q.y - r.z*q.z
-					+ s.w*p.w - s.x*p.x - s.y*p.y - s.z*p.z,
-				r.w*q.x + r.x*q.w + r.y*q.z - r.z*q.y
-					+ s.w*p.x + s.x*p.w + s.y*p.z - s.z*p.y,
-				r.w*q.y - r.x*q.z + r.y*q.w + r.z*q.x
-					+ s.w*p.y - s.x*p.z + s.y*p.w + s.z*p.x,
-				r.w*q.z + r.x*q.y - r.y*q.x + r.z*q.w
-					+ s.w*p.z + s.x*p.y - s.y*p.x + s.z*p.w
+				s.w*p.w - s.x*p.x - s.y*p.y - s.z*p.z
+					+ r.w*q.w - r.x*q.x - r.y*q.y - r.z*q.z,
+				s.x*p.w + s.w*p.x - s.z*p.y + s.y*p.z
+					+ r.x*q.w + r.w*q.x - r.z*q.y + r.y*q.z,
+				s.y*p.w + s.z*p.x + s.w*p.y - s.x*p.z
+					+ r.y*q.w + r.z*q.x + r.w*q.y - r.x*q.z,
+				s.z*p.w - s.y*p.x + s.x*p.y + s.w*p.z
+					+ r.z*q.w - r.y*q.x + r.x*q.y + r.w*q.z
 			};
 		}
 		dual<R>& operator*=(quat<R> const &rhs) {

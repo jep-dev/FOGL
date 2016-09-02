@@ -71,6 +71,7 @@ namespace Util { // --> util/types.hpp
 	/*! A tag representing a graph
 	 * @tparam V The pack of types containing the vertex endpoints
 	 * @tparam E The pack of integer pairs containing the endpoint indices
+	 * @tparam BIDI True if and only if edges are bidirectional
 	 */
 	template<class V, class E, bool BIDI=false> struct graph_t;
 

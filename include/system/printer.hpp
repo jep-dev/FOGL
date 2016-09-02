@@ -3,6 +3,7 @@
 
 #include "util.hpp"
 
+#include <cstring>
 #include <iomanip>
 #include <algorithm>
 #include <sstream>
@@ -17,9 +18,9 @@ namespace System {
 		enum Alignment {LEFT, CENTER, RIGHT};
 		static constexpr const char
 			border_nw='.', border_n='-', border_ne='.',
-			border_w='\'', space=' ', border_e='\'',
+			border_w='|', space=' ', border_e='|',
 			border_sw='\'', border_s='-', border_se='\'',
-			divider_n=border_ne, divider_c='\'', divider_s=border_se,
+			divider_n=border_ne, divider_c='|', divider_s=border_se,
 			padding_nw=border_n, padding_w=space, padding_sw=border_s,
 			padding_ne=border_n, padding_e=space, padding_se=border_s;
 
@@ -31,51 +32,35 @@ namespace System {
 				std::vector<std::string> &words);
 		
 		static string repeat(int N, char C = ' ');
-		template<typename T> static std::string
-		stringify(const T &t);
-		template<typename T1, typename T2, typename... TN>
-		static string stringify(const T1 &t1, const T2 &t2, const TN &... tn);
 
 		template<typename R>
 		static string align(const R &value, int width, 
 				Alignment dir = LEFT, char filler = space,
 				int precision = 3) {
 			OSS oss;
-			if(std::is_floating_point<R>::value) {
-				oss << std::setprecision(precision) << std::fixed 
-					<< (dir == LEFT ? std::left : std::right)
-					<< std::setw(width) << std::setfill(filler)
-					<< value;
-				return oss.str().substr(0,width);
- 			}
-			oss << value;
-			string word = oss.str();
-			int diff = width - word.size();
-			if(diff <= 0) {
+			bool numerical = std::is_floating_point<R>::value
+					|| std::is_integral<R>::value;
+			if(numerical) {
+				oss << std::setprecision(precision) << std::fixed << value;
+			} else {
+				oss << value;
+			}
+			auto word = oss.str();
+			int diff = width - uni_strlen(word),
+				rhalf = diff/2, lhalf = diff - rhalf;
+			if(diff < 0) {
 				return word.substr(0, width);
 			}
-			string blank = repeat(diff, filler);
+			auto lhs = repeat(lhalf, filler), rhs = repeat(rhalf, filler);
 			switch(dir) {
-			case LEFT:
-				return word+blank;
-			case RIGHT:
-				return blank+word;
-			default:
-				return blank.substr(0, diff/2) + word
-					+ blank.substr(diff/2);
+				case RIGHT: word = lhs + word; break;
+				default: word += lhs; break;
 			}
-		}
-		template<typename... V>
-		static string left(int width, const V&... v) {
-			return align(stringify(v...), width, LEFT, ' ');
-		}
-		template<typename... V>
-		static string center(int width, const V&... v) {
-			return align(stringify(v...), width, CENTER, ' ');
-		}
-		template<typename... V>
-		static string right(int width, const V&... v) {
-			return align(stringify(v...), width, RIGHT, ' ');
+			switch(dir) {
+				case LEFT: word += rhs; break;
+				default: word = rhs + word; break;
+			}
+			return word;
 		}
 	};
 
@@ -148,12 +133,12 @@ namespace System {
 			});
 			for(int row = 0; row < H && row < diff; ++row) {
 				lines[row] << align(row < H ?
-					start[row] : "", maxlen, RIGHT);
+					start[row] : "", maxlen, CENTER);
 			}
 			return self();
 		}
 
-		template<typename T, int ROWS, int COLS, int WIDTH=10*COLS+1>
+		template<typename T, int ROWS, int COLS, int WIDTH=8*COLS+1>
 		SELF& push(T (&data)[ROWS*COLS], string *start, string *stop) {
 			if(ROWS > H) {
 				return self();
@@ -182,7 +167,7 @@ namespace System {
 				insert(0, align(word, span, CENTER, border_n));
 				for(int row = 0; row < ROWS; ++row) {
 					insert(row+1, align(data[row*COLS+col], 
-								span, RIGHT, space));
+								span, CENTER, space));
 				}
 				insert(ROWS+1, align("", span, LEFT, border_s));
 				push(&innerE[0], &innerE[0] + ROWS + 2);
@@ -209,8 +194,6 @@ namespace System {
 			typedef Printer<H,NoCRTP<H>> SELF;
 	};
 
-	bool readFile(const char *fname, std::string &lines);
-	bool readFile(const char *fname, std::vector<std::string> &lines);
 	int split(std::string const& line, std::vector<std::string> &words);
 }
 

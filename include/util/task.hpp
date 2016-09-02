@@ -5,6 +5,7 @@
 #include <deque>
 
 namespace Util {
+	/** Interface specifying init, poll, and run */
 	struct task {
 		
 		/** Initializes any resources deferred from constructor
@@ -44,6 +45,7 @@ namespace Util {
 		}
 	};
 
+	/** Container of tasks applying init, poll, and run to children */
 	struct supertask : public virtual task {
 		std::deque<task*> tasks;
 		void init(std::atomic_bool& alive) {
@@ -64,10 +66,10 @@ namespace Util {
 		virtual ~supertask(void) {}
 	};
 
+	/** Task constructed with callbacks for init, poll, and run */
 	struct worker : public virtual task {
 		std::function<void (std::atomic_bool &)>
 			m_init, m_poll, m_run;
-		//void (*m_run)(std::atomic_bool &);
 		void init(std::atomic_bool &alive) {
 			m_init(alive);
 		}

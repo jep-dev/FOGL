@@ -3,6 +3,8 @@
 
 #include <iosfwd>
 
+#define GLFW_INCLUDE_NONE
+
 #include "control.hpp"
 #include "system.hpp"
 #include "math.hpp"

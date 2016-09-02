@@ -60,7 +60,9 @@ env:; @echo "$(foreach var,CC CXX CFLAGS CPPFLAGS WFLAGS\
 ifneq ($(MAKECMDGOALS),clean)
 ifneq ($(MAKECMDGOALS),.sentinel)
 ifneq ($(MAKECMDGOALS),env)
+ifneq ($(MAKECMDGOALS),gl3w)
 	-include $(MAIN_DEPS)
+endif
 endif
 endif
 endif
@@ -69,8 +71,7 @@ release: gl3w $(MAIN_OBJS) $(MAIN_DEPS)\
 		$(RELEASE_OBJ) $(RELEASE_EXE);
 $(RELEASE_EXE): $(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS)\
 		$(MAIN_PCHS)
-	$(LINK_CXX) -fPIE \
-		-include $(MAIN_PCHS) $(RELEASE_CPPFLAGS)\
+	$(LINK_CXX) -fPIE $(RELEASE_CPPFLAGS)\
 		$(RELEASE_OBJ) $(MAIN_OBJS) $(GL3W_OBJS) $(RELEASE_LDFLAGS)\
 		-o $@
 
@@ -80,7 +81,7 @@ $(DIR_ROOT_INCLUDE)main$(PCH_EXT): $(DIR_ROOT_INCLUDE)main.hpp $(MAIN_INCLUDES)
 
 $(DIR_ROOT_LIB)util$(OBJ_EXT): $(UTIL_H_ONLY)
 
-test: $(MAIN_OBJS) $(TEST_EXES) ; # use --log_level=error
+test: $(MAIN_OBJS) $(TEST_EXES); 
 
 gl3w: $(GL3W_OBJS)
 $(DIR_GL3W)%$(OBJ_EXT): $(DIR_GL3W)$(DIR_SRC)*.c\
