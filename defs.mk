@@ -35,6 +35,7 @@ TEST_EXT?=_test
 RELEASE_EXT?=
 
 MAIN_MODULES?=util system math model view control
+TEST_MODULES?=$(MAIN_MODULES) main
 MODULES?=UTIL SYSTEM MATH MODEL VIEW CONTROL
 MODULE_DIRS?=$(foreach mod,$(MAIN_MODULES),$(mod)/)
 #MAIN_H_ONLY?=util/types.hpp math.hpp math/quat.hpp math/dual.hpp system.hpp
@@ -69,7 +70,7 @@ MAIN_DEPS=$(MAIN_OBJS:%$(OBJ_EXT)=%$(DEP_EXT))
 SENTINEL_DIRS?=$(DIR_BIN) $(foreach outer,$(DIR_LIB),\
 			   $(foreach inner,. $(MODULE_DIRS),$(outer)$(inner)))
 
-TEST_EXES?=$(foreach mod,$(MAIN_MODULES),\
+TEST_EXES?=$(foreach mod,$(TEST_MODULES),\
 		   $(DIR_TEST)$(DIR_ROOT_BIN)$(mod)$(TEST_EXT)$(EXE_EXT))
 #DEBUG_EXE?=$(DIR_ROOT)$(DIR_BIN)$(EXE_BASE)$(DEBUG_EXT)$(EXE_EXT)
 RELEASE_EXE?=$(DIR_ROOT_BIN)$(EXE_BASE)$(RELEASE_EXT)$(EXE_EXT)
