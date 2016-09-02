@@ -1,6 +1,7 @@
 #include "control.hpp"
 #include "model.hpp"
 
+#define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 #include <GL/glu.h>
 #include <SOIL/SOIL.h>
