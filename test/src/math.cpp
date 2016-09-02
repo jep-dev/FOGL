@@ -26,4 +26,5 @@ BOOST_AUTO_TEST_CASE(quaternions) {
 BOOST_AUTO_TEST_CASE(dual_quaternions) {
 	BOOST_REQUIRE(E1 != 0);
 	BOOST_REQUIRE(E1*E1 == 0);
+	BOOST_REQUIRE((k*E1)*i != i*(k*E1));
 }
