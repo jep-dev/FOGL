@@ -2,7 +2,8 @@
 #define MATH_DUAL_HPP
 
 #ifndef _E_of
-#define _E_of(X) X "\u0190"
+#define _E_of(X) X "E"
+//#define _E_of(X) X "\u0190"
 #endif
 
 #include <boost/operators.hpp>
