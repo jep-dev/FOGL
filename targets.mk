@@ -81,7 +81,7 @@ $(DIR_ROOT_INCLUDE)main$(PCH_EXT): $(DIR_ROOT_INCLUDE)main.hpp $(MAIN_INCLUDES)
 
 $(DIR_ROOT_LIB)util$(OBJ_EXT): $(UTIL_H_ONLY)
 
-test: $(MAIN_OBJS) $(TEST_EXES) ; # use --log_level=error
+test: $(MAIN_OBJS) $(TEST_EXES); 
 
 gl3w: $(GL3W_OBJS)
 $(DIR_GL3W)%$(OBJ_EXT): $(DIR_GL3W)$(DIR_SRC)*.c\
