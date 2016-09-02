@@ -46,7 +46,7 @@ namespace System {
 				oss << value;
 			}
 			auto word = oss.str();
-			int diff = width - word.length(),
+			int diff = width - uni_strlen(word),
 				lhalf = diff/2, rhalf = diff - lhalf;
 			if(diff < 0) {
 				return word.substr(0, width);
