@@ -147,7 +147,7 @@ namespace System {
 			return self();
 		}
 
-		template<typename T, int ROWS, int COLS, int WIDTH=10*COLS+1>
+		template<typename T, int ROWS, int COLS, int WIDTH=8*COLS+1>
 		SELF& push(T (&data)[ROWS*COLS], string *start, string *stop) {
 			if(ROWS > H) {
 				return self();
