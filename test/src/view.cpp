@@ -1,3 +1,4 @@
+#define GLFW_INCLUDE_NONE
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
 #include "view.hpp"
