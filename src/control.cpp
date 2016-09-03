@@ -15,7 +15,7 @@
 #include "omp.h"
 
 namespace Control {
-	void control::init(std::atomic_bool &alive) {
+	bool control::init(std::atomic_bool &alive) {
 		//using namespace Util;
 		// Task 1: view before model (splash)
 		using namespace View;
@@ -28,8 +28,7 @@ namespace Control {
 		auto status = obj_t::load(this -> mpath, object);
 		if(status != obj_t::e_ok) {
 			errors.push_back("The model failed to load.");
-			alive = false;
-			return;
+			return alive = false;
 		}
 
 		glGenBuffers(view::e_id_model-view::e_id_vbuf,
@@ -37,8 +36,7 @@ namespace Control {
 		// TODO Use more than first range of each obj type
 		if(object.v_beg.size() == 0) {
 			errors.push_back("The loaded model does not contain vertices.");
-			alive = false;
-			return;
+			return alive = false;
 		} else {
 			auto v0 = object.v_beg[0], v1 = object.v_end[0];
 			glBindBuffer(GL_ARRAY_BUFFER, viewer.ids[view::e_id_vbuf]);
@@ -68,13 +66,13 @@ namespace Control {
 			f1 = object.f3_end[0];
 		} else {
 			errors.push_back("The loaded model does not contain faces.");
-			alive = false;
-			return;
+			return alive = false;
 		}
 		viewer.nTriangles = (f1-f0)/3;
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, viewer.nTriangles*3,
 				(void*)(&object.ints[f0]), GL_STATIC_DRAW);
 		glUseProgram(viewer.ids[view::e_id_prog]);
+		return alive;
 
 		/*
 		// Task 2: model loading
@@ -115,7 +113,7 @@ namespace Control {
 		glUseProgram(viewer.ids[view::e_id_prog]);*/
 	}
 
-	void control::poll(std::atomic_bool &alive) {
+	bool control::poll(std::atomic_bool &alive) {
 		std::ostringstream oss;
 		if(alive)
 			viewer.poll(alive);
@@ -151,9 +149,10 @@ namespace Control {
 				}
 			}
 		}
+		return alive;
 	}
 
-	void control::run(std::atomic_bool &alive) {
+	bool control::run(std::atomic_bool &alive) {
 		using namespace Model::Ply;
 		auto delay = std::chrono::milliseconds(150);
 
@@ -161,8 +160,7 @@ namespace Control {
 		auto kill = [&alive] {alive = false;};
 		double t1 = glfwGetTime(), t2;
 		while(true) {
-			poll(alive);
-			if(alive) viewer.run(alive);
+			if(poll(alive)) viewer.run(alive);
 			t2 = glfwGetTime() - t1;
 			frame++;
 			dFrames++;
@@ -173,9 +171,9 @@ namespace Control {
 			}
 			if(!alive) break;
 		}
+		return alive;
 	}
 
-	control::control(std::atomic_bool &alive, const char *mpath,
-			const char *vert, const char *frag):
-		task(), mpath(mpath), viewer(alive, vert, frag) {}
+	control::control(std::atomic_bool &alive, const char *mpath):
+		task(), mpath(mpath), viewer(alive) {}
 }

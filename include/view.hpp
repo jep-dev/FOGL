@@ -5,6 +5,9 @@
 #define _USE_MATH_DEFINES
 #endif
 
+#include <vector>
+#include <string>
+
 #include <GL/gl3w.h>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -14,9 +17,6 @@
 #include "view/pane.hpp"
 
 namespace View {
-	/// Loops over the queued GL errors and prints each (using GLU).
-	void printErrors(const char *prefix);
-
 	/// A view structure (state and implementation)
 	struct view : public virtual Util::task {
 		typedef enum {
@@ -31,14 +31,23 @@ namespace View {
 		GLFWwindow *win;
 		int frame = 0, fps = 0;
 		float phi, theta;
+		std::vector<std::string> errors;
 	
 		/// Sets stable shader values (uniforms)
 		void setUniforms(void);
 
+		/** Compiles and links the given shaders
+ 		 * @param alive Shared state; false signals shutdown
+		 * @param vert Path to a GLSL vertex shader
+		 * @param frag Path to a GLSL fragment shader
+		 */
+		bool setProg(std::atomic_bool &alive,
+				const char *vert_fname, const char *frag_fname);
+
 		/** Polls for updates; move to control?
  		 * @param alive Shared state; false signals shutdown
  		 */
-		void poll(std::atomic_bool &alive) override;
+		bool poll(std::atomic_bool &alive) override;
 
 		/*! Calculates and displays the next frame, potentially incorporating
  		 * the frame index (discrete time) and FPS
@@ -48,19 +57,17 @@ namespace View {
 		/** Begins the game loop with the specified callbacks
 		 * @param alive Shared status flag; false signals shutdown
 		 */
-		void run(std::atomic_bool &alive) override;
+		bool run(std::atomic_bool &alive) override;
 
 		/** Initializes any resources not initialized in the constructor
  		 * @param alive Shared status flag; false signals shutdown
  		 */
-		void init(std::atomic_bool &alive) override;
+		bool init(std::atomic_bool &alive) override;
 
 		/** Constructor for a view object
  		 * @param alive Shared status flag; false signals shutdown
-		 * @param vert Path to a GLSL vertex shader
-		 * @param frag Path to a GLSL fragment shader
 		 */
-		view(std::atomic_bool &alive, const char *vert, const char *frag);
+		view(std::atomic_bool &alive);
 
 		/// Destructor for a view object
 		virtual ~view(void);

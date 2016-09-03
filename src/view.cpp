@@ -9,15 +9,43 @@
 
 #define GLFW_INCLUDE_NONE
 #include <GL/gl3w.h>
-#include <GL/glu.h>
 #include <GLFW/glfw3.h>
 
 namespace View {
-	void printErrors(void) {
-		GLenum err;
-		while(!(err = glGetError())) {
-			std::cout << gluErrorString(err) << "\n";
+	bool view::setProg(std::atomic_bool &alive,
+			const char *vert_fname, const char *frag_fname) {
+		if(!alive) {
+			return false;
 		}
+		//if(ids[e_id_prog]) glDeleteProgram(ids[e_id_prog]);
+		ids[e_id_prog] = glCreateProgram();
+		if(!link(vert_fname, frag_fname, ids[e_id_prog], errors)) {
+			errors.emplace_back("Could not compile/link shader(s).");
+			return alive = false;
+		}
+		auto mat_model = glGetUniformLocation(ids[e_id_prog], "model"),
+			 mat_view = glGetUniformLocation(ids[e_id_prog], "view"),
+			 mat_proj = glGetUniformLocation(ids[e_id_prog], "proj");
+		if(mat_model == -1) {
+			errors.emplace_back("Could not find uniform 'model'");
+			return alive = false;
+		} else {
+			ids[e_id_model] = mat_model;
+		}
+		if(mat_view == -1) {
+			errors.emplace_back("Could not find uniform 'view'");
+			return alive = false;
+		} else {
+			ids[e_id_view] = mat_view;
+		}
+		if(mat_proj == -1) {
+			errors.emplace_back("Could not find uniform 'view'");
+			return alive = false;
+		} else {
+			ids[e_id_proj] = mat_proj;
+		}
+		glUseProgram(ids[e_id_prog]);
+		return true;
 	}
 
 	void view::setUniforms(void) {
@@ -78,16 +106,22 @@ namespace View {
 		glfwSwapBuffers(win);
 	}
 
-	void view::poll(std::atomic_bool &alive) {
+	bool view::poll(std::atomic_bool &alive) {
 		if(alive && win) {
 			glfwMakeContextCurrent(win);
 			glfwPollEvents();
+		} else {
+			return alive = false;
 		}
 		if(glfwWindowShouldClose(win)) {
-			alive = false;
+			return alive = false;
 		}
+		return alive;
 	}
-	void view::init(std::atomic_bool &alive) {
+	bool view::init(std::atomic_bool &alive) {
+		if(!alive) {
+			return false;
+		}
 		glfwSetWindowSizeCallback(win, 
 			[](GLFWwindow*, int w, int h){
 				glViewport(0, 0, w, h);
@@ -97,15 +131,17 @@ namespace View {
 			[] (int, const char *szErr) {
 				std::cout << szErr << std::endl;
 			});
+		return alive;
 	}
 	
-	void view::run(std::atomic_bool &alive) {
+	bool view::run(std::atomic_bool &alive) {
 		if(alive && win && !glfwWindowShouldClose(win)) {
 			glfwMakeContextCurrent(win);
 			redraw();
 		}
+		return alive;
 	}
-	view::view(std::atomic_bool &alive, const char *vert, const char *frag) {
+	view::view(std::atomic_bool &alive) {
 		if(!alive) {
 			return;
 		}
@@ -115,14 +151,14 @@ namespace View {
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		
 		if(!(win = glfwCreateWindow(680, 680, "View", NULL, NULL))) {
-			std::cout << "Could not create window." << std::endl;
+			errors.emplace_back("Could not create window.");
 			alive = false;
 			return;
 		}
 
 		glfwMakeContextCurrent(win);
 		if(gl3wInit()) {
-			std::cout << "Could not initialize gl3w." << std::endl;
+			errors.emplace_back("Could not initialize gl3w.");
 			alive = false;
 			return;
 		}
@@ -138,17 +174,6 @@ namespace View {
 
 		glGenVertexArrays(1, &ids[e_id_va]);
 		glBindVertexArray(ids[e_id_va]);
-		
-		ids[e_id_prog] = glCreateProgram();
-		if(!link(vert, frag, ids[e_id_prog])) {
-			std::cout << "Could not compile/link shader(s)." << std::endl;
-			alive = false;
-			return;
-		}
-		ids[e_id_model] = glGetUniformLocation(ids[e_id_prog], "model");
-		ids[e_id_view] = glGetUniformLocation(ids[e_id_prog], "view");
-		ids[e_id_proj] = glGetUniformLocation(ids[e_id_prog], "proj");
-		glUseProgram(ids[e_id_prog]);
 	}
 	view::~view(void) {
 		if(ids[e_id_prog]) {

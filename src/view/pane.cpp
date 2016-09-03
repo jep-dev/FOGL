@@ -4,7 +4,7 @@
 namespace View {
 	// TODO Screen/compositor type?
 
-	void pane::init(std::atomic_bool &alive) {
+	bool pane::init(std::atomic_bool &alive) {
 		glGenFramebuffers(1, &ids[e_fbo]);
 		glBindFramebuffer(GL_FRAMEBUFFER, ids[e_fbo]);
 
@@ -28,7 +28,7 @@ namespace View {
 		if(glCheckFramebufferStatus(GL_FRAMEBUFFER)
 				!= GL_FRAMEBUFFER_COMPLETE) {
 			std::cout << "Exiting due to FBO status" << std::endl;
-			alive = false;
+			return alive = false;
 		}
 
 		// TODO Generate a quad, plus depth, stencil, z-buf?
@@ -46,10 +46,14 @@ namespace View {
 		// TODO Shader paths as members by ctor/init
 		if(!link("share/pane.vert", "share/pane.frag", ids[e_q_prog])) {
 			std::cout << "Exiting due to GLSL status" << std::endl;
-			alive = false;
+			return alive = false;
 		}
 		ids[e_q_tex] = glGetUniformLocation(ids[e_q_prog], "tex");
 		glUseProgram(ids[e_q_prog]);
+		return alive;
+	}
+	bool pane::poll(std::atomic_bool &alive) {
+		return alive;
 	}
 
 	void pane::resize(int dx, int dy, int x0, int y0) {
@@ -60,8 +64,9 @@ namespace View {
 		glViewport(x0, y0, x0 + dx, y0 + dy);
 	}
 
-	void pane::run(std::atomic_bool &alive) {
+	bool pane::run(std::atomic_bool &alive) {
 		// TODO Render the quad to screen/compositor type
+		return alive;
 	}
 
 	pane::pane(int dx, int dy, int x0, int y0):
