@@ -5,9 +5,12 @@
 
 #define GLFW_INCLUDE_NONE
 
-#include "control.hpp"
+#include "util.hpp"
 #include "system.hpp"
 #include "math.hpp"
+#include "model.hpp"
+#include "view.hpp"
+#include "control.hpp"
 
 /**
  * Entry point of the program
