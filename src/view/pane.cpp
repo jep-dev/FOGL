@@ -44,8 +44,8 @@ namespace View {
 		
 		ids[e_q_prog] = glCreateProgram();
 		// TODO Shader paths as members by ctor/init
-		if(!link("share/pane.vert", "share/pane.frag", ids[e_q_prog])) {
-			std::cout << "Exiting due to GLSL status" << std::endl;
+		if(!link("share/pane.vert", "share/pane.frag",
+					ids[e_q_prog], errors)) {
 			return alive = false;
 		}
 		ids[e_q_tex] = glGetUniformLocation(ids[e_q_prog], "tex");
