@@ -31,10 +31,6 @@ int main(int argc, const char **argv) {
 			return 1;
 		}
 		if(alive) v.run(alive);
-		else {
-			std::cout << "Failed to run view." << std::endl;
-			return 1;
-		}
-		glfwTerminate();
+		//glfwTerminate();
 	}
 }
