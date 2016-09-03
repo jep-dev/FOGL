@@ -32,22 +32,43 @@ namespace Control {
 			return;
 		}
 
-		if(object.v_beg.size() == 0 || object.vn_beg.size() == 0) {
+		glGenBuffers(view::e_id_model-view::e_id_vbuf,
+				&viewer.ids[view::e_id_vbuf]);
+		// TODO Use more than first range of each obj type
+		if(object.v_beg.size() == 0) {
+			alive = false;
+			return;
+		} else {
+			auto v0 = object.v_beg[0], v1 = object.v_end[0];
+			glBindBuffer(GL_ARRAY_BUFFER, viewer.ids[view::e_id_vbuf]);
+			glBufferData(GL_ARRAY_BUFFER, v1-v0,
+					(void*)(&object.floats[v0]), GL_STATIC_DRAW);
+		}
+		if(object.vn_beg.size() != 0) {
+			auto vn0 = object.vn_beg[0], vn1 = object.vn_end[0];
+			glBindBuffer(GL_ARRAY_BUFFER, viewer.ids[view::e_id_vnbuf]);
+			glBufferData(GL_ARRAY_BUFFER, vn1-vn0,
+					(void*)(&object.floats[vn0]), GL_STATIC_DRAW);
+		}
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,
+				viewer.ids[view::e_id_fbuf]);
+		int f0, f1;
+		if(object.f0_beg.size() != 0) {
+			f0 = object.f0_beg[0];
+			f1 = object.f0_end[0];
+		} else if(object.f1_beg.size() != 0) {
+			f0 = object.f1_beg[0];
+			f1 = object.f1_end[0];
+		} else if(object.f2_beg.size() != 0) {
+			f0 = object.f2_beg[0];
+			f1 = object.f2_end[0];
+		} else if(object.f3_beg.size() != 0) {
+			f0 = object.f3_beg[0];
+			f1 = object.f3_end[0];
+		} else {
 			alive = false;
 			return;
 		}
-		auto v0 = object.v_beg[0], v1 = object.v_end[0],
-			vn0 = object.vn_beg[0], vn1 = object.vn_end[0],
-			f0 = object.f2_beg[0], f1 = object.f2_end[0];
-		glGenBuffers(view::e_id_model-view::e_id_vbuf,
-				&viewer.ids[view::e_id_vbuf]);
-		glBindBuffer(GL_ARRAY_BUFFER, viewer.ids[view::e_id_vbuf]);
-		glBufferData(GL_ARRAY_BUFFER, v1-v0,
-				(void*)(&object.floats[v0]), GL_STATIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, viewer.ids[view::e_id_vnbuf]);
-		glBufferData(GL_ARRAY_BUFFER, vn1-vn0,
-				(void*)(&object.floats[vn0]), GL_STATIC_DRAW);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, viewer.ids[view::e_id_fbuf]);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, f1-f0,
 				(void*)(&object.ints[f0]), GL_STATIC_DRAW);
 		glUseProgram(viewer.ids[view::e_id_prog]);
