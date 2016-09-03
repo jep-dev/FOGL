@@ -17,10 +17,10 @@
 #define FRAG_PATH "share/shade.frag"
 #endif
 
-void printErrors(std::ostream oss) {}
+void printErrors(std::ostream &oss) {}
 
 template<typename T1, typename... TN>
-void printErrors(std::ostream oss, T1 &t1, TN &... tn) {
+void printErrors(std::ostream &oss, T1 &t1, TN &... tn) {
 	for(auto e : t1) {
 		oss << e << std::endl;
 	}
