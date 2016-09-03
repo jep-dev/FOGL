@@ -2,9 +2,11 @@
 Asynchronous model/view/controller engine/framework; under construction.
 
 #### Requirements:
-* Python 2.7 or 3.4
-* OpenGL 3.30 Core or better
-* OpenGL Utility Library (GLU)
+* Python 2.7 or 3.4 -- for GL3W
+* [OpenMP](www.openmp.org) -- for future parallel computation
+* [Clang](clang.llvm.org) or any compiler with support for C++11 and OpenMP
+* [OpenGL](https://www.opengl.org) 3.30 Core or better
+* [OpenGL](http://glu.g-truc.net/0.1.0/index.html) -- Utility Library (GLU)
 * [GL3W](https://github.com/skaslev/gl3w) -- OpenGL extension loading
 * [GLFW](https://github.com/glfw/glfw) -- windows with OpenGL and event handling
 * [SOIL](https://www.opengl.org/wiki/Image_Libraries#SOIL) -- Simple OpenGL Image Library
@@ -13,6 +15,8 @@ Asynchronous model/view/controller engine/framework; under construction.
 * [Graphviz](http://www.graphviz.org/) (optional) -- see Documentation section
 
 Several of these requirements can be installed via the command line rather than manually (download/configure/build/install):
+
+`sudo apt-get install build-essential clang libomp-dev`
 
 `sudo apt-get install python3 libboost-all-dev libgl1-mesa-dev libglu1-mesa-dev libsoil-dev`
 
