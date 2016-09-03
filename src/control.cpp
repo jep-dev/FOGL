@@ -71,6 +71,7 @@ namespace Control {
 			alive = false;
 			return;
 		}
+		viewer.nTriangles = (f1-f0)/3;
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, f1-f0,
 				(void*)(&object.ints[f0]), GL_STATIC_DRAW);
 		glUseProgram(viewer.ids[view::e_id_prog]);
