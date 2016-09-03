@@ -1,5 +1,7 @@
 #include <iostream>
+
 #include "main.hpp"
+#include "util.hpp"
 #include "system/printer.hpp"
 
 #ifndef OBJ_PATH
@@ -15,19 +17,19 @@
 #define FRAG_PATH "share/shade.frag"
 #endif
 
-void printErrors(void) {}
+void printErrors(std::ostream oss) {}
 
 template<typename T1, typename... TN>
-void printErrors(T1 &t1, TN &... tn) {
+void printErrors(std::ostream oss, T1 &t1, TN &... tn) {
 	for(auto e : t1) {
-		std::cout << e << std::endl;
+		oss << e << std::endl;
 	}
-	printErrors(tn...);
+	printErrors(oss, tn...);
 }
-
 
 int main(int argc, const char **argv) {
 	using namespace Util;
+	using namespace System;
 	if(glfwInit() == 0) {
 		std::cout << "Failed to initialize GLFW "
 			<< glfwGetVersionString() << std::endl;
@@ -49,14 +51,14 @@ int main(int argc, const char **argv) {
 	Control::control ctl(alive, obj_fname);
 	if(!alive) {
 		std::cout << "Control construction failed." << std::endl;
-		printErrors(ctl.viewer.errors, ctl.errors);
+		printErrors(std::cout, ctl.viewer.errors, ctl.errors);
 		return 1;
 	}
 	if(!ctl.viewer.setProg(alive, vert_fname, frag_fname)) {
 		std::cout << "Failed to compile or link shaders." << std::endl;
 		std::cout << "For shaders " << vert_fname << ", "
 			<< frag_fname << std::endl;
-		printErrors(ctl.viewer.errors, ctl.errors);
+		printErrors(std::cout, ctl.viewer.errors, ctl.errors);
 		return 1;
 	} else {
 		using namespace System;
@@ -79,12 +81,12 @@ int main(int argc, const char **argv) {
 
 		if(!task::init(alive, &ctl)) {
 			std::cout << "Control Initialization failed." << std::endl;
-			printErrors(ctl.viewer.errors, ctl.errors);
+			printErrors(std::cout, ctl.viewer.errors, ctl.errors);
 			return 1;
 		}
 	}
 	if(!task::run(alive, &ctl)) {
-		printErrors(ctl.viewer.errors, ctl.errors);
+		printErrors(std::cout, ctl.viewer.errors, ctl.errors);
 	}
 
 	glfwTerminate();
