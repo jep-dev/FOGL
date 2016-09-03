@@ -38,7 +38,6 @@ MAIN_MODULES?=util system math model view control
 TEST_MODULES?=$(MAIN_MODULES) main
 MODULES?=UTIL SYSTEM MATH MODEL VIEW CONTROL
 MODULE_DIRS?=$(foreach mod,$(MAIN_MODULES),$(mod)/)
-#MAIN_H_ONLY?=util/types.hpp math.hpp math/quat.hpp math/dual.hpp system.hpp
 
 SYSTEM_SUBMODULES?=system/net system/printer
 SYSTEM_H_ONLY?=
