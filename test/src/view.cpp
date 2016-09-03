@@ -19,10 +19,15 @@ int main(int argc, const char **argv) {
 		return 1;
 	} else {
 		std::atomic_bool alive(true);
-		view v(alive, "share/shade.vert", "share/shade.frag");
+		view v(alive);
+		if(alive) {
+			v.setProg(alive, "share/shade.vert", "share/shade.frag");
+		} else {
+			std::cout << "Failed to construct view." << std::endl;
+		}
 		if(alive) v.init(alive);
 		else {
-			std::cout << "Failed to construct view." << std::endl;
+			std::cout << "Failed to initialize view." << std::endl;
 			return 1;
 		}
 		if(alive) v.run(alive);
@@ -32,6 +37,4 @@ int main(int argc, const char **argv) {
 		}
 		glfwTerminate();
 	}
-
-	// TODO Determine why GLFW can init but cannot terminate
 }

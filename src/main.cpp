@@ -15,6 +15,17 @@
 #define FRAG_PATH "share/shade.frag"
 #endif
 
+void printErrors(void) {}
+
+template<typename T1, typename... TN>
+void printErrors(T1 &t1, TN &... tn) {
+	for(auto e : t1) {
+		std::cout << e << std::endl;
+	}
+	printErrors(tn...);
+}
+
+
 int main(int argc, const char **argv) {
 	using namespace Util;
 	if(glfwInit() == 0) {
@@ -35,9 +46,19 @@ int main(int argc, const char **argv) {
 	else frag_fname = FRAG_PATH;
 
 	std::atomic_bool alive(true);
-	Control::control ctl(alive, obj_fname, vert_fname, frag_fname);
-	
-	if(alive) {
+	Control::control ctl(alive, obj_fname);
+	if(!alive) {
+		std::cout << "Control construction failed." << std::endl;
+		printErrors(ctl.viewer.errors, ctl.errors);
+		return 1;
+	}
+	if(!ctl.viewer.setProg(alive, vert_fname, frag_fname)) {
+		std::cout << "Failed to compile or link shaders." << std::endl;
+		std::cout << "For shaders " << vert_fname << ", "
+			<< frag_fname << std::endl;
+		printErrors(ctl.viewer.errors, ctl.errors);
+		return 1;
+	} else {
 		using namespace System;
 		Printer<6> printer;
 		std::string cols[]{"GLFW", "OpenGL", "Path"},
@@ -56,21 +77,14 @@ int main(int argc, const char **argv) {
 			.push<std::string, 4, 1, 31>(paths, &cols[2], &cols[3]+1).level();
 		std::cout << printer << std::endl;
 
-		task::init(alive, &ctl);
-	} else {
-		std::cout << "Initialization of control failed." << std::endl;
-		for(auto err : ctl.errors) {
-			std::cout << err << std::endl;
+		if(!task::init(alive, &ctl)) {
+			std::cout << "Control Initialization failed." << std::endl;
+			printErrors(ctl.viewer.errors, ctl.errors);
+			return 1;
 		}
-		return 1;
 	}
-	if(alive) {
-		task::run(alive, &ctl);
-	} else {
-		std::cout << "Control failed while running." << std::endl;
-		for(auto err : ctl.errors) {
-			std::cout << err << std::endl;
-		}
+	if(!task::run(alive, &ctl)) {
+		printErrors(ctl.viewer.errors, ctl.errors);
 	}
 
 	glfwTerminate();
