@@ -13,6 +13,7 @@ namespace Control {
 
 	/// A data structure controlling both model and view
 	struct control : public Util::task {
+		std::vector<std::string> errors;
 		const char *mpath;
 		View::view viewer;
 		//Model::contour<Util::undef_t, GLfloat, GLclampf, GLclampf> model;

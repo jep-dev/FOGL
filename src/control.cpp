@@ -27,7 +27,7 @@ namespace Control {
 		obj_t object;
 		auto status = obj_t::load(this -> mpath, object);
 		if(status != obj_t::e_ok) {
-			std::cout << "The model failed to load." << std::endl;
+			errors.push_back("The model failed to load.");
 			alive = false;
 			return;
 		}
@@ -36,6 +36,7 @@ namespace Control {
 				&viewer.ids[view::e_id_vbuf]);
 		// TODO Use more than first range of each obj type
 		if(object.v_beg.size() == 0) {
+			errors.push_back("The loaded model does not contain vertices.");
 			alive = false;
 			return;
 		} else {
@@ -66,6 +67,7 @@ namespace Control {
 			f0 = object.f3_beg[0];
 			f1 = object.f3_end[0];
 		} else {
+			errors.push_back("The loaded model does not contain faces.");
 			alive = false;
 			return;
 		}

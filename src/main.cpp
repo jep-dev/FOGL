@@ -48,12 +48,18 @@ int main(int argc, const char **argv) {
 		task::init(alive, &ctl);
 	} else {
 		std::cout << "Initialization of control failed." << std::endl;
+		for(auto err : ctl.errors) {
+			std::cout << err << std::endl;
+		}
 		return 1;
 	}
 	if(alive) {
 		task::run(alive, &ctl);
 	} else {
 		std::cout << "Control failed while running." << std::endl;
+		for(auto err : ctl.errors) {
+			std::cout << err << std::endl;
+		}
 	}
 
 	glfwTerminate();
