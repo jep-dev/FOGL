@@ -174,7 +174,7 @@ int main(int argc, const char **argv) {
 	for(auto f : mesh_points) {
 		std::cout << f << ' ';
 	}
-	std::cout << "\nMesh faces:";
+	std::cout << "\nMesh faces: ";
 	for(auto i : mesh_faces) {
 		std::cout << i << ' ';
 	}
