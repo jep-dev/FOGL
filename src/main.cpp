@@ -72,11 +72,13 @@ int main(int argc, const char **argv) {
 		glfwGetVersion(&versions[0], &versions[2], &versions[4]);
 		glGetIntegerv(GL_MAJOR_VERSION, &versions[1]);
 		glGetIntegerv(GL_MINOR_VERSION, &versions[3]);
-		printer.push(&rows[0], &rows[5]).level()
-			.push<int, 3, 2>(versions, &cols[0], &cols[2]).level()
-			.insert(0, Printer_Base::repeat(3)).level()
-			.push(&rows[5], &rows[5]+6).level()
-			.push<std::string, 4, 1, 31>(paths, &cols[2], &cols[3]+1).level();
+		printer.push(&rows[5], &rows[5]+6)
+			.level().insert(0, " ").level()
+			.push<std::string, 4, 1, 31>(paths, &cols[2], &cols[3]+1)
+			.level().insert(0, "   ").level()
+			.push(&rows[0], &rows[5])
+			.level().insert(0, " ").level()
+			.push<int, 3, 2>(versions, &cols[0], &cols[2]);
 		std::cout << printer << std::endl;
 
 		if(!task::init(alive, &ctl)) {
