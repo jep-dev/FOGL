@@ -3,10 +3,10 @@
 
 namespace Model {
 	struct mesh_t {
-		void (*surf)(float, float, float*);
-		void vertices(int w, int h, float *points);
-		void faces(int w, int h, int *faces);
-		mesh_t(void (*fn)(float s, float t, float *point));
+		std::vector<float> vertices;
+		std::vector<int> faces;
+		mesh_t(int w, int h, void (*fn)
+			(float s, float t, std::vector<float> &));
 	};
 }
 

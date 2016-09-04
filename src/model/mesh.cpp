@@ -1,26 +1,21 @@
 #include "model.hpp"
 
 namespace Model {
-	void mesh_t::vertices(int w, int h, float *points) {
-		for(int index = 0, max_index = w*h; index < max_index; index++) {
-			int y = index % w, x = index / w;
-			surf(float(x)/w, float(y)/h, &points[index*3]);
-		}
-	}
-	void mesh_t::faces(int w, int h, int *faces) {
-		int index = 0, vindex = 0;
+	mesh_t::mesh_t(int w, int h, void (*fn)
+		(float s, float t, std::vector<float> &vertices)) {
 		for(int i = 0; i < w; i++) {
 			for(int j = 0; j < h; j++) {
-				auto vIndex = j*w+i;
-				faces[index++] = vIndex;
-				faces[index++] = vIndex + 1;
-				faces[index++] = vIndex + w + 1;
-				faces[index++] = vIndex;
-				faces[index++] = vIndex + w + 1;
-				faces[index++] = vIndex + w;
+				auto index = j * w + i;
+				fn(float(i)/w, float(j)/h, vertices);
+				if(i < w-1 && j < h-1) {
+					faces.emplace_back(index);
+					faces.emplace_back(index+1);
+					faces.emplace_back(index+w+1);
+					faces.emplace_back(index);
+					faces.emplace_back(index+w+1);
+					faces.emplace_back(index+w);
+				}
 			}
 		}
 	}
-	mesh_t::mesh_t(void (*fn)(float s, float t, float *point)):
-		surf(fn) {}
 }
