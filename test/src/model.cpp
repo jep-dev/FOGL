@@ -159,23 +159,19 @@ int main(int argc, const char **argv) {
 		default: {} break;
 	}
 
-	mesh_t mesh([](float u, float v, float* uv) {
-		uv[0] = u;
-		uv[1] = v;
-		uv[2] = 0;
+	int w = 2, h = 2;
+	mesh_t mesh(w, h, [](float u, float v, std::vector<float> &vertices) {
+		vertices.emplace_back(u);
+		vertices.emplace_back(v);
+		vertices.emplace_back(0);
 	});
 
-	int w = 2, h = 2, size = w*h*3;
-	float mesh_points[size];
-	int mesh_faces[size*2];
-	mesh.vertices(w, h, mesh_points);
-	mesh.faces(w, h, mesh_faces);
 	std::cout << "\nMesh points: ";
-	for(auto f : mesh_points) {
+	for(auto f : mesh.vertices) {
 		std::cout << f << ' ';
 	}
 	std::cout << "\nMesh faces: ";
-	for(auto i : mesh_faces) {
+	for(auto i : mesh.faces) {
 		std::cout << i << ' ';
 	}
 	endl(std::cout);
