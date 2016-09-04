@@ -84,7 +84,7 @@ namespace View {
 			//stride = 2*offset,
 			bits = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
 		setUniforms();
-		glClearColor(0.5,0.5,0.5,1.0);
+		glClearColor(0.25,0.25,0.25,1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glBindBuffer(GL_ARRAY_BUFFER, ids[e_id_vbuf]);
 		
