@@ -159,7 +159,7 @@ int main(int argc, const char **argv) {
 		default: {} break;
 	}
 
-	int w = 2, h = 2;
+	int w = 3, h = 3;
 	mesh_t mesh(w, h, [](float u, float v, std::vector<float> &vertices) {
 		vertices.emplace_back(u);
 		vertices.emplace_back(v);
