@@ -39,7 +39,7 @@ namespace Control {
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.faces.size(),
 			(void*) &mesh.faces[0], viewer.ids[view::e_id_fbuf]);
 		viewer.nTriangles = mesh.faces.size()/3;
-
+		return alive;
 		/*
 		// Task 2: wavefront obj model loading
 		using namespace Model;
@@ -90,7 +90,6 @@ namespace Control {
 		viewer.nTriangles = (f1-f0)/3;
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, viewer.nTriangles*3,
 				(void*)(&object.ints[f0]), GL_STATIC_DRAW);*/
-		return alive;
 
 		/*
 		// Task 2: model loading
@@ -141,21 +140,11 @@ namespace Control {
 			int nButtons;
 			const uint8_t *buttons =
 				glfwGetJoystickButtons(GLFW_JOYSTICK_1, &nButtons);
-			bool once = false;
 			for(int i = 0; i < nButtons; i++) {
 				bool pressed = buttons[i] == GLFW_PRESS;
-				if(once && pressed) oss << ", " << i;
-				if(!once && pressed) {
-					once = true;
-					oss << i;
-				}
 				if(i==8 && pressed) 
 					alive = false;
 			}
-			if(once)
-				std::cout << "\nPressed: " << oss.str() << std::endl;
-
-			once = false;
 			int nAxes;
 			const GLfloat *axes =
 				glfwGetJoystickAxes(GLFW_JOYSTICK_1, &nAxes);
