@@ -28,11 +28,14 @@ namespace Control {
 			vertices.emplace_back(2*t-1);
 			vertices.emplace_back(s*s+t*t);
 		});
+
 		glGenBuffers(1, &viewer.ids[view::e_id_vbuf]);
 		glBindBuffer(GL_ARRAY_BUFFER, viewer.ids[view::e_id_vbuf]);
 		glBufferData(GL_ARRAY_BUFFER, mesh.vertices.size(),
 			(void*) &mesh.vertices[0], GL_STATIC_DRAW);
+
 		glGenBuffers(1, &viewer.ids[view::e_id_fbuf]);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, viewer.ids[view::e_id_fbuf]);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.faces.size(),
 			(void*) &mesh.faces[0], viewer.ids[view::e_id_fbuf]);
 		viewer.nTriangles = mesh.faces.size()/3;
