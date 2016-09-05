@@ -29,21 +29,18 @@ namespace View {
 		if(mat_model == -1) {
 			errors.emplace_back("Could not find uniform 'model'");
 			return alive = false;
-		} else {
-			ids[e_id_model] = mat_model;
 		}
+		ids[e_id_model] = mat_model;
 		if(mat_view == -1) {
 			errors.emplace_back("Could not find uniform 'view'");
 			return alive = false;
-		} else {
-			ids[e_id_view] = mat_view;
 		}
+		ids[e_id_view] = mat_view;
 		if(mat_proj == -1) {
 			errors.emplace_back("Could not find uniform 'view'");
 			return alive = false;
-		} else {
-			ids[e_id_proj] = mat_proj;
 		}
+		ids[e_id_proj] = mat_proj;
 		glUseProgram(ids[e_id_prog]);
 		return true;
 	}
@@ -53,24 +50,24 @@ namespace View {
 		glfwGetFramebufferSize(win, &w, &h);
 		float mag = float(1/tan(fov*M_PI/180));
 		float mat_proj[]{
-				mag, 0, 0, 0, 0, mag, 0, 0,
-				0, 0, (far+near)/(far-near), -1,
-				0, 0, 2*far*near/(far-near), 0
+			mag, 0, 0, 0, 0, mag, 0, 0,
+			0, 0, (far+near)/(far-near), -1,
+			0, 0, 2*far*near/(far-near), 0
 		};
 		glUniformMatrix4fv(ids[e_id_proj], 1, GL_TRUE, mat_proj);
 
 		float ct = cos(-theta*1.5), st = sin(-theta*1.5),
 			  cp = cos(-phi), sp = sin(-phi);
 		float mat_model[]{
-				    ct,  0,    -st, 0,
-				-sp*st, cp, -sp*ct, 0,
-				 cp*st, sp,  cp*ct, 0,
-				     0,  0,      0, 1
+			    ct,  0,    -st, 0,
+			-sp*st, cp, -sp*ct, 0,
+			 cp*st, sp,  cp*ct, 0,
+			     0,  0,      0, 1
 		}, mat_view[]{
-				1, 0, 0, 0,
-				0, 1, 0, 0,
-				0, 0, 1, 0,
-				0, 0, 2, 1
+			1, 0, 0, 0,
+			0, 1, 0, 0,
+			0, 0, 1, 0,
+			0, 0, 2, 1
 		};
 
 		glUniformMatrix4fv(ids[e_id_model], 1, GL_TRUE, mat_model);
