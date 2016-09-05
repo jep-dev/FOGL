@@ -69,8 +69,7 @@ namespace View {
 		return alive;
 	}
 
-	pane::pane(int dx, int dy, int x0, int y0):
-		Util::task() {
-			resize(dx, dy, x0, y0);
+	pane::pane(int dx, int dy, int x0, int y0): Util::task() {
+		resize(dx, dy, x0, y0);
 	}
 }
