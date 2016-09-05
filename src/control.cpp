@@ -23,10 +23,11 @@ namespace Control {
 		glfwMakeContextCurrent(viewer.win);
 
 		using namespace Model;
-		mesh_t mesh(50, 50, [](float s, float t, std::vector<float> &vertices) {
-			vertices.push_back(s-.5);
-			vertices.emplace_back(t-.5);
-			vertices.emplace_back(s*s+t*t);
+		mesh_t mesh(50, 50,
+		[](float s, float t, std::vector<float> &vertices) {
+			vertices.emplace_back(-s*s-t*t); // X
+			vertices.emplace_back(2*s-1); // Y
+			vertices.emplace_back(2*t-1); // Z
 		});
 
 		glGenBuffers(1, &viewer.ids[view::e_id_vbuf]);
@@ -35,7 +36,8 @@ namespace Control {
 			(void*) &mesh.vertices[0], GL_STATIC_DRAW);
 
 		glGenBuffers(1, &viewer.ids[view::e_id_fbuf]);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, viewer.ids[view::e_id_fbuf]);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,
+			viewer.ids[view::e_id_fbuf]);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.faces.size(),
 			(void*) &mesh.faces[0], GL_STATIC_DRAW);
 		viewer.nTriangles = mesh.faces.size()/3;
