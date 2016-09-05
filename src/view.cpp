@@ -17,7 +17,7 @@ namespace View {
 		if(!alive) {
 			return false;
 		}
-		//if(ids[e_id_prog]) glDeleteProgram(ids[e_id_prog]);
+		if(ids[e_id_prog]) glDeleteProgram(ids[e_id_prog]);
 		ids[e_id_prog] = glCreateProgram();
 		if(!link(vert_fname, frag_fname, ids[e_id_prog], errors)) {
 			errors.emplace_back("Could not compile/link shader(s).");
