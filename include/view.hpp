@@ -30,7 +30,7 @@ namespace View {
 		int nTriangles;
 		GLFWwindow *win;
 		int frame = 0, fps = 0;
-		float phi, theta;
+		float theta, phi, x, y;
 		std::vector<std::string> errors;
 	
 		/// Sets stable shader values (uniforms)

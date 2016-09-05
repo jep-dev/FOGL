@@ -49,8 +49,8 @@ namespace View {
 		int w, h;
 		glfwGetFramebufferSize(win, &w, &h);
 		float mag = float(1/tan(fov*M_PI/180)),
-			ct = cos(theta), st = sin(theta),
-			cp = cos(phi), sp = sin(phi),
+			ct = cos(theta/2), st = sin(theta/2),
+			cp = cos(phi/2), sp = sin(phi/2),
 		mat_proj[]{ // Projection matrix
 			mag, 0, 0, 0, 0, mag, 0, 0,
 			0, 0, (far+near)/(far-near), -1,
@@ -64,10 +64,10 @@ namespace View {
 			1, 0, 0, 0,
 			0, 1, 0, 0,
 			0, 0, 1, 0,
-			0, 0, 2, 1
+			x, 0, y, 1
 		};
 
-		glUniformMatrix4fv(ids[e_id_proj], 1, GL_TRUE, mat_proj);
+		glUniformMatrix4fv(ids[e_id_proj], 1, GL_FALSE, mat_proj);
 		glUniformMatrix4fv(ids[e_id_model], 1, GL_FALSE, mat_model);
 		glUniformMatrix4fv(ids[e_id_view], 1, GL_FALSE, mat_view);
 	}
@@ -135,7 +135,8 @@ namespace View {
 		}
 		return alive;
 	}
-	view::view(std::atomic_bool &alive) {
+	view::view(std::atomic_bool &alive):
+			theta(0), phi(0), x(0), y(2) {
 		if(!alive) {
 			return;
 		}
