@@ -122,42 +122,6 @@ namespace Math {
 	bool dual<R>::operator==(dual<R> const& rhs) const {
 		return u == rhs.u && v == rhs.v;
 	}
-	/*
-	template<typename R>
-	dual<R> dual<R>::operator+(dual<R> const& rhs) const {
-		return {u+rhs.u, v+rhs.v};
-	}
-	template<typename R>
-	dual<R> dual<R>::operator-(dual<R> const& rhs) const {
-		return {u-rhs.u, v-rhs.v};
-	}
-	template<typename R>
-	dual<R> dual<R>::operator*(R const& rhs) const {
-		return {u*rhs, v*rhs};
-	}
-	template<typename R>
-	dual<R> dual<R>::operator*(quat<R> const& rhs) const {
-		return {u*rhs, v*rhs};
-	}
-	template<typename R>
-	dual<R> dual<R>::operator*(dual<R> const& rhs) const {
-		auto const& p = rhs.u, q = rhs.v;
-		return {{
-			u.w*p.w - u.x*p.x - u.y*p.y - u.z*p.z,
-			u.w*p.x + u.x*p.w + u.y*p.z - u.z*p.y,
-			u.w*p.y - u.x*p.z + u.y*p.w + u.z*p.x,
-			u.w*p.z + u.x*p.y - u.y*p.x + u.z*p.w
-		}, {
-			u.w*q.w - u.x*q.x - u.y*q.y - u.z*q.z
-			+ v.w*p.w - v.x*p.x - v.y*p.y - v.z*p.z,
-			u.w*q.x + u.x*q.w + u.y*q.z - u.z*q.y
-			+ v.w*p.x + v.x*p.w + v.y*p.z - v.z*p.y,
-			u.w*q.y - u.x*q.z + u.y*q.w + u.z*q.x
-			+ v.w*p.y - v.x*p.z + v.y*p.w + v.z*p.x,
-			u.w*q.z + u.x*q.y - u.y*q.x + u.z*q.w
-			+ v.w*p.z + v.x*p.y - v.y*p.x + v.z*p.w
-		}};
-	}*/
 	template<typename R>
 	dual<R> dual<R>::operator()(quat<R> const& rhs) const {
 		return *this * rhs * ~*this;
@@ -166,51 +130,6 @@ namespace Math {
 	dual<R> dual<R>::operator()(dual<R> const& rhs) const {
 		return *this * rhs * ~*this;
 	}
-	/*
-	template<typename R>
-	dual<R> dual<R>::operator/(R const& rhs) const {
-		return {u/rhs, v/rhs};
-	}
-	template<typename R>
-	dual<R> dual<R>::operator/(quat<R> const& rhs) const {
-		auto inv = !rhs;
-		return {u*inv, v*inv};
-	}
-	
-	template<typename R>
-	dual<R> dual<R>::operator+=(dual<R> const& rhs) {
-		u += rhs.u; v += rhs.v;
-		return *this;
-	}
-	template<typename R>
-	dual<R> dual<R>::operator-=(dual<R> const& rhs) {
-		u -= rhs.u; v -= rhs.v;
-		return *this;
-	}
-	template<typename R>
-	dual<R> dual<R>::operator*=(R const& rhs) {
-		u *= rhs; v *= rhs;
-		return *this;
-	}
-	template<typename R>
-	dual<R> dual<R>::operator*=(quat<R> const& rhs) {
-		return *this = *this * rhs;
-	}
-	template<typename R>
-	dual<R> dual<R>::operator*=(dual<R> const& rhs) {
-		return *this = *this * rhs;
-	}
-	template<typename R>
-	dual<R> dual<R>::operator/=(R const& rhs) {
-		u /= rhs; v /= rhs;
-		return *this;
-	}
-	template<typename R>
-	dual<R> dual<R>::operator/=(quat<R> const& rhs) {
-		auto inv = !rhs;
-		u *= inv; v *= inv;
-		return *this;
-	}*/
 }
 
 #endif
