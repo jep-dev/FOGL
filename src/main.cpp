@@ -56,8 +56,6 @@ int main(int argc, const char **argv) {
 	}
 	if(!ctl.viewer.setProg(alive, vert_fname, frag_fname)) {
 		std::cout << "Failed to compile or link shaders." << std::endl;
-		std::cout << "For shaders " << vert_fname << ", "
-			<< frag_fname << std::endl;
 		printErrors(std::cout, ctl.viewer.errors, ctl.errors);
 		return 1;
 	} else {
