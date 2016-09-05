@@ -48,29 +48,27 @@ namespace View {
 	void view::setUniforms(void) {
 		int w, h;
 		glfwGetFramebufferSize(win, &w, &h);
-		float mag = float(1/tan(fov*M_PI/180));
-		float mat_proj[]{
+		float mag = float(1/tan(fov*M_PI/180)),
+			ct = cos(theta), st = sin(theta),
+			cp = cos(phi), sp = sin(phi),
+		mat_proj[]{ // Projection matrix
 			mag, 0, 0, 0, 0, mag, 0, 0,
 			0, 0, (far+near)/(far-near), -1,
 			0, 0, 2*far*near/(far-near), 0
-		};
-		glUniformMatrix4fv(ids[e_id_proj], 1, GL_TRUE, mat_proj);
-
-		float ct = cos(-theta*1.5), st = sin(-theta*1.5),
-			  cp = cos(-phi), sp = sin(-phi);
-		float mat_model[]{
-			    ct,  0,    -st, 0,
-			-sp*st, cp, -sp*ct, 0,
-			 cp*st, sp,  cp*ct, 0,
-			     0,  0,      0, 1
-		}, mat_view[]{
+		}, mat_model[]{ // Model matrix
+			ct*cp, -ct*sp, -st, 0,
+			sp,        cp,   0, 0,
+			st*cp, -st*sp,  ct, 0,
+			0,          0,   0, 1
+		}, mat_view[]{ // View matrix
 			1, 0, 0, 0,
 			0, 1, 0, 0,
 			0, 0, 1, 0,
 			0, 0, 2, 1
 		};
 
-		glUniformMatrix4fv(ids[e_id_model], 1, GL_TRUE, mat_model);
+		glUniformMatrix4fv(ids[e_id_proj], 1, GL_TRUE, mat_proj);
+		glUniformMatrix4fv(ids[e_id_model], 1, GL_FALSE, mat_model);
 		glUniformMatrix4fv(ids[e_id_view], 1, GL_FALSE, mat_view);
 	}
 	
@@ -88,7 +86,6 @@ namespace View {
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, GL_FLOAT,
 				GL_FALSE, stride, nullptr);
-		
 		
  		/*glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 3, GL_FLOAT,
