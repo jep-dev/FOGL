@@ -25,9 +25,9 @@ namespace Control {
 		using namespace Model;
 		mesh_t mesh(50, 50,
 		[](float s, float t, std::vector<float> &vertices) {
-			vertices.emplace_back(-s*s-t*t); // X
-			vertices.emplace_back(2*s-1); // Y
-			vertices.emplace_back(2*t-1); // Z
+			vertices.emplace_back(2*s-1);   // X
+			vertices.emplace_back(s*s+t*t); // Y
+			vertices.emplace_back(2*t-1);   // Z
 		});
 
 		glGenBuffers(1, &viewer.ids[view::e_id_vbuf]);
@@ -143,18 +143,23 @@ namespace Control {
 			const uint8_t *buttons =
 				glfwGetJoystickButtons(GLFW_JOYSTICK_1, &nButtons);
 			for(int i = 0; i < nButtons; i++) {
-				bool pressed = buttons[i] == GLFW_PRESS;
-				if(i==8 && pressed) 
-					alive = false;
+				if(buttons[i] == GLFW_PRESS) {
+					if(i == 8) alive = false;
+					else std::cout << i << std::endl;
+				}
 			}
 			int nAxes;
 			const GLfloat *axes =
 				glfwGetJoystickAxes(GLFW_JOYSTICK_1, &nAxes);
 			for(int i = 0; i < nAxes; i++) {
 				if(i == 0) {
-					viewer.theta = axes[i]*2 + 1.5;
+					viewer.theta = axes[i]*M_PI;
 				} else if(i == 1) {
-					viewer.phi = axes[i];
+					viewer.phi = axes[i]*M_PI;
+				} else if(i == 6) {
+					viewer.x += axes[i]/10;
+				} else if(i == 7) {
+					viewer.y += axes[i]/10;
 				}
 			}
 		}
