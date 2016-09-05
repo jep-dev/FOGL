@@ -24,8 +24,8 @@ namespace Control {
 
 		using namespace Model;
 		mesh_t mesh(50, 50, [](float s, float t, std::vector<float> &vertices) {
-			vertices.push_back(2*s-1);
-			vertices.emplace_back(2*t-1);
+			vertices.push_back(s-.5);
+			vertices.emplace_back(t-.5);
 			vertices.emplace_back(s*s+t*t);
 		});
 
@@ -37,7 +37,7 @@ namespace Control {
 		glGenBuffers(1, &viewer.ids[view::e_id_fbuf]);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, viewer.ids[view::e_id_fbuf]);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.faces.size(),
-			(void*) &mesh.faces[0], viewer.ids[view::e_id_fbuf]);
+			(void*) &mesh.faces[0], GL_STATIC_DRAW);
 		viewer.nTriangles = mesh.faces.size()/3;
 		return alive;
 		/*
