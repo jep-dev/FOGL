@@ -29,9 +29,6 @@ namespace Control {
 			vertices.emplace_back(cos(theta)*sin(phi)); // X
 			vertices.emplace_back(sin(theta)*sin(phi)); // Y
 			vertices.emplace_back(cos(phi));            // Z
-			/*vertices.emplace_back(2*s-1);
-			vertices.emplace_back(-s*s-t*t);
-			vertices.emplace_back(2*t-1);*/
 		});
 
 		glGenBuffers(1, &viewer.ids[view::e_id_vbuf]);

@@ -16,7 +16,6 @@ namespace Control {
 		std::vector<std::string> errors;
 		const char *mpath;
 		View::view viewer;
-		//Model::contour<Util::undef_t, GLfloat, GLclampf, GLclampf> model;
 		
 		bool init(std::atomic_bool &alive) override;
 		bool poll(std::atomic_bool &alive) override;
@@ -24,7 +23,7 @@ namespace Control {
 
 		/** Constructor; initializes and applies shaders
  		 * @param alive Shared state; false signals shutdown
- 		 * @param ply The path to a Wavefront obj model
+ 		 * @param obj The path to a Wavefront obj model
  		 */
 		control(std::atomic_bool &alive, const char *obj);
 	};
