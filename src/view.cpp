@@ -61,10 +61,10 @@ namespace View {
 			st*cp, -st*sp,  ct, 0,
 			0,          0,   0, 1
 		}, mat_view[]{ // View matrix
-			1, 0,   0, 0,
-			0, 1,   0, 0,
-			0, 0,   1, 0,
-			x, y, z-4, 1
+			1, 0,      0, 0,
+			0, 1,      0, 0,
+			0, 0,      1, 0,
+			x, y, z-2.5f, 1
 		};
 
 		glUniformMatrix4fv(ids[e_id_proj], 1, GL_FALSE, mat_proj);
