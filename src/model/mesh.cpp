@@ -6,7 +6,7 @@ namespace Model {
 		for(int i = 0; i < w; i++) {
 			for(int j = 0; j < h; j++) {
 				auto index = 3*(j * w + i), i2 = 3, j2 = w*3;
-				fn(float(i)/w, float(j)/h, vertices);
+				fn(float(i)/(w-1), float(j)/(h-1), vertices);
 				if(i < w-1 && j < h-1) {
 					faces.emplace_back(index);
 					faces.emplace_back(index+i2);
