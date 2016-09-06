@@ -25,9 +25,13 @@ namespace Control {
 		using namespace Model;
 		mesh_t mesh(50, 50,
 		[](float s, float t, std::vector<float> &vertices) {
-			vertices.emplace_back(2*s-1);   // X
-			vertices.emplace_back(s*s+t*t); // Y
-			vertices.emplace_back(2*t-1);   // Z
+			auto theta = s*M_PI*2, phi = t*M_PI;
+			vertices.emplace_back(cos(theta)*sin(phi)); // X
+			vertices.emplace_back(sin(theta)*sin(phi)); // Y
+			vertices.emplace_back(cos(phi));            // Z
+			/*vertices.emplace_back(2*s-1);
+			vertices.emplace_back(-s*s-t*t);
+			vertices.emplace_back(2*t-1);*/
 		});
 
 		glGenBuffers(1, &viewer.ids[view::e_id_vbuf]);
@@ -145,6 +149,12 @@ namespace Control {
 			for(int i = 0; i < nButtons; i++) {
 				if(buttons[i] == GLFW_PRESS) {
 					if(i == 8) alive = false;
+					else if(i == 7)
+						viewer.x = viewer.y = viewer.z = 0;
+					else if(i == 4)
+						viewer.z -= .1;
+					else if(i == 5)
+						viewer.z += .1;
 					else std::cout << i << std::endl;
 				}
 			}
@@ -159,7 +169,7 @@ namespace Control {
 				} else if(i == 6) {
 					viewer.x += axes[i]/10;
 				} else if(i == 7) {
-					viewer.y += axes[i]/10;
+					viewer.y -= axes[i]/10;
 				}
 			}
 		}
