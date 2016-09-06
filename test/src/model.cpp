@@ -160,19 +160,28 @@ int main(int argc, const char **argv) {
 	}
 
 	int w = 3, h = 3;
-	mesh_t mesh(w, h, [](float u, float v, std::vector<float> &vertices) {
-		vertices.emplace_back(u);
-		vertices.emplace_back(v);
-		vertices.emplace_back(0);
+	mesh_t mesh(w, h, [](float s, float t, std::vector<float> &vertices) {
+		auto theta = s*M_PI*2, phi = t*M_PI;
+		vertices.emplace_back(cos(theta)*sin(phi));
+		vertices.emplace_back(sin(theta)*sin(phi));
+		vertices.emplace_back(cos(phi));
 	});
 
-	std::cout << "\nMesh points: ";
-	for(auto f : mesh.vertices) {
-		std::cout << f << ' ';
+	std::cout << "\nMesh points: \n";
+	int i = 0;
+	for(auto v : mesh.vertices) {
+		std::cout << v << ' ';
+		if(i++ % 3 == 2) {
+			endl(std::cout);
+		}
 	}
-	std::cout << "\nMesh faces: ";
-	for(auto i : mesh.faces) {
-		std::cout << i << ' ';
+	std::cout << "\nMesh faces: \n";
+	for(auto f : mesh.faces) {
+		// Divide by 3 to get vertex index
+		std::cout << f/3 << ' ';
+		if(i++ % 3 == 2) {
+			endl(std::cout);
+		}
 	}
 	endl(std::cout);
 }

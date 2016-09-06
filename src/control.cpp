@@ -23,7 +23,7 @@ namespace Control {
 		glfwMakeContextCurrent(viewer.win);
 
 		using namespace Model;
-		mesh_t mesh(50, 50,
+		mesh_t mesh(150, 150,
 		[](float s, float t, std::vector<float> &vertices) {
 			auto theta = s*M_PI*2, phi = t*M_PI;
 			vertices.emplace_back(cos(theta)*sin(phi)); // X
@@ -36,13 +36,13 @@ namespace Control {
 
 		glGenBuffers(1, &viewer.ids[view::e_id_vbuf]);
 		glBindBuffer(GL_ARRAY_BUFFER, viewer.ids[view::e_id_vbuf]);
-		glBufferData(GL_ARRAY_BUFFER, mesh.vertices.size(),
+		glBufferData(GL_ARRAY_BUFFER, mesh.vertices.size() * sizeof(float),
 			(void*) &mesh.vertices[0], GL_STATIC_DRAW);
 
 		glGenBuffers(1, &viewer.ids[view::e_id_fbuf]);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,
 			viewer.ids[view::e_id_fbuf]);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.faces.size(),
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.faces.size() * sizeof(int),
 			(void*) &mesh.faces[0], GL_STATIC_DRAW);
 		viewer.nTriangles = mesh.faces.size()/3;
 		return alive;
