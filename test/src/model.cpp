@@ -158,4 +158,21 @@ int main(int argc, const char **argv) {
 		} break;
 		default: {} break;
 	}
+
+	int w = 3, h = 3;
+	mesh_t mesh(w, h, [](float u, float v, std::vector<float> &vertices) {
+		vertices.emplace_back(u);
+		vertices.emplace_back(v);
+		vertices.emplace_back(0);
+	});
+
+	std::cout << "\nMesh points: ";
+	for(auto f : mesh.vertices) {
+		std::cout << f << ' ';
+	}
+	std::cout << "\nMesh faces: ";
+	for(auto i : mesh.faces) {
+		std::cout << i << ' ';
+	}
+	endl(std::cout);
 }

@@ -38,13 +38,12 @@ MAIN_MODULES?=util system math model view control
 TEST_MODULES?=$(MAIN_MODULES) main
 MODULES?=UTIL SYSTEM MATH MODEL VIEW CONTROL
 MODULE_DIRS?=$(foreach mod,$(MAIN_MODULES),$(mod)/)
-#MAIN_H_ONLY?=util/types.hpp math.hpp math/quat.hpp math/dual.hpp system.hpp
 
 SYSTEM_SUBMODULES?=system/net system/printer
 SYSTEM_H_ONLY?=
 MATH_SUBMODULES?=math/affine
 MATH_H_ONLY?=math/quat.hpp math/dual.hpp
-MODEL_SUBMODULES?=model/ply model/obj model/mtl
+MODEL_SUBMODULES?=model/ply model/obj model/mtl model/mesh
 MODEL_H_ONLY?=
 VIEW_SUBMODULES?=view/shade view/pane
 VIEW_H_ONLY?=

@@ -7,44 +7,68 @@
 #include <sstream>
 #include <math.h>
 
+#define GLFW_INCLUDE_NONE
 #include <GL/gl3w.h>
-#include <GL/glu.h>
 #include <GLFW/glfw3.h>
 
 namespace View {
-	void printErrors(void) {
-		GLenum err;
-		while(!(err = glGetError())) {
-			std::cout << gluErrorString(err) << "\n";
+	bool view::setProg(std::atomic_bool &alive,
+			const char *vert_fname, const char *frag_fname) {
+		if(!alive) {
+			return false;
 		}
+		if(ids[e_id_prog]) glDeleteProgram(ids[e_id_prog]);
+		ids[e_id_prog] = glCreateProgram();
+		if(!link(vert_fname, frag_fname, ids[e_id_prog], errors)) {
+			errors.emplace_back("Could not compile/link shader(s).");
+			return alive = false;
+		}
+		auto mat_model = glGetUniformLocation(ids[e_id_prog], "model"),
+			 mat_view = glGetUniformLocation(ids[e_id_prog], "view"),
+			 mat_proj = glGetUniformLocation(ids[e_id_prog], "proj");
+		if(mat_model == -1) {
+			errors.emplace_back("Could not find uniform 'model'");
+			return alive = false;
+		}
+		ids[e_id_model] = mat_model;
+		if(mat_view == -1) {
+			errors.emplace_back("Could not find uniform 'view'");
+			return alive = false;
+		}
+		ids[e_id_view] = mat_view;
+		if(mat_proj == -1) {
+			errors.emplace_back("Could not find uniform 'view'");
+			return alive = false;
+		}
+		ids[e_id_proj] = mat_proj;
+		glUseProgram(ids[e_id_prog]);
+		return true;
 	}
 
 	void view::setUniforms(void) {
 		int w, h;
 		glfwGetFramebufferSize(win, &w, &h);
-		float mag = float(1/tan(fov*M_PI/180));
-		float mat_proj[]{
-				mag, 0, 0, 0, 0, mag, 0, 0,
-				0, 0, (far+near)/(far-near), -1,
-				0, 0, 2*far*near/(far-near), 0
-		};
-		glUniformMatrix4fv(ids[e_id_proj], 1, GL_TRUE, mat_proj);
-
-		float ct = cos(-theta*1.5), st = sin(-theta*1.5),
-			  cp = cos(-phi), sp = sin(-phi);
-		float mat_model[]{
-				    ct,  0,    -st, 0,
-				-sp*st, cp, -sp*ct, 0,
-				 cp*st, sp,  cp*ct, 0,
-				     0,  0,      0, 1
-		}, mat_view[]{
-				1, 0, 0, 0,
-				0, 1, 0, 0,
-				0, 0, 1, 0,
-				0, 0, 2, 1
+		float mag = float(1/tan(fov*M_PI/180)),
+			ct = cos(theta/2), st = sin(theta/2),
+			cp = cos(phi/2), sp = sin(phi/2),
+		mat_proj[]{ // Projection matrix
+			mag, 0, 0, 0, 0, mag, 0, 0,
+			0, 0, (far+near)/(far-near), -1,
+			0, 0, 2*far*near/(far-near), 0
+		}, mat_model[]{ // Model matrix
+			ct*cp, -ct*sp, -st, 0,
+			sp,        cp,   0, 0,
+			st*cp, -st*sp,  ct, 0,
+			0,          0,   0, 1
+		}, mat_view[]{ // View matrix
+			1, 0,   0, 0,
+			0, 1,   0, 0,
+			0, 0,   1, 0,
+			x, y, z-4, 1
 		};
 
-		glUniformMatrix4fv(ids[e_id_model], 1, GL_TRUE, mat_model);
+		glUniformMatrix4fv(ids[e_id_proj], 1, GL_FALSE, mat_proj);
+		glUniformMatrix4fv(ids[e_id_model], 1, GL_FALSE, mat_model);
 		glUniformMatrix4fv(ids[e_id_view], 1, GL_FALSE, mat_view);
 	}
 	
@@ -55,6 +79,7 @@ namespace View {
 			//stride = 2*offset,
 			bits = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
 		setUniforms();
+		glClearColor(0.25,0.25,0.25,1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glBindBuffer(GL_ARRAY_BUFFER, ids[e_id_vbuf]);
 		
@@ -62,30 +87,35 @@ namespace View {
 		glVertexAttribPointer(0, 3, GL_FLOAT,
 				GL_FALSE, stride, nullptr);
 		
-		
- 		glEnableVertexAttribArray(1);
+ 		/*glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 3, GL_FLOAT,
-				GL_FALSE, stride, (void*) offset);
+				GL_FALSE, stride, (void*) offset);*/
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ids[e_id_fbuf]);
 		glDrawElements(GL_TRIANGLES, nTriangles*3,
 				GL_UNSIGNED_INT, nullptr);
 
-		glDisableVertexAttribArray(1);
+		//glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(0);
 		glfwSwapBuffers(win);
 	}
 
-	void view::poll(std::atomic_bool &alive) {
+	bool view::poll(std::atomic_bool &alive) {
 		if(alive && win) {
 			glfwMakeContextCurrent(win);
 			glfwPollEvents();
+		} else {
+			return alive = false;
 		}
 		if(glfwWindowShouldClose(win)) {
-			alive = false;
+			return alive = false;
 		}
+		return alive;
 	}
-	void view::init(std::atomic_bool &alive) {
+	bool view::init(std::atomic_bool &alive) {
+		if(!alive) {
+			return false;
+		}
 		glfwSetWindowSizeCallback(win, 
 			[](GLFWwindow*, int w, int h){
 				glViewport(0, 0, w, h);
@@ -95,15 +125,18 @@ namespace View {
 			[] (int, const char *szErr) {
 				std::cout << szErr << std::endl;
 			});
+		return alive;
 	}
 	
-	void view::run(std::atomic_bool &alive) {
+	bool view::run(std::atomic_bool &alive) {
 		if(alive && win && !glfwWindowShouldClose(win)) {
 			glfwMakeContextCurrent(win);
 			redraw();
 		}
+		return alive;
 	}
-	view::view(std::atomic_bool &alive, const char *vert, const char *frag) {
+	view::view(std::atomic_bool &alive):
+			theta(0), phi(0), x(0), y(0), z(0) {
 		if(!alive) {
 			return;
 		}
@@ -113,14 +146,14 @@ namespace View {
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		
 		if(!(win = glfwCreateWindow(680, 680, "View", NULL, NULL))) {
-			std::cout << "Could not create window." << std::endl;
+			errors.emplace_back("Could not create window.");
 			alive = false;
 			return;
 		}
 
 		glfwMakeContextCurrent(win);
 		if(gl3wInit()) {
-			std::cout << "Could not initialize gl3w." << std::endl;
+			errors.emplace_back("Could not initialize gl3w.");
 			alive = false;
 			return;
 		}
@@ -136,17 +169,6 @@ namespace View {
 
 		glGenVertexArrays(1, &ids[e_id_va]);
 		glBindVertexArray(ids[e_id_va]);
-		
-		ids[e_id_prog] = glCreateProgram();
-		if(!link(vert, frag, ids[e_id_prog])) {
-			std::cout << "Could not compile/link shader(s)." << std::endl;
-			alive = false;
-			return;
-		}
-		ids[e_id_model] = glGetUniformLocation(ids[e_id_prog], "model");
-		ids[e_id_view] = glGetUniformLocation(ids[e_id_prog], "view");
-		ids[e_id_proj] = glGetUniformLocation(ids[e_id_prog], "proj");
-		glUseProgram(ids[e_id_prog]);
 	}
 	view::~view(void) {
 		if(ids[e_id_prog]) {

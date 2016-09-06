@@ -10,8 +10,8 @@
 #include <streambuf>
 
 namespace View {
-	using std::string;
-	bool compile(const char *fname, GLuint &shader) {
+	bool compile(const char *fname, GLuint &shader,
+			std::vector<std::string> &errors) {
 		int len;
 		GLint status = GL_FALSE;
 		
@@ -29,21 +29,20 @@ namespace View {
 			char msg[len+1];
 			msg[len] = '\0';
 			glGetShaderInfoLog(shader, len, NULL, msg);
-			std::cout << msg << std::endl;
+			errors.emplace_back((const char *)msg);
+			return false;
 		}
 		return true;
 	}
 
-	bool link(const char *vertName, 
-			const char *fragName, GLuint &program) {
-		using string=std::string;
-
+	bool link(const char *vertName, const char *fragName,
+			GLuint &program, std::vector<std::string> &errors) {
 		bool success = false;
 		GLint len, status;
 		GLuint vert = glCreateShader(GL_VERTEX_SHADER),
 			frag = glCreateShader(GL_FRAGMENT_SHADER);
-		if((success = compile(vertName, vert))) {
-			if((success = compile(fragName, frag))) {
+		if((success = compile(vertName, vert, errors))) {
+			if((success = compile(fragName, frag, errors))) {
 				glAttachShader(program, vert);
 				glAttachShader(program, frag);
 				glLinkProgram(program);
@@ -57,7 +56,8 @@ namespace View {
 					msg[len] = '\0';
 					glGetProgramInfoLog(program, 
 							len, NULL, msg);
-					std::cout << msg << std::endl;
+					errors.emplace_back((const char *)msg);
+					return false;
 				}
 				glDeleteShader(frag);
 			}

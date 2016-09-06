@@ -84,8 +84,7 @@ $(DIR_ROOT_LIB)util$(OBJ_EXT): $(UTIL_H_ONLY)
 test: $(MAIN_OBJS) $(TEST_EXES); 
 
 gl3w: $(GL3W_OBJS)
-$(DIR_GL3W)%$(OBJ_EXT): $(DIR_GL3W)$(DIR_SRC)*.c\
-		$(DIR_GL3W)$(DIR_INCLUDE)GL/*.h
+$(DIR_GL3W)%$(OBJ_EXT): $(DIR_GL3W)$(DIR_SRC)*.c
 	$(COMPILE_CC) $(CFLAGS) $<\
 		-o $@
 $(GL3W_DLLS): $(DIR_GL3W)$(DIR_SRC)*.c $(DIR_GL3W)$(DIR_INCLUDE)GL/*.h

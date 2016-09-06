@@ -13,22 +13,20 @@ namespace Control {
 
 	/// A data structure controlling both model and view
 	struct control : public Util::task {
+		std::vector<std::string> errors;
 		const char *mpath;
 		View::view viewer;
 		//Model::contour<Util::undef_t, GLfloat, GLclampf, GLclampf> model;
 		
-		void init(std::atomic_bool &alive) override;
-		void poll(std::atomic_bool &alive) override;
-		void run(std::atomic_bool &alive) override;
+		bool init(std::atomic_bool &alive) override;
+		bool poll(std::atomic_bool &alive) override;
+		bool run(std::atomic_bool &alive) override;
 
 		/** Constructor; initializes and applies shaders
  		 * @param alive Shared state; false signals shutdown
- 		 * @param ply The path to a ply model
- 		 * @param vert Path to a GLSL vertex shader
- 		 * @param frag Path to a GLSL fragment shader
+ 		 * @param ply The path to a Wavefront obj model
  		 */
-		control(std::atomic_bool &alive, const char *ply,
- 			const char *vert, const char *frag);
+		control(std::atomic_bool &alive, const char *obj);
 	};
 }
 

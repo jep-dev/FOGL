@@ -82,36 +82,6 @@ namespace Math {
 	quat<R> quat<R>::operator()(quat<R> const& rhs) const {
 		return *this * rhs * ~*this;
 	}
-	/*template<typename R>
-	quat<R> quat<R>::operator+(quat<R> const& rhs) const {
-		return {w+rhs.w, x+rhs.x, y+rhs.y, z+rhs.z};
-	}
-	template<typename R>
-	quat<R> quat<R>::operator-(quat<R> const& rhs) const {
-		return {w-rhs.w, x-rhs.x, y-rhs.y, z-rhs.z};
-	}
-	template<typename R>
-	quat<R> quat<R>::operator*(R const& rhs) const {
-		return {rhs*w, rhs*x, rhs*y, rhs*z};
-	}
-	template<typename R>
-	quat<R> quat<R>::operator*(quat<R> const& rhs) const {
-		R rw = rhs.w, rx = rhs.x, 
-			ry = rhs.y, rz = rhs.z;
-		return {
-			w*rw - x*rx - y*ry - z*rz,
-			w*rx + x*rw + y*rz - z*ry,
-			w*ry + y*rw + rz*x - z*rx,
-			w*rz + z*rw + x*ry - y*rx};
-	}
-	template<typename R>
-	quat<R> quat<R>::operator/(R const& rhs) const {
-		return {w/rhs, x/rhs, y/rhs, z/rhs};
-	}
-	template<typename R>
-	quat<R> quat<R>::operator/(quat<R> const& rhs) const {
-		return *this * !rhs;
-	}*/
 
 	template<typename R>
 	quat<R>& quat<R>::operator+=(quat<R> const& rhs) {
@@ -138,18 +108,7 @@ namespace Math {
 		y = lw*ry - lx*rz + ly*rw + lz*rx;
 		z = lw*rz + lx*ry - ly*rx + lz*rw;
 		return *this;
-		//return *this = *this * rhs;
 	}
-	/*template<typename R>
-	quat<R>& quat<R>::operator/=(R const& rhs) {
-		w /= rhs; x /= rhs;
-		y /= rhs; z /= rhs;
-		return *this;
-	}
-	template<typename R>
-	quat<R>& quat<R>::operator/=(quat<R> const& rhs) {
-		return *this = *this / rhs;
-	}*/
 }
 
 #endif

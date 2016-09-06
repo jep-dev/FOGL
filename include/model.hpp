@@ -45,5 +45,6 @@ namespace Model {
 #include "model/ply.hpp"
 #include "model/obj.hpp"
 #include "model/mtl.hpp"
+#include "model/mesh.hpp"
 
 #endif
