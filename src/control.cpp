@@ -162,9 +162,9 @@ namespace Control {
 					else if(i == 7)
 						viewer.x = viewer.y = viewer.z = 0;
 					else if(i == 4)
-						viewer.z -= .1;
+						viewer.y -= .1;
 					else if(i == 5)
-						viewer.z += .1;
+						viewer.y += .1;
 					else std::cout << i << std::endl;
 				}
 			}
@@ -174,8 +174,8 @@ namespace Control {
 			if(nAxes >= 2) {
 				float x = axes[0], y = axes[1];
 				deadzone(x, y);
-				viewer.x += x/10;
-				viewer.y -= y/10;
+				viewer.x -= x/20;
+				viewer.z -= y/20;
 			}
 			if(nAxes >= 5) {
 				float theta = axes[3], phi = axes[4];
