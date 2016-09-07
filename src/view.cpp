@@ -52,7 +52,8 @@ namespace View {
 			ct = cos(theta/2), st = sin(theta/2),
 			cp = cos(phi/2), sp = sin(phi/2),
 		mat_proj[]{ // Projection matrix
-			mag, 0, 0, 0, 0, mag, 0, 0,
+			mag, 0, 0, 0,
+			0, mag, 0, 0,
 			0, 0, (far+near)/(far-near), -1,
 			0, 0, 2*far*near/(far-near), 0
 		}, mat_model[]{ // Model matrix
@@ -61,9 +62,9 @@ namespace View {
 			st*cp, -st*sp,  ct, 0,
 			0,          0,   0, 1
 		}, mat_view[]{ // View matrix
-			1, 0,      0, 0,
-			0, 1,      0, 0,
-			0, 0,      1, 0,
+			1, 0, 0, 0,
+			0, 1, 0, 0,
+			0, 0, 1, 0,
 			x, y, z-2.5f, 1
 		};
 
