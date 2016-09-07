@@ -48,20 +48,21 @@ namespace View {
 	void view::setUniforms(void) {
 		int w, h;
 		glfwGetFramebufferSize(win, &w, &h);
-		float mag = float(1/tan(fov*M_PI/180)),
+		glViewport(0, 0, w, h);
+		float mag = 1.0f/tan(fov*M_PI/180),
 			ct = cos(theta/2), st = sin(theta/2),
 			cp = cos(phi/2), sp = sin(phi/2),
 		mat_proj[]{ // Projection matrix
-			mag, 0, 0, 0,
+			mag*h/w, 0, 0, 0,
 			0, mag, 0, 0,
 			0, 0, (far+near)/(far-near), -1,
 			0, 0, 2*far*near/(far-near), 0
-		}, mat_model[]{ // Model matrix
+		}, mat_view[]{ // View matrix
 			ct*cp, -ct*sp, -st, 0,
 			sp,        cp,   0, 0,
 			st*cp, -st*sp,  ct, 0,
 			0,          0,   0, 1
-		}, mat_view[]{ // View matrix
+		}, mat_model[]{ // Model matrix
 			1, 0, 0, 0,
 			0, 1, 0, 0,
 			0, 0, 1, 0,
