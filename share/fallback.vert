@@ -10,6 +10,7 @@ in vec3 vertex;
 out vec4 InColor;
 
 void main() {
-	gl_Position = proj * view * model * vec4(vertex, 1.0);
-	InColor = vec4((gl_Position/dot(gl_Position,gl_Position)).xyz, 1.0);
+	vec4 pos = vec4(vertex, 1.0);
+	gl_Position = proj * view * model * pos;
+	InColor = vec4((pos/dot(pos,pos)).xyz, 1.0);
 }
