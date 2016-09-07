@@ -5,6 +5,7 @@ namespace Model {
 	struct mesh_t {
 		std::vector<float> vertices;
 		std::vector<int> faces;
+		friend std::ostream& operator<<(std::ostream& os, const mesh_t& mesh);
 		mesh_t(int w, int h, void (*fn)
 			(float s, float t, std::vector<float> &));
 	};
