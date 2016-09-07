@@ -167,21 +167,5 @@ int main(int argc, const char **argv) {
 		vertices.emplace_back(cos(phi));
 	});
 
-	std::cout << "\nMesh points: \n";
-	int i = 0;
-	for(auto v : mesh.vertices) {
-		std::cout << v << ' ';
-		if(i++ % 3 == 2) {
-			endl(std::cout);
-		}
-	}
-	std::cout << "\nMesh faces: \n";
-	for(auto f : mesh.faces) {
-		// Divide by 3 to get vertex index
-		std::cout << f/3 << ' ';
-		if(i++ % 3 == 2) {
-			endl(std::cout);
-		}
-	}
-	endl(std::cout);
+	std::cout << mesh << std::endl;
 }
