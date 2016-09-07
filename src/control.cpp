@@ -1,4 +1,5 @@
 #include "control.hpp"
+#include "math.hpp"
 #include "model.hpp"
 
 #define GLFW_INCLUDE_NONE
@@ -15,6 +16,17 @@
 #include "omp.h"
 
 namespace Control {
+
+	void control::deadzone(float &x, float &y) {
+		float r = sqrt(x*x + y*y), theta = atan2(y, x);
+		if(r < r_dead) {
+			x = y = 0;
+		} else {
+			x = (x/r - r_dead) / (1-r_dead);
+			y = (y/r - r_dead) / (1-r_dead);
+		}
+	}
+
 	bool control::init(std::atomic_bool &alive) {
 		//using namespace Util;
 		// Task 1: view before model (splash)
@@ -23,8 +35,9 @@ namespace Control {
 		glfwMakeContextCurrent(viewer.win);
 
 		using namespace Model;
-		mesh_t mesh(150, 150,
+		mesh_t mesh(10, 10,
 		[](float s, float t, std::vector<float> &vertices) {
+			using namespace Math;
 			auto theta = s*M_PI*2, phi = t*M_PI;
 			vertices.emplace_back(cos(theta)*sin(phi)); // X
 			vertices.emplace_back(sin(theta)*sin(phi)); // Y
@@ -158,16 +171,16 @@ namespace Control {
 			int nAxes;
 			const GLfloat *axes =
 				glfwGetJoystickAxes(GLFW_JOYSTICK_1, &nAxes);
-			for(int i = 0; i < nAxes; i++) {
-				if(i == 0) {
-					viewer.theta = axes[i]*M_PI;
-				} else if(i == 1) {
-					viewer.phi = axes[i]*M_PI;
-				} else if(i == 6) {
-					viewer.x += axes[i]/10;
-				} else if(i == 7) {
-					viewer.y -= axes[i]/10;
-				}
+			if(nAxes >= 2) {
+				float x = axes[0], y = axes[1];
+				deadzone(x, y);
+				viewer.x += x/10;
+				viewer.y -= y/10;
+			}
+			if(nAxes >= 5) {
+				float theta = axes[3], phi = axes[4];
+				viewer.theta = theta*M_PI;
+				viewer.phi = phi*M_PI;
 			}
 		}
 		return alive;

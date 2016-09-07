@@ -16,6 +16,9 @@ namespace Control {
 		std::vector<std::string> errors;
 		const char *mpath;
 		View::view viewer;
+
+		float r_dead = .125f;
+		void deadzone(float &x, float &y);
 		
 		bool init(std::atomic_bool &alive) override;
 		bool poll(std::atomic_bool &alive) override;
