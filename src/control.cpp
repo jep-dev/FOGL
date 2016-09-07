@@ -35,7 +35,7 @@ namespace Control {
 		glfwMakeContextCurrent(viewer.win);
 
 		using namespace Model;
-		mesh_t mesh(10, 10,
+		mesh_t mesh(150, 150,
 		[](float s, float t, std::vector<float> &vertices) {
 			using namespace Math;
 			auto theta = s*M_PI*2, phi = t*M_PI;
@@ -165,7 +165,6 @@ namespace Control {
 						viewer.y -= .1;
 					else if(i == 5)
 						viewer.y += .1;
-					else std::cout << i << std::endl;
 				}
 			}
 			int nAxes;
