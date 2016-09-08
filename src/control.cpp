@@ -56,9 +56,9 @@ namespace Control {
 			(void*) &mesh.faces[0], GL_STATIC_DRAW);
 		viewer.nTriangles = mesh.faces.size()/3;
 		return alive;
-		/*
+		
 		// Task 2: wavefront obj model loading
-		using namespace Model;
+		/*using namespace Model;
 		obj_t object;
 		auto status = obj_t::load(this -> mpath, object);
 		if(status != obj_t::e_ok) {
@@ -81,7 +81,7 @@ namespace Control {
 		if(object.vn_beg.size() != 0) {
 			auto vn0 = object.vn_beg[0], vn1 = object.vn_end[0];
 			glBindBuffer(GL_ARRAY_BUFFER, viewer.ids[view::e_id_vnbuf]);
-			glBufferData(GL_ARRAY_BUFFER, vn1-vn0,
+			glBufferData(GL_ARRAY_BUFFER, (vn1-vn0)*sizeof(float),
 					(void*)(&object.floats[vn0]), GL_STATIC_DRAW);
 		}
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,
@@ -104,8 +104,9 @@ namespace Control {
 			return alive = false;
 		}
 		viewer.nTriangles = (f1-f0)/3;
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, viewer.nTriangles*3,
-				(void*)(&object.ints[f0]), GL_STATIC_DRAW);*/
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, viewer.nTriangles*3*sizeof(int),
+				(void*)(&object.ints[f0]), GL_STATIC_DRAW);
+		return alive;*/
 
 		/*
 		// Task 2: model loading
