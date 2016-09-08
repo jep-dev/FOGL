@@ -34,7 +34,7 @@ namespace Control {
 		glfwSetInputMode(viewer.win, GLFW_STICKY_KEYS, 1);
 		glfwMakeContextCurrent(viewer.win);
 
-		using namespace Model;
+		/*using namespace Model;
 		mesh_t mesh(150, 150,
 		[](float s, float t, std::vector<float> &vertices) {
 			using namespace Math;
@@ -55,10 +55,10 @@ namespace Control {
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.faces.size() * sizeof(int),
 			(void*) &mesh.faces[0], GL_STATIC_DRAW);
 		viewer.nTriangles = mesh.faces.size()/3;
-		return alive;
+		return alive;*/
 		
 		// Task 2: wavefront obj model loading
-		/*using namespace Model;
+		using namespace Model;
 		obj_t object;
 		auto status = obj_t::load(this -> mpath, object);
 		if(status != obj_t::e_ok) {
@@ -66,24 +66,25 @@ namespace Control {
 			return alive = false;
 		}
 
-		glGenBuffers(view::e_id_model-view::e_id_vbuf,
-				&viewer.ids[view::e_id_vbuf]);
 		// TODO Use more than first range of each obj type
 		if(object.v_beg.size() == 0) {
 			errors.push_back("The loaded model does not contain vertices.");
 			return alive = false;
 		} else {
 			auto v0 = object.v_beg[0], v1 = object.v_end[0];
+			glGenBuffers(1, &viewer.ids[view::e_id_vbuf]);
 			glBindBuffer(GL_ARRAY_BUFFER, viewer.ids[view::e_id_vbuf]);
 			glBufferData(GL_ARRAY_BUFFER, v1-v0,
 					(void*)(&object.floats[v0]), GL_STATIC_DRAW);
 		}
 		if(object.vn_beg.size() != 0) {
 			auto vn0 = object.vn_beg[0], vn1 = object.vn_end[0];
+			glGenBuffers(1, &viewer.ids[view::e_id_vnbuf]);
 			glBindBuffer(GL_ARRAY_BUFFER, viewer.ids[view::e_id_vnbuf]);
 			glBufferData(GL_ARRAY_BUFFER, (vn1-vn0)*sizeof(float),
 					(void*)(&object.floats[vn0]), GL_STATIC_DRAW);
 		}
+		glGenBuffers(1, &viewer.ids[view::e_id_fbuf]);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,
 				viewer.ids[view::e_id_fbuf]);
 		int f0, f1;
@@ -104,9 +105,9 @@ namespace Control {
 			return alive = false;
 		}
 		viewer.nTriangles = (f1-f0)/3;
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, (f1-f0)*sizeof(int),
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, (f1-f0)/3*sizeof(int),
 				(void*)(&object.ints[f0]), GL_STATIC_DRAW);
-		return alive;*/
+		return alive;
 
 		/*
 		// Task 2: model loading
