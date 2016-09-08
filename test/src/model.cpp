@@ -112,21 +112,13 @@ int main(int argc, const char **argv) {
 		default: {} break;
 	}
 
-	int w = 3, h = 3;
+	int w = 5, h = 5;
 	mesh_t mesh(w, h, [](float s, float t, std::vector<float> &vertices) {
 		auto theta = s*M_PI*2, phi = t*M_PI;
 		vertices.emplace_back(cos(theta)*sin(phi));
 		vertices.emplace_back(sin(theta)*sin(phi));
 		vertices.emplace_back(cos(phi));
 	});
-	std::ofstream file;
-	file.open("share/sphere.obj");
-	if(!file.is_open()) {
-		std::cout << "Could not open file." << std::endl;
-	} else {
-		file << mesh;
-		file.close();
-	}
 
 	std::cout << mesh << std::endl;
 }
