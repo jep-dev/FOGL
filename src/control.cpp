@@ -104,7 +104,7 @@ namespace Control {
 			return alive = false;
 		}
 		viewer.nTriangles = (f1-f0)/3;
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, viewer.nTriangles*3*sizeof(int),
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, (f1-f0)*sizeof(int),
 				(void*)(&object.ints[f0]), GL_STATIC_DRAW);
 		return alive;*/
 
