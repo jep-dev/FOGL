@@ -1,5 +1,6 @@
 #include "model/obj.hpp"
 
+#include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <ostream>
@@ -118,6 +119,14 @@ int main(int argc, const char **argv) {
 		vertices.emplace_back(sin(theta)*sin(phi));
 		vertices.emplace_back(cos(phi));
 	});
+	std::ofstream file;
+	file.open("share/sphere.obj");
+	if(!file.is_open()) {
+		std::cout << "Could not open file." << std::endl;
+	} else {
+		file << mesh;
+		file.close();
+	}
 
 	std::cout << mesh << std::endl;
 }
