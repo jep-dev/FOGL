@@ -61,54 +61,6 @@ int main(int argc, const char **argv) {
 		counter++;
 		endl(std::cout);
 	}
-	/*std::cout << "Contiguous data: " << std::endl;
-	endl(std::cout << "Bools:" << obj.bools.size());
-	for(auto it : obj.bools) std::cout << it << " ";
-	endl(std::cout << "\nFloats:" << obj.floats.size());
-	for(auto it : obj.floats) std::cout << it << " ";
-	endl(std::cout << "\nIntegers:" << obj.ints.size());
-	for(auto it : obj.ints) std::cout << it << " ";
-	endl(std::cout << "\nStrings:" << obj.strings.size());
-	for(auto it : obj.strings) std::cout << it << " ";
-	endl(std::cout);*/
-
-	/*auto f_it = std::begin(obj.floats);
-	auto i_it = std::begin(obj.ints);
-	auto nf_it = std::begin(obj.nFloats);
-	auto ni_it = std::begin(obj.nInts);
-	for(auto t_it = std::begin(obj.types);
-			t_it != std::end(obj.types); t_it++) {
-		bool vmatch = *t_it == e_el_v,
-			 vnmatch = *t_it == e_el_vn,
-			 f2match = *t_it == e_el_f2;
-		if(*nf_it > 0) {
-			if(vmatch) {
-				std::cout << "\nVertex: ";
-			} else if(vnmatch) {
-				std::cout << "\nVertex norm: ";
-			}
-			for(int i = 0, iMax = *nf_it; i < iMax; ++i) {
-				if(vmatch || vnmatch) {
-					std::cout << *f_it << " ";
-				}
-				f_it++;
-			}
-		}
-		if(*ni_it > 0) {
-			if(f2match) {
-				std::cout << "\nFace: ";
-			}
-			for(int i = 0, iMax = *ni_it; i < iMax; ++i) {
-				if(f2match) {
-					std::cout << *i_it << " ";
-				}
-				i_it++;
-			}
-		}
-		nf_it++;
-		ni_it++;
-	}
-	std::cout << "\n\n";*/
 
 	for(int i = 0; i < 7; i++) {
 		std::vector<int> begs, ends;
