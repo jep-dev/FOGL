@@ -38,8 +38,8 @@ namespace View {
 
 		/** Compiles and links the given shaders
  		 * @param alive Shared state; false signals shutdown
-		 * @param vert Path to a GLSL vertex shader
-		 * @param frag Path to a GLSL fragment shader
+		 * @param vert_fname Path to a GLSL vertex shader
+		 * @param frag_fname Path to a GLSL fragment shader
 		 */
 		bool setProg(std::atomic_bool &alive,
 				const char *vert_fname, const char *frag_fname);
