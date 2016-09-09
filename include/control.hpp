@@ -18,6 +18,11 @@ namespace Control {
 		View::view viewer;
 
 		float r_dead = .125f;
+		/** Joystick deadzone; zeroes inputs below threshold and normalizes
+		 * inputs above threshold.
+		 * @param x First axis
+		 * @param y Second axis
+		 */
 		void deadzone(float &x, float &y);
 		
 		bool init(std::atomic_bool &alive) override;
