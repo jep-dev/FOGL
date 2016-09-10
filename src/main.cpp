@@ -5,11 +5,11 @@
 #include "system/printer.hpp"
 
 #ifndef OBJ_PATH
-#define OBJ_PATH "share/cube.obj"
+#define OBJ_PATH "share/sphere.obj"
 #endif
-#ifndef MTL_PATH
+/*#ifndef MTL_PATH
 #define MTL_PATH "share/cube.mtl"
-#endif
+#endif*/
 #ifndef VERT_PATH
 #define VERT_PATH "share/fallback.vert"
 #endif

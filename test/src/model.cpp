@@ -10,9 +10,9 @@
 #ifndef OBJ_PATH
 #define OBJ_PATH "share/cube.obj"
 #endif
-#ifndef MTL_PATH
+/*#ifndef MTL_PATH
 #define MTL_PATH "share/cube.mtl"
-#endif
+#endif*/
 
 int main(int argc, const char **argv) {
 	using namespace Model;
@@ -97,7 +97,7 @@ int main(int argc, const char **argv) {
 		}
 	}
 
-	material_t mtl;
+	/*material_t mtl;
 	std::cout << "\nFile: " << mtl_fname << std::endl;
 	switch(mtl.load(mtl_fname, mtl)) {
 		case material_t::e_ok: {
@@ -110,7 +110,7 @@ int main(int argc, const char **argv) {
 			std::cout << "Status: Unknown" << std::endl;
 		} break;
 		default: {} break;
-	}
+	}*/
 
 	int w = 150, h = 150;
 	mesh_t mesh(w, h, [](float s, float t, std::vector<float> &vertices) {
