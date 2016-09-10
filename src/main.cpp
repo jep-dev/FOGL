@@ -36,15 +36,15 @@ int main(int argc, const char **argv) {
 		return 1;
 	}
 	
-	const char *obj_fname, *mtl_fname, *vert_fname, *frag_fname;
+	const char *obj_fname, *vert_fname, *frag_fname;
 
 	if(argc >= 2) obj_fname = argv[1];
 	else obj_fname = OBJ_PATH;
-	if(argc >= 3) mtl_fname = argv[2];
-	else mtl_fname = MTL_PATH;
-	if(argc >= 4) vert_fname = argv[3];
+	/*if(argc >= 3) mtl_fname = argv[2];
+	else mtl_fname = MTL_PATH;*/
+	if(argc >= 4) vert_fname = argv[2];
 	else vert_fname = VERT_PATH;
-	if(argc >= 5) frag_fname = argv[4];
+	if(argc >= 5) frag_fname = argv[3];
 	else frag_fname = FRAG_PATH;
 
 	std::atomic_bool alive(true);
@@ -60,19 +60,19 @@ int main(int argc, const char **argv) {
 		return 1;
 	}
 	using namespace System;
-	Printer<6> printer;
+	Printer<5> printer;
 	std::string cols[]{"GLFW", "OpenGL", "Path"},
 		rows[]{"", "Major", "Minor", "Revision", "",
-			"", "Wavefront obj", "Wavefront mtl",
+			"", "Wavefront obj", /*"Wavefront mtl",*/
 			"Vertex shader", "Fragment shader", ""},
-		paths[]{obj_fname, mtl_fname, vert_fname, frag_fname};
+		paths[]{obj_fname,/* mtl_fname,*/ vert_fname, frag_fname};
 	int versions[6]{0};
 	glfwGetVersion(&versions[0], &versions[2], &versions[4]);
 	glGetIntegerv(GL_MAJOR_VERSION, &versions[1]);
 	glGetIntegerv(GL_MINOR_VERSION, &versions[3]);
-	printer.push(&rows[5], &rows[5]+6)
+	printer.push(&rows[5], &rows[5]+5)
 		.level().insert(0, " ").level()
-		.push<std::string, 4, 1, 31>(paths, &cols[2], &cols[3]+1)
+		.push<std::string, 3, 1, 31>(paths, &cols[2], &cols[3]+1)
 		.level().insert(0, "   ").level()
 		.push(&rows[0], &rows[5])
 		.level().insert(0, " ").level()
