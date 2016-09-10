@@ -77,7 +77,7 @@ namespace Model {
 					auto s_it = std::begin(s_tk);
 					s_it++;
 					while(s_it != std::end(s_tk)) {
-						index = boost::lexical_cast<int>(*s_it++);
+						index = boost::lexical_cast<int>(*s_it++)-1;
 						ints.push_back(index);
 						n_ints++;
 					}
