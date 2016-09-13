@@ -79,10 +79,10 @@ namespace Control {
 		}
 		if(object.vn_beg.size() != 0) {
 			auto vn0 = object.vn_beg[0], vn1 = object.vn_end[0];
-			/*glGenBuffers(1, &viewer.ids[view::e_id_vnbuf]);
-			glBindBuffer(GL_ARRAY_BUFFER, viewer.ids[view::e_id_vnbuf]);
-			glBufferData(GL_ARRAY_BUFFER, (vn1-vn0)*sizeof(float),
-					(void*)(&object.floats[vn0]), GL_STATIC_DRAW);*/
+			//glGenBuffers(1, &viewer.ids[view::e_id_vnbuf]);
+			//glBindBuffer(GL_ARRAY_BUFFER, viewer.ids[view::e_id_vnbuf]);
+			//glBufferData(GL_ARRAY_BUFFER, (vn1-vn0)*sizeof(float),
+					//(void*)(&object.floats[vn0]), GL_STATIC_DRAW);
 		}
 		glGenBuffers(1, &viewer.ids[view::e_id_fbuf]);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,
