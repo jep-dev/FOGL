@@ -26,7 +26,7 @@ namespace View {
 			e_id_total
 		} e_id_index; 
 		GLuint ids[e_id_total];
-		float near = 1, far = 10, fov = 50;
+		float near = 1, far = 20, fov = 30;
 		int nTriangles;
 		GLFWwindow *win;
 		int frame = 0, fps = 0;
