@@ -33,7 +33,7 @@ namespace Model {
 		}
 		for(auto f : mesh.faces) {
 			if(i == 0) os << "f ";
-			os << f << ' ';
+			os << f+1 << ' ';
 			i++;
 			if(i == 3) {
 				i = 0;

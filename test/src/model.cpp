@@ -10,9 +10,9 @@
 #ifndef OBJ_PATH
 #define OBJ_PATH "share/cube.obj"
 #endif
-#ifndef MTL_PATH
+/*#ifndef MTL_PATH
 #define MTL_PATH "share/cube.mtl"
-#endif
+#endif*/
 
 int main(int argc, const char **argv) {
 	using namespace Model;
@@ -97,7 +97,7 @@ int main(int argc, const char **argv) {
 		}
 	}
 
-	material_t mtl;
+	/*material_t mtl;
 	std::cout << "\nFile: " << mtl_fname << std::endl;
 	switch(mtl.load(mtl_fname, mtl)) {
 		case material_t::e_ok: {
@@ -110,15 +110,22 @@ int main(int argc, const char **argv) {
 			std::cout << "Status: Unknown" << std::endl;
 		} break;
 		default: {} break;
-	}
+	}*/
 
-	int w = 5, h = 5;
+	int w = 150, h = 150;
 	mesh_t mesh(w, h, [](float s, float t, std::vector<float> &vertices) {
 		auto theta = s*M_PI*2, phi = t*M_PI;
 		vertices.emplace_back(cos(theta)*sin(phi));
 		vertices.emplace_back(sin(theta)*sin(phi));
 		vertices.emplace_back(cos(phi));
 	});
-
-	std::cout << mesh << std::endl;
+	std::ofstream file;
+	file.open("share/sphere.obj");
+	if(!file.is_open()) {
+		std::cout << "Could not open file." << std::endl;
+	} else {
+		file << mesh;
+		file.close();
+	}
+	//std::cout << mesh << std::endl;
 }

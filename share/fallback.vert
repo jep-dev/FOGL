@@ -12,5 +12,5 @@ out vec4 InColor;
 void main() {
 	vec4 pos = vec4(vertex, 1.0);
 	gl_Position = proj * view * model * pos;
-	InColor = vec4((pos/dot(pos,pos)).xyz, 1.0);
+	InColor = vec4(normalize(pos).xyz, 1.0);
 }
