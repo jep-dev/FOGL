@@ -17,11 +17,11 @@
 int main(int argc, const char **argv) {
 	using namespace Model;
 	const char *obj_fname, *mtl_fname;
-	if(argc >= 3) {
+	/*if(argc >= 3) {
 		mtl_fname = argv[2];
 	} else {
 		mtl_fname = MTL_PATH;
-	}
+	}*/
 	if(argc >= 2) {
 		obj_fname = argv[1];
 	} else {
