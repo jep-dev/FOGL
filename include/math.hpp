@@ -59,6 +59,7 @@ namespace Math {
 #include "math/quat.hpp"
 #include "math/dual.hpp"
 #include "math/affine.hpp"
+#include "math/matrix.hpp"
 
 namespace Math {
 

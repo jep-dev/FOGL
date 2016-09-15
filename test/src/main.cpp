@@ -56,4 +56,13 @@ int main(int argc, const char **argv) {
 	std::cout << transforms(d10+d0i, d10+d0j) << std::endl;
 	std::cout << transforms(dj0, d10+d0i) << std::endl;
 	std::cout << transforms(d10+d0j, d10+d0i) << std::endl;
+
+	float src[]{1, 2, 0, 0}, dest[4];
+	transpose<2,2>(src, dest);
+	printer.clear();
+	std::string cols2[]{"",""};
+	printer.push<float, 2, 2>(src, &cols2[0], &cols2[0]+2)
+		.level().insert(0, "  ").level()
+		.push<float, 2, 2>(dest, &cols2[0], &cols2[0]+2);
+	std::cout << printer << std::endl;
 }
