@@ -62,7 +62,7 @@ int main(int argc, const char **argv) {
 	printer.clear();
 	std::string cols2[]{"",""};
 	printer.push<float, 2, 2>(src, &cols2[0], &cols2[0]+2)
-		.level().insert(0, "  ").level()
+		.level().insert(0, "T").insert(1,"  = ").level()
 		.push<float, 2, 2>(dest, &cols2[0], &cols2[0]+2);
 	std::cout << printer << std::endl;
 }
