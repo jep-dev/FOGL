@@ -1,5 +1,4 @@
 #include "view.hpp"
-#include <iostream>
 
 namespace View {
 	// TODO Screen/compositor type?
@@ -27,20 +26,29 @@ namespace View {
 
 		if(glCheckFramebufferStatus(GL_FRAMEBUFFER)
 				!= GL_FRAMEBUFFER_COMPLETE) {
-			std::cout << "Exiting due to FBO status" << std::endl;
+			errors.emplace_back("Framebuffer status != complete");
 			return alive = false;
 		}
 
 		// TODO Generate a quad, plus depth, stencil, z-buf?
 		glGenVertexArrays(1, &ids[e_q_va]);
 		glBindVertexArray(ids[e_q_va]);
-		glGenBuffers(1, &ids[e_q_vb]);
-		glBindBuffer(GL_ARRAY_BUFFER, ids[e_q_vb]);
 		static constexpr const GLfloat points[] = {
 			-1, 1, 0, 1, 1, 0, -1, -1, 0, // Up/left triangle
 			-1, -1, 0, 1, 1, 0, 1, -1, 0  // Down/right triangle
 		};
-		glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+		glGenBuffers(1, &ids[e_q_vb]);
+		glBindBuffer(GL_ARRAY_BUFFER, ids[e_q_vb]);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(points),
+ 				points, GL_STATIC_DRAW);
+		static constexpr const GLint indices[] = {
+			0, 1, 2, 3, 4, 5
+		};
+		glGenBuffers(1, &ids[e_fbo]);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ids[e_fbo]);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices),
+				indices, GL_STATIC_DRAW);
+
 		return alive;
 	}
 	bool pane::setProg(std::atomic_bool &alive,
