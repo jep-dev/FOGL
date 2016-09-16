@@ -41,11 +41,13 @@ namespace View {
 			-1, -1, 0, 1, 1, 0, 1, -1, 0  // Down/right triangle
 		};
 		glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
-		
+		return alive;
+	}
+	bool pane::setProg(std::atomic_bool &alive,
+			const char *vname, const char *fname) {
 		ids[e_q_prog] = glCreateProgram();
 		// TODO Shader paths as members by ctor/init
-		if(!link("share/pane.vert", "share/pane.frag",
-					ids[e_q_prog], errors)) {
+		if(!link(vname, fname, ids[e_q_prog], errors)) {
 			return alive = false;
 		}
 		ids[e_q_tex] = glGetUniformLocation(ids[e_q_prog], "tex");
@@ -69,7 +71,6 @@ namespace View {
 		return alive;
 	}
 
-	pane::pane(int dx, int dy, int x0, int y0): Util::task() {
-		resize(dx, dy, x0, y0);
-	}
+	pane::pane(std::atomic_bool &alive):
+		Util::task(), win(glfwCreateWindow(640, 480, "", NULL, NULL)) {}
 }

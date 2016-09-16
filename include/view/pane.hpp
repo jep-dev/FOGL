@@ -12,16 +12,19 @@ namespace View {
 			e_q_va, e_q_vb, e_q_prog, e_q_tex,
 			e_total
 		} e_ids;
+		GLFWwindow *win;
 		GLuint ids[e_ids::e_total] = {0};
 		std::vector<std::string> errors;
 
 		void resize(int dx, int dy, int x0 = 0, int y0 = 0);
+		bool setProg(std::atomic_bool &alive,
+				const char *vname, const char *fname);
 		
 		bool init(std::atomic_bool &alive) override;
 		bool poll(std::atomic_bool &alive) override;
 		bool run(std::atomic_bool &alive) override;
 
-		pane(int dx, int dy, int x0 = 0, int y0 = 0);
+		pane(std::atomic_bool &alive);
 	};
 }
 
