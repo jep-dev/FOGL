@@ -108,6 +108,7 @@ namespace Control {
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, (f1-f0)*sizeof(int),
 				(void*)(&object.ints[f0]), GL_STATIC_DRAW);
 		return alive;
+		//return viewer.init(alive);
 
 		/*
 		// Task 2: model loading
