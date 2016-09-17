@@ -1,7 +1,6 @@
 #ifndef CONTROL_HPP
 #define CONTROL_HPP
 
-#include "control/adapter.hpp"
 #include "model.hpp"
 #include "view.hpp"
 
