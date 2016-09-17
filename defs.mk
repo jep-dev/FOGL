@@ -97,7 +97,7 @@ RELEASE_CPPFLAGS:=-O3 -include $(DIR_ROOT_INCLUDE)main.hpp\
 	$(foreach path,OBJ MTL FRAG VERT,-D $(path)_PATH=$($(path)_PATH))
 TEST_CPPFLAGS:=-O0
 MODEL_CPPFLAGS:=$(RELEASE_CPPFLAGS)
-RELEASE_LDFLAGS:=$(LDFLAGS) -Wl,--gc-sections -lGL -lGLU -lglfw -ldl
+RELEASE_LDFLAGS:=$(LDFLAGS) -Wl,--gc-sections -lSOIL -lGL -lGLU -lglfw -ldl
 GL3W_LDFLAGS:=$(LDFLAGS) -lGL -lGLU -ldl
 #RELEASE_LDFLAGS:=$(LDFLAGS) $(MAIN_DLL_DIRS) $(MAIN_DLL_LINKS)\
 	-lGL -lGLU -lglfw -ldl
