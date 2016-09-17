@@ -151,7 +151,6 @@ namespace Control {
 	}
 
 	bool control::run(std::atomic_bool &alive) {
-		using namespace Model::Ply;
 		auto delay = std::chrono::milliseconds(150);
 
 		int frame = 0, dFrames = 0, fps = 0;
