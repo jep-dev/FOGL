@@ -41,6 +41,13 @@ namespace Model {
 		}
 	};
 
+	struct model {
+		std::vector<bool> bools;
+		std::vector<int> ints;
+		std::vector<float> floats;
+		std::vector<std::string> strings;
+	};
+
 }
 #include "model/ply.hpp"
 #include "model/obj.hpp"

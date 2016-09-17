@@ -38,22 +38,6 @@ namespace Model {
 			operator<<(std::ostream& lhs, Property const& rhs);
 		};
 		
- 		/*/// A vector/stack of raw bytes (needs replacement)
-		struct Buffer {
-			std::vector<uint8_t> data;
-			template<typename T>
-			void push_back(T const& t) {
-				static constexpr int N = sizeof(T);
-				auto buf = (uint8_t*) &t;
-				data.insert(data.end(), buf, buf+N);
-			}
-			template<typename S, typename... T>
-			void push_back(S const& s, T... t) {
-				push_back(s);
-				push_back(t...);
-			}
-		};*/
-
  		/// A group of properties
 		struct Element: public Buffer {
 			std::string name;
