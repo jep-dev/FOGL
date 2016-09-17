@@ -11,6 +11,7 @@ namespace Model {
 		std::vector<int> ints;
 		std::vector<float> floats;
 		std::vector<std::string> strings;
+		virtual ~model(void);
 	};
 }
 #include "model/obj.hpp"
