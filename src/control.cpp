@@ -109,44 +109,6 @@ namespace Control {
 				(void*)(&object.ints[f0]), GL_STATIC_DRAW);
 		return alive;
 		//return viewer.init(alive);
-
-		/*
-		// Task 2: model loading
-		using namespace Model::Ply;
- 		Header model(this -> mpath);
- 		if(model.status) {
-			std::cout << model.statusContext << std::endl;
-			return;
-		}
-		auto start = begin(model.elements), 
-				 stop = end(model.elements);
-		auto vertices = std::find_if(start, stop,
-			[](Element const& el) -> bool {
-				// TODO Change behavior based on the number of elements
-				return el.name == "vertex" && !el.has_list;
-		}), indices = std::find_if(start, stop,
-			[](Element const& el) -> bool {
-				int sz = el.properties.size();
-				return el.name == "face"
-					&& (el.has_list ? sz==1 : sz==3);
-		});
-		if(vertices == stop || indices == stop) {
-			std::cout << "The model is valid, but does not match "
-				"the anticipated structure." << std::endl;
-			return;
-		Task 3: view after model
-		glGenBuffers(1, &viewer.ids[view::e_id_vbuf]);
-		glBindBuffer(GL_ARRAY_BUFFER, viewer.ids[view::e_id_vbuf]);
-		glBufferData(GL_ARRAY_BUFFER, vertices->data.size(),
-				(void*)(&vertices->data[0]), GL_STATIC_DRAW);
-
-		glGenBuffers(1, &viewer.ids[view::e_id_ibuf]);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,
-				viewer.ids[view::e_id_ibuf]);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices->data.size(),
-				(void*)(&indices->data[0]), GL_STATIC_DRAW);
-		viewer.nTriangles = indices -> instances;
-		glUseProgram(viewer.ids[view::e_id_prog]);*/
 	}
 
 	bool control::poll(std::atomic_bool &alive) {
