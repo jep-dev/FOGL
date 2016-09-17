@@ -115,7 +115,7 @@ namespace Model {
 	}
 
 	/// A wavefront object container/parser
-	struct obj_t {
+	struct obj_t : public model {
 		/*! The enumeration and count of possible states */
 		typedef enum {
 			e_ok=0,        ///< Parsing status is OK
@@ -157,11 +157,7 @@ namespace Model {
 
 		std::vector<int> v_beg, v_end, vp_beg, vp_end, vn_beg, vn_end,
 			f0_beg, f0_end, f1_beg, f1_end, f2_beg, f2_end, f3_beg, f3_end;
-		std::vector<bool> bools;
-		std::vector<float> floats;
-		std::vector<int> ints;
-		std::vector<std::string> strings;
-		std::vector<unsigned int> nBools, nStrings, nInts, nFloats;
+		std::vector<unsigned int> nBools, nFloats, nInts, nStrings;
 		std::vector<e_el> types;
 	};
 	

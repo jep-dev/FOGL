@@ -1,7 +1,5 @@
 #include "view.hpp"
 #include "system.hpp"
-#include "model/ply.hpp"
-#include "model/obj.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -10,6 +8,7 @@
 #define GLFW_INCLUDE_NONE
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
+#include <SOIL/SOIL.h>
 
 namespace View {
 	bool view::setProg(std::atomic_bool &alive,
@@ -144,7 +143,7 @@ namespace View {
 		}
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-		glfwWindowHint(GLFW_SAMPLES, 4);
+		glfwWindowHint(GLFW_SAMPLES, 16);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		
 		if(!(win = glfwCreateWindow(680, 680, "View", NULL, NULL))) {
