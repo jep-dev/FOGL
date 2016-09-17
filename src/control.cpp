@@ -34,8 +34,8 @@ namespace Control {
 		glfwSetInputMode(viewer.win, GLFW_STICKY_KEYS, 1);
 		glfwMakeContextCurrent(viewer.win);
 
-		/*using namespace Model;
-		mesh_t mesh(150, 150,
+		using namespace Model;
+		mesh_t model(150, 150,
 		[](float s, float t, std::vector<float> &vertices) {
 			using namespace Math;
 			auto theta = s*M_PI*2, phi = t*M_PI;
@@ -43,70 +43,24 @@ namespace Control {
 			vertices.emplace_back(sin(theta)*sin(phi)); // Y
 			vertices.emplace_back(cos(phi));            // Z
 		});
+		/*obj_t model;
+		auto status = obj_t::load(this -> mpath, model);
+		if(status != obj_t::e_ok) {
+			errors.push_back("The model failed to load.");
+			return alive = false;
+		}*/
 
 		glGenBuffers(1, &viewer.ids[view::e_id_vbuf]);
 		glBindBuffer(GL_ARRAY_BUFFER, viewer.ids[view::e_id_vbuf]);
-		glBufferData(GL_ARRAY_BUFFER, mesh.vertices.size() * sizeof(float),
-			(void*) &mesh.vertices[0], GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, model.floats.size() * sizeof(float),
+			(void*) &model.floats[0], GL_STATIC_DRAW);
 
 		glGenBuffers(1, &viewer.ids[view::e_id_fbuf]);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,
 			viewer.ids[view::e_id_fbuf]);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.faces.size() * sizeof(int),
-			(void*) &mesh.faces[0], GL_STATIC_DRAW);
-		viewer.nTriangles = mesh.faces.size()/3;
-		return alive;*/
-		
-		// Task 2: wavefront obj model loading
-		using namespace Model;
-		obj_t object;
-		auto status = obj_t::load(this -> mpath, object);
-		if(status != obj_t::e_ok) {
-			errors.push_back("The model failed to load.");
-			return alive = false;
-		}
-
-		// TODO Use more than first range of each obj type
-		if(object.v_beg.size() == 0) {
-			errors.push_back("The loaded model does not contain vertices.");
-			return alive = false;
-		} else {
-			auto v0 = object.v_beg[0], v1 = object.v_end[0];
-			glGenBuffers(1, &viewer.ids[view::e_id_vbuf]);
-			glBindBuffer(GL_ARRAY_BUFFER, viewer.ids[view::e_id_vbuf]);
-			glBufferData(GL_ARRAY_BUFFER, (v1-v0)*sizeof(float),
-					(void*)(&object.floats[v0]), GL_STATIC_DRAW);
-		}
-		if(object.vn_beg.size() != 0) {
-			auto vn0 = object.vn_beg[0], vn1 = object.vn_end[0];
-			//glGenBuffers(1, &viewer.ids[view::e_id_vnbuf]);
-			//glBindBuffer(GL_ARRAY_BUFFER, viewer.ids[view::e_id_vnbuf]);
-			//glBufferData(GL_ARRAY_BUFFER, (vn1-vn0)*sizeof(float),
-					//(void*)(&object.floats[vn0]), GL_STATIC_DRAW);
-		}
-		glGenBuffers(1, &viewer.ids[view::e_id_fbuf]);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,
-				viewer.ids[view::e_id_fbuf]);
-		int f0, f1;
-		if(object.f0_beg.size() != 0) {
-			f0 = object.f0_beg[0];
-			f1 = object.f0_end[0];
-		} else if(object.f1_beg.size() != 0) {
-			f0 = object.f1_beg[0];
-			f1 = object.f1_end[0];
-		} else if(object.f2_beg.size() != 0) {
-			f0 = object.f2_beg[0];
-			f1 = object.f2_end[0];
-		} else if(object.f3_beg.size() != 0) {
-			f0 = object.f3_beg[0];
-			f1 = object.f3_end[0];
-		} else {
-			errors.push_back("The loaded model does not contain faces.");
-			return alive = false;
-		}
-		viewer.nTriangles = (f1-f0)/3;
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, (f1-f0)*sizeof(int),
-				(void*)(&object.ints[f0]), GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, model.ints.size() * sizeof(int),
+			(void*) &model.ints[0], GL_STATIC_DRAW);
+		viewer.nTriangles = model.ints.size()/3;
 		return alive;
 		//return viewer.init(alive);
 	}
