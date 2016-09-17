@@ -49,6 +49,7 @@ int main(int argc, const char **argv) {
 
 	std::atomic_bool alive(true);
 	Control::control ctl(alive, obj_fname);
+	// Control::control ctl(alive, 0); // Use mesh instead
 	if(!alive) {
 		std::cout << "Control construction failed." << std::endl;
 		printErrors(std::cout, ctl.viewer.errors, ctl.errors);
@@ -63,9 +64,8 @@ int main(int argc, const char **argv) {
 	Printer<5> printer;
 	std::string cols[]{"GLFW", "OpenGL", "Path"},
 		rows[]{"", "Major", "Minor", "Revision", "",
-			"", "Wavefront obj", /*"Wavefront mtl",*/
-			"Vertex shader", "Fragment shader", ""},
-		paths[]{obj_fname,/* mtl_fname,*/ vert_fname, frag_fname};
+			"", "Wavefront obj", "Vertex shader", "Fragment shader", ""},
+		paths[]{obj_fname, vert_fname, frag_fname};
 	int versions[6]{0};
 	glfwGetVersion(&versions[0], &versions[2], &versions[4]);
 	glGetIntegerv(GL_MAJOR_VERSION, &versions[1]);
