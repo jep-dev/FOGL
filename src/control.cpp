@@ -211,5 +211,5 @@ namespace Control {
 	}
 
 	control::control(std::atomic_bool &alive, const char *mpath):
-		task(), mpath(mpath), viewer(alive) {}
+		task(), mpath(mpath), adapter(alive), viewer(alive) {}
 }

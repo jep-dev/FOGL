@@ -1,6 +1,7 @@
 #ifndef CONTROL_HPP
 #define CONTROL_HPP
 
+#include "control/adapter.hpp"
 #include "model.hpp"
 #include "view.hpp"
 
@@ -15,6 +16,7 @@ namespace Control {
 	struct control : public Util::task {
 		std::vector<std::string> errors;
 		const char *mpath;
+		Adapter::adapter adapter;
 		View::view viewer;
 
 		float r_dead = .125f;
