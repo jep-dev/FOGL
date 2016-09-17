@@ -35,20 +35,25 @@ namespace Control {
 		glfwMakeContextCurrent(viewer.win);
 
 		using namespace Model;
-		mesh_t model(150, 150,
-		[](float s, float t, std::vector<float> &vertices) {
-			using namespace Math;
-			auto theta = s*M_PI*2, phi = t*M_PI;
-			vertices.emplace_back(cos(theta)*sin(phi)); // X
-			vertices.emplace_back(sin(theta)*sin(phi)); // Y
-			vertices.emplace_back(cos(phi));            // Z
-		});
-		/*obj_t model;
-		auto status = obj_t::load(this -> mpath, model);
-		if(status != obj_t::e_ok) {
-			errors.push_back("The model failed to load.");
-			return alive = false;
-		}*/
+		model model;
+		if(mpath) {
+			obj_t obj;
+			auto status = obj_t::load(this -> mpath, obj);
+			if(status != obj_t::e_ok) {
+				errors.push_back("The model failed to load.");
+				return alive = false;
+			}
+			model = obj;
+		} else {
+			model = mesh_t(150, 150,
+			[](float s, float t, std::vector<float> &vertices) {
+				using namespace Math;
+				auto theta = s*M_PI*2, phi = t*M_PI;
+				vertices.emplace_back(cos(theta)*sin(phi)); // X
+				vertices.emplace_back(sin(theta)*sin(phi)); // Y
+				vertices.emplace_back(cos(phi));            // Z
+			});
+		}
 
 		glGenBuffers(1, &viewer.ids[view::e_id_vbuf]);
 		glBindBuffer(GL_ARRAY_BUFFER, viewer.ids[view::e_id_vbuf]);
@@ -126,5 +131,5 @@ namespace Control {
 	}
 
 	control::control(std::atomic_bool &alive, const char *mpath):
-		task(), mpath(mpath), adapter(alive), viewer(alive) {}
+		task(), mpath(mpath), viewer(alive) {}
 }
