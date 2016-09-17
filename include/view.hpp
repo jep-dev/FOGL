@@ -14,7 +14,6 @@
 
 #include "util.hpp"
 #include "view/shade.hpp"
-#include "view/pane.hpp"
 
 namespace View {
 	/// A view structure (state and implementation)
