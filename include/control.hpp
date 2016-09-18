@@ -14,8 +14,8 @@ namespace Control {
 	/// A data structure controlling both model and view
 	struct control : public Util::task {
 		std::vector<std::string> errors;
-		const char *mpath;
-		View::view viewer;
+		const Model::model &model;
+		View::view &viewer;
 
 		float r_dead = .125f;
 		/** Joystick deadzone; zeroes inputs below threshold and normalizes
@@ -31,9 +31,10 @@ namespace Control {
 
 		/** Constructor; initializes and applies shaders
  		 * @param alive Shared state; false signals shutdown
- 		 * @param obj The path to a Wavefront obj model
  		 */
-		control(std::atomic_bool &alive, const char *obj);
+		control(std::atomic_bool &alive,
+				const Model::model &model,
+				View::view &viewer);
 	};
 }
 
