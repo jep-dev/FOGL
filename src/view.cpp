@@ -11,38 +11,6 @@
 #include <SOIL/SOIL.h>
 
 namespace View {
-	bool view::setProg(std::atomic_bool &alive,
-			const char *vert_fname, const char *frag_fname) {
-		if(!alive) {
-			return false;
-		}
-		if(ids[e_id_prog]) glDeleteProgram(ids[e_id_prog]);
-		ids[e_id_prog] = glCreateProgram();
-		if(!link(vert_fname, frag_fname, ids[e_id_prog], errors)) {
-			errors.emplace_back("Could not compile/link shader(s).");
-			return alive = false;
-		}
-		auto mat_model = glGetUniformLocation(ids[e_id_prog], "model"),
-			 mat_view = glGetUniformLocation(ids[e_id_prog], "view"),
-			 mat_proj = glGetUniformLocation(ids[e_id_prog], "proj");
-		if(mat_model == -1) {
-			errors.emplace_back("Could not find uniform 'model'");
-			return alive = false;
-		}
-		ids[e_id_model] = mat_model;
-		if(mat_view == -1) {
-			errors.emplace_back("Could not find uniform 'view'");
-			return alive = false;
-		}
-		ids[e_id_view] = mat_view;
-		if(mat_proj == -1) {
-			errors.emplace_back("Could not find uniform 'view'");
-			return alive = false;
-		}
-		ids[e_id_proj] = mat_proj;
-		glUseProgram(ids[e_id_prog]);
-		return true;
-	}
 
 	void view::setUniforms(void) {
 		int w, h;
@@ -126,6 +94,32 @@ namespace View {
 			[] (int, const char *szErr) {
 				std::cout << szErr << std::endl;
 			});
+
+		if(ids[e_id_prog]) glDeleteProgram(ids[e_id_prog]);
+		ids[e_id_prog] = glCreateProgram();
+		if(!link(vert_fname, frag_fname, ids[e_id_prog], errors)) {
+			errors.emplace_back("Could not compile/link shader(s).");
+			return alive = false;
+		}
+		auto mat_model = glGetUniformLocation(ids[e_id_prog], "model"),
+			 mat_view = glGetUniformLocation(ids[e_id_prog], "view"),
+			 mat_proj = glGetUniformLocation(ids[e_id_prog], "proj");
+		if(mat_model == -1) {
+			errors.emplace_back("Could not find uniform 'model'");
+			return alive = false;
+		}
+		ids[e_id_model] = mat_model;
+		if(mat_view == -1) {
+			errors.emplace_back("Could not find uniform 'view'");
+			return alive = false;
+		}
+		ids[e_id_view] = mat_view;
+		if(mat_proj == -1) {
+			errors.emplace_back("Could not find uniform 'view'");
+			return alive = false;
+		}
+		ids[e_id_proj] = mat_proj;
+		glUseProgram(ids[e_id_prog]);
 		return alive;
 	}
 	
@@ -136,9 +130,17 @@ namespace View {
 		}
 		return alive;
 	}
-	view::view(std::atomic_bool &alive):
-			theta(0), phi(0), x(0), y(0), z(0) {
+	view::view(std::atomic_bool &alive,
+			const char *vert_fname, const char *frag_fname):
+		vert_fname(vert_fname), frag_fname(frag_fname),
+			theta(0), phi(0), x(0), y(0), z(0)
+	{
 		if(!alive) {
+			return;
+		}
+		if(glfwInit() == 0) {
+			errors.emplace_back("Could not initialize GLFW.");
+			alive = false;
 			return;
 		}
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -176,5 +178,6 @@ namespace View {
 			glDeleteProgram(ids[e_id_prog]);
 		}
 		glfwDestroyWindow(win);
+		glfwTerminate();
 	}
 }
