@@ -60,14 +60,9 @@ int main(int argc, const char *argv[]) {
 		std::cout << "Initialized model with ad-hoc mesh." << std::endl;
 	}
 
-	std::atomic_bool alive(true);
 
-	View::view view(alive, vert_fname, frag_fname);
-	if(!alive) {
-		std::cout << "View construction failed." << std::endl;
-		printErrors(std::cout, view.errors);
-		return 1;
-	} else if(!view.init(alive)) {
+	View::view view(vert_fname, frag_fname);
+	if(!view.init()) {
 		std::cout << "View initialization failed." << std::endl;
 		printErrors(std::cout, view.errors);
 		return 1;
@@ -82,18 +77,14 @@ int main(int argc, const char *argv[]) {
 			<< '.' << std::endl;
 	}
 	
-	Control::control ctl(alive, model, view);
-	if(!alive) {
-		std::cout << "Control construction failed." << std::endl;
-		printErrors(std::cout, ctl.errors);
-		return 1;
-	} else if(!ctl.init(alive)) {
+	Control::control ctl(model, view);
+	if(!ctl.init()) {
 		std::cout << "Control initialization failed." << std::endl;
 		printErrors(std::cout, view.errors, ctl.errors);
 		return 1;
 	}
 	std::cout << "Initialized control." << std::endl;
-	if(!ctl.run(alive)) {
+	if(!ctl.run()) {
 		printErrors(std::cout, view.errors, ctl.errors);
 	}
 	return 0;
