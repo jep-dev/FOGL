@@ -52,3 +52,6 @@ All of the requirements support Linux, Windows, and OS X. This project only supp
 #### Todo:
 - [ ] include/util/types.hpp (152) Distinguish between permutations with and without duplicates; the current permutation test relies on the exclusive-or of two parameter packs, not necessarily sets
 - [x] include/system.hpp (13) Remove file reading function and more in favor of in-place ifstream, etc.
+- [ ] Support multiple groups/objects in Wavefront obj
+- [ ] Support mtl for Wavefront obj
+- [ ] Migrate from GLFW to GTK

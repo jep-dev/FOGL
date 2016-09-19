@@ -61,7 +61,8 @@ namespace View {
 		 * @param vert_fname Path to a GLSL vertex shader
 		 * @param frag_fname Path to a GLSL fragment shader
 		 */
-		view(std::atomic_bool &alive, const char *vname, const char *fname);
+		view(std::atomic_bool &alive,
+				const char *vert_fname, const char *frag_fname);
 
 		/// Destructor for a view object
 		virtual ~view(void);
