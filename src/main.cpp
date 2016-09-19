@@ -2,14 +2,7 @@
 
 #include "main.hpp"
 #include "util.hpp"
-#include "system/printer.hpp"
 
-#ifndef OBJ_PATH
-#define OBJ_PATH "share/sphere.obj"
-#endif
-/*#ifndef MTL_PATH
-#define MTL_PATH "share/cube.mtl"
-#endif*/
 #ifndef VERT_PATH
 #define VERT_PATH "share/fallback.vert"
 #endif
@@ -27,68 +20,81 @@ void printErrors(std::ostream &oss, T1 &t1, TN &... tn) {
 	printErrors(oss, tn...);
 }
 
-int main(int argc, const char **argv) {
-	using namespace Util;
-	using namespace System;
-	if(glfwInit() == 0) {
-		std::cout << "Failed to initialize GLFW "
-			<< glfwGetVersionString() << std::endl;
+int main(int argc, const char *argv[]) {
+	const char *obj_fname = nullptr,
+		  *vert_fname = nullptr,
+		  *frag_fname = nullptr;
+	if(argc >= 2) obj_fname = argv[1];
+	//else obj_fname = OBJ_PATH;
+	if(argc >= 3) vert_fname = argv[2];
+	else vert_fname = VERT_PATH;
+	if(argc >= 4) frag_fname = argv[3];
+	else frag_fname = FRAG_PATH;
+	if(argc >= 5) {
+		std::cout << "Usage: " << argv[0] <<
+			" [obj_fname [vert_fname [frag_fname]]]" << std::endl;
 		return 1;
 	}
-	
-	const char *obj_fname, *vert_fname, *frag_fname;
 
-	if(argc >= 2) obj_fname = argv[1];
-	else obj_fname = OBJ_PATH;
-	/*if(argc >= 3) mtl_fname = argv[2];
-	else mtl_fname = MTL_PATH;*/
-	if(argc >= 4) vert_fname = argv[2];
-	else vert_fname = VERT_PATH;
-	if(argc >= 5) frag_fname = argv[3];
-	else frag_fname = FRAG_PATH;
+	using namespace Model;
+	model model;
+	if(obj_fname) {
+		obj_t obj;
+		auto status = obj_t::load(obj_fname, obj);
+		if(status != obj_t::e_ok) {
+			std::cout << "Failed to load model "
+				<< obj_fname << std::endl;
+			return 1;
+		}
+		model = obj;
+		std::cout << "Initialized model with obj "
+			<< obj_fname << '.' << std::endl;
+	} else {
+		model = mesh_t(25, 25,
+		[](float s, float t, std::vector<float> &vertices) {
+			auto theta = s*M_PI*2, phi = t*M_PI;
+			vertices.emplace_back(cos(theta)*sin(phi)); // X
+			vertices.emplace_back(sin(theta)*sin(phi)); // Y
+			vertices.emplace_back(cos(phi));            // Z
+		});
+		std::cout << "Initialized model with ad-hoc mesh." << std::endl;
+	}
 
 	std::atomic_bool alive(true);
-	Control::control ctl(alive, obj_fname);
-	// Control::control ctl(alive, 0); // Use mesh instead
+
+	View::view view(alive, vert_fname, frag_fname);
+	if(!alive) {
+		std::cout << "View construction failed." << std::endl;
+		printErrors(std::cout, view.errors);
+		return 1;
+	} else if(!view.init(alive)) {
+		std::cout << "View initialization failed." << std::endl;
+		printErrors(std::cout, view.errors);
+		return 1;
+	} else {
+		int gl_major, gl_minor, glfw_major, glfw_minor, glfw_rev;
+		glGetIntegerv(GL_MAJOR_VERSION, &gl_major);
+		glGetIntegerv(GL_MINOR_VERSION, &gl_minor);
+		glfwGetVersion(&glfw_major, &glfw_minor, &glfw_rev);
+		std::cout << "Initialized view with OpenGL "
+			<< gl_major << '.' << gl_minor << " and GLFW "
+			<< glfw_major << '.' << glfw_minor << '.' << glfw_rev
+			<< '.' << std::endl;
+	}
+	
+	Control::control ctl(alive, model, view);
 	if(!alive) {
 		std::cout << "Control construction failed." << std::endl;
-		printErrors(std::cout, ctl.viewer.errors, ctl.errors);
+		printErrors(std::cout, ctl.errors);
+		return 1;
+	} else if(!ctl.init(alive)) {
+		std::cout << "Control initialization failed." << std::endl;
+		printErrors(std::cout, view.errors, ctl.errors);
 		return 1;
 	}
-	if(!ctl.viewer.setProg(alive, vert_fname, frag_fname)) {
-		std::cout << "Failed to compile or link shaders." << std::endl;
-		printErrors(std::cout, ctl.viewer.errors, ctl.errors);
-		return 1;
+	std::cout << "Initialized control." << std::endl;
+	if(!ctl.run(alive)) {
+		printErrors(std::cout, view.errors, ctl.errors);
 	}
-	using namespace System;
-	Printer<5> printer;
-	std::string cols[]{"GLFW", "OpenGL", "Path"},
-		rows[]{"", "Major", "Minor", "Revision", "",
-			"", "Wavefront obj", "Vertex shader", "Fragment shader", ""},
-		paths[]{obj_fname, vert_fname, frag_fname};
-	int versions[6]{0};
-	glfwGetVersion(&versions[0], &versions[2], &versions[4]);
-	glGetIntegerv(GL_MAJOR_VERSION, &versions[1]);
-	glGetIntegerv(GL_MINOR_VERSION, &versions[3]);
-	printer.push(&rows[5], &rows[5]+5)
-		.level().insert(0, " ").level()
-		.push<std::string, 3, 1, 31>(paths, &cols[2], &cols[3]+1)
-		.level().insert(0, "   ").level()
-		.push(&rows[0], &rows[5])
-		.level().insert(0, " ").level()
-		.push<int, 3, 2>(versions, &cols[0], &cols[2]);
-	std::cout << printer << std::endl;
-
-	if(!task::init(alive, &ctl)) {
-		std::cout << "Control Initialization failed." << std::endl;
-		printErrors(std::cout, ctl.viewer.errors, ctl.errors);
-		return 1;
-	}
-	if(!task::run(alive, &ctl)) {
-		printErrors(std::cout, ctl.viewer.errors, ctl.errors);
-	}
-
-	glfwTerminate();
-
 	return 0;
 }

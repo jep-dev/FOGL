@@ -25,6 +25,7 @@ namespace View {
 			e_id_total
 		} e_id_index; 
 		GLuint ids[e_id_total];
+		const char *vert_fname, *frag_fname;
 		float near = 1, far = 20, fov = 30;
 		int nTriangles;
 		GLFWwindow *win;
@@ -34,14 +35,6 @@ namespace View {
 	
 		/// Sets stable shader values (uniforms)
 		void setUniforms(void);
-
-		/** Compiles and links the given shaders
- 		 * @param alive Shared state; false signals shutdown
-		 * @param vert_fname Path to a GLSL vertex shader
-		 * @param frag_fname Path to a GLSL fragment shader
-		 */
-		bool setProg(std::atomic_bool &alive,
-				const char *vert_fname, const char *frag_fname);
 
 		/** Polls for updates; move to control?
  		 * @param alive Shared state; false signals shutdown
@@ -65,8 +58,10 @@ namespace View {
 
 		/** Constructor for a view object
  		 * @param alive Shared status flag; false signals shutdown
+		 * @param vert_fname Path to a GLSL vertex shader
+		 * @param frag_fname Path to a GLSL fragment shader
 		 */
-		view(std::atomic_bool &alive);
+		view(std::atomic_bool &alive, const char *vname, const char *fname);
 
 		/// Destructor for a view object
 		virtual ~view(void);

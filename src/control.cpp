@@ -12,6 +12,7 @@
 #include <iostream>
 #include <memory>
 #include <sstream>
+#include <thread>
 
 #include "omp.h"
 
@@ -33,27 +34,6 @@ namespace Control {
 		using namespace View;
 		glfwSetInputMode(viewer.win, GLFW_STICKY_KEYS, 1);
 		glfwMakeContextCurrent(viewer.win);
-
-		using namespace Model;
-		model model;
-		if(mpath) {
-			obj_t obj;
-			auto status = obj_t::load(this -> mpath, obj);
-			if(status != obj_t::e_ok) {
-				errors.push_back("The model failed to load.");
-				return alive = false;
-			}
-			model = obj;
-		} else {
-			model = mesh_t(150, 150,
-			[](float s, float t, std::vector<float> &vertices) {
-				using namespace Math;
-				auto theta = s*M_PI*2, phi = t*M_PI;
-				vertices.emplace_back(cos(theta)*sin(phi)); // X
-				vertices.emplace_back(sin(theta)*sin(phi)); // Y
-				vertices.emplace_back(cos(phi));            // Z
-			});
-		}
 
 		glGenBuffers(1, &viewer.ids[view::e_id_vbuf]);
 		glBindBuffer(GL_ARRAY_BUFFER, viewer.ids[view::e_id_vbuf]);
@@ -110,17 +90,25 @@ namespace Control {
 	}
 
 	bool control::run(std::atomic_bool &alive) {
-		auto delay = std::chrono::milliseconds(150);
+		auto delay = 150;
 
 		int frame = 0, dFrames = 0, fps = 0;
 		auto kill = [&alive] {alive = false;};
 		double t1 = glfwGetTime(), t2;
 		while(true) {
-			if(poll(alive)) viewer.run(alive);
+			if(poll(alive))
+				viewer.run(alive);
+			if(delay > 1) {
+				std::this_thread::sleep_for(
+						std::chrono::milliseconds(delay));
+			} else {
+				delay = 1;
+			}
 			t2 = glfwGetTime() - t1;
 			frame++;
 			dFrames++;
 			if(t2 > 1.0) {
+				delay *= dFrames / t2 / 60;
 				std::cout << "FPS: " << int(dFrames/t2) << std::endl;
 				t1 += t2;
 				dFrames = 0;
@@ -130,6 +118,7 @@ namespace Control {
 		return alive;
 	}
 
-	control::control(std::atomic_bool &alive, const char *mpath):
-		task(), mpath(mpath), viewer(alive) {}
+	control::control(std::atomic_bool &alive,
+			const Model::model &model, View::view &view):
+		task(), model(model), viewer(view) {}
 }
