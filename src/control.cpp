@@ -35,12 +35,10 @@ namespace Control {
 		glfwSetInputMode(viewer.win, GLFW_STICKY_KEYS, 1);
 		glfwMakeContextCurrent(viewer.win);
 
-		glGenBuffers(1, &viewer.ids[view::e_id_vbuf]);
 		glBindBuffer(GL_ARRAY_BUFFER, viewer.ids[view::e_id_vbuf]);
 		glBufferData(GL_ARRAY_BUFFER, model.floats.size() * sizeof(float),
 			(void*) &model.floats[0], GL_STATIC_DRAW);
 
-		glGenBuffers(1, &viewer.ids[view::e_id_fbuf]);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,
 			viewer.ids[view::e_id_fbuf]);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, model.ints.size() * sizeof(int),
