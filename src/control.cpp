@@ -12,6 +12,7 @@
 #include <iostream>
 #include <memory>
 #include <sstream>
+#include <thread>
 
 #include "omp.h"
 
@@ -89,17 +90,25 @@ namespace Control {
 	}
 
 	bool control::run(std::atomic_bool &alive) {
-		auto delay = std::chrono::milliseconds(150);
+		auto delay = 150;
 
 		int frame = 0, dFrames = 0, fps = 0;
 		auto kill = [&alive] {alive = false;};
 		double t1 = glfwGetTime(), t2;
 		while(true) {
-			if(poll(alive)) viewer.run(alive);
+			if(poll(alive))
+				viewer.run(alive);
+			if(delay > 1) {
+				std::this_thread::sleep_for(
+						std::chrono::milliseconds(delay));
+			} else {
+				delay = 1;
+			}
 			t2 = glfwGetTime() - t1;
 			frame++;
 			dFrames++;
 			if(t2 > 1.0) {
+				delay *= dFrames / t2 / 60;
 				std::cout << "FPS: " << int(dFrames/t2) << std::endl;
 				t1 += t2;
 				dFrames = 0;
