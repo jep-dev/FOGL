@@ -2,7 +2,6 @@
 
 #include "main.hpp"
 #include "util.hpp"
-#include "system/printer.hpp"
 
 #ifndef VERT_PATH
 #define VERT_PATH "share/fallback.vert"
@@ -51,7 +50,7 @@ int main(int argc, const char *argv[]) {
 		std::cout << "Initialized model with obj "
 			<< obj_fname << '.' << std::endl;
 	} else {
-		model = mesh_t(150, 150,
+		model = mesh_t(25, 25,
 		[](float s, float t, std::vector<float> &vertices) {
 			auto theta = s*M_PI*2, phi = t*M_PI;
 			vertices.emplace_back(cos(theta)*sin(phi)); // X
