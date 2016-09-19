@@ -9,16 +9,18 @@ int main(int argc, const char **argv) {
 	std::atomic_bool alive(true);
 	view v(alive, "share/shade.vert", "share/shade.frag");
 	if(alive) {
-		glGenBuffers(1, &v.ids[view::e_id_vbuf]);
-		glBindBuffer(GL_ARRAY_BUFFER, v.ids[view::e_id_vbuf]);
-		glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_STATIC_DRAW);
-		glGenBuffers(1, &v.ids[view::e_id_fbuf]);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, v.ids[view::e_id_fbuf]);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 0, nullptr, GL_STATIC_DRAW);
 		v.init(alive);
 	} else {
 		std::cout << "Failed to initialize view." << std::endl;
+		for(const auto &e : v.errors) {
+			std::cout << e << std::endl;
+		}
 		return 1;
 	}
-	if(alive) v.run(alive);
+	if(alive)
+		v.run(alive);
+	else
+		for(const auto &e : v.errors) {
+			std::cout << e << std::endl;
+		}
 }
