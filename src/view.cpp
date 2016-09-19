@@ -120,6 +120,8 @@ namespace View {
 		}
 		ids[e_id_proj] = mat_proj;
 		glUseProgram(ids[e_id_prog]);
+		if(!ids[e_id_vbuf]) glGenBuffers(1, &ids[e_id_vbuf]);
+		if(!ids[e_id_fbuf]) glGenBuffers(1, &ids[e_id_fbuf]);
 		return alive;
 	}
 	
