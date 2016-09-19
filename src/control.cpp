@@ -28,7 +28,8 @@ namespace Control {
 		}
 	}
 
-	bool control::init(std::atomic_bool &alive) {
+	bool control::init(void) {
+		if(!alive) return false;
 		//using namespace Util;
 		// Task 1: view before model (splash)
 		using namespace View;
@@ -44,23 +45,21 @@ namespace Control {
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, model.ints.size() * sizeof(int),
 			(void*) &model.ints[0], GL_STATIC_DRAW);
 		viewer.nTriangles = model.ints.size()/3;
-		return alive;
-		//return viewer.init(alive);
+		return true;
 	}
 
-	bool control::poll(std::atomic_bool &alive) {
+	bool control::poll(void) {
+		if(!alive) return false;
 		std::ostringstream oss;
-		if(alive)
-			viewer.poll(alive);
-		if(alive) {
+		if(viewer.poll()) {
 			if(glfwGetKey(viewer.win, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-				alive = false;
+				return false;
 			int nButtons;
 			const uint8_t *buttons =
 				glfwGetJoystickButtons(GLFW_JOYSTICK_1, &nButtons);
 			for(int i = 0; i < nButtons; i++) {
 				if(buttons[i] == GLFW_PRESS) {
-					if(i == 8) alive = false;
+					if(i == 8) return false;
 					else if(i == 7)
 						viewer.x = viewer.y = viewer.z = 0;
 					else if(i == 4)
@@ -84,18 +83,23 @@ namespace Control {
 				viewer.phi = phi*M_PI;
 			}
 		}
-		return alive;
+		return true;
 	}
 
-	bool control::run(std::atomic_bool &alive) {
+	bool control::run(void) {
+		if(!alive) return false;
 		auto delay = 150;
 
 		int frame = 0, dFrames = 0, fps = 0;
-		auto kill = [&alive] {alive = false;};
 		double t1 = glfwGetTime(), t2;
 		while(true) {
-			if(poll(alive))
-				viewer.run(alive);
+			if(!poll()) {
+				errors.emplace_back("Safely shutting down");
+				break;
+			} else if(!viewer.run()) {
+				errors.emplace_back("Failed to run view");
+				break;
+			}
 			if(delay > 1) {
 				std::this_thread::sleep_for(
 						std::chrono::milliseconds(delay));
@@ -111,12 +115,12 @@ namespace Control {
 				t1 += t2;
 				dFrames = 0;
 			}
-			if(!alive) break;
 		}
-		return alive;
+		return false;
 	}
 
-	control::control(std::atomic_bool &alive,
-			const Model::model &model, View::view &view):
-		task(), model(model), viewer(view) {}
+	control::control(const Model::model &model, View::view &view):
+		task(), model(model), viewer(view) {
+		alive = true;
+	}
 }

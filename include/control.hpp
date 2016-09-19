@@ -25,16 +25,14 @@ namespace Control {
 		 */
 		void deadzone(float &x, float &y);
 		
-		bool init(std::atomic_bool &alive) override;
-		bool poll(std::atomic_bool &alive) override;
-		bool run(std::atomic_bool &alive) override;
+		bool init(void) override;
+		bool poll(void) override;
+		bool run(void) override;
 
 		/** Constructor; initializes and applies shaders
  		 * @param alive Shared state; false signals shutdown
  		 */
-		control(std::atomic_bool &alive,
-				const Model::model &model,
-				View::view &viewer);
+		control(const Model::model &model, View::view &viewer);
 	};
 }
 

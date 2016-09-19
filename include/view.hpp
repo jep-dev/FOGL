@@ -37,32 +37,25 @@ namespace View {
 		void setUniforms(void);
 
 		/** Polls for updates; move to control?
- 		 * @param alive Shared state; false signals shutdown
  		 */
-		bool poll(std::atomic_bool &alive) override;
+		bool poll(void) override;
 
 		/*! Calculates and displays the next frame, potentially incorporating
  		 * the frame index (discrete time) and FPS
 		 */
 		void redraw();
 		
-		/** Begins the game loop with the specified callbacks
-		 * @param alive Shared status flag; false signals shutdown
-		 */
-		bool run(std::atomic_bool &alive) override;
+		/** Begins the game loop with the specified callbacks */
+		bool run(void) override;
 
-		/** Initializes any resources not initialized in the constructor
- 		 * @param alive Shared status flag; false signals shutdown
- 		 */
-		bool init(std::atomic_bool &alive) override;
+		/** Initializes any resources not initialized in the constructor */
+		bool init(void) override;
 
 		/** Constructor for a view object
- 		 * @param alive Shared status flag; false signals shutdown
 		 * @param vert_fname Path to a GLSL vertex shader
 		 * @param frag_fname Path to a GLSL fragment shader
 		 */
-		view(std::atomic_bool &alive,
-				const char *vert_fname, const char *frag_fname);
+		view(const char *vert_fname, const char *frag_fname);
 
 		/// Destructor for a view object
 		virtual ~view(void);

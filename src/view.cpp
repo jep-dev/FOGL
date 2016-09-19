@@ -69,7 +69,7 @@ namespace View {
 		glfwSwapBuffers(win);
 	}
 
-	bool view::poll(std::atomic_bool &alive) {
+	bool view::poll(void) {
 		if(alive && win) {
 			glfwMakeContextCurrent(win);
 			glfwPollEvents();
@@ -81,7 +81,7 @@ namespace View {
 		}
 		return alive;
 	}
-	bool view::init(std::atomic_bool &alive) {
+	bool view::init(void) {
 		if(!alive) {
 			return false;
 		}
@@ -120,29 +120,26 @@ namespace View {
 		}
 		ids[e_id_proj] = mat_proj;
 		glUseProgram(ids[e_id_prog]);
-		if(!ids[e_id_vbuf]) glGenBuffers(1, &ids[e_id_vbuf]);
-		if(!ids[e_id_fbuf]) glGenBuffers(1, &ids[e_id_fbuf]);
-		return alive;
+		glGenBuffers(1, &ids[e_id_vbuf]);
+		glGenBuffers(1, &ids[e_id_fbuf]);
+		return true;
 	}
 	
-	bool view::run(std::atomic_bool &alive) {
+	bool view::run(void) {
 		if(alive && win && !glfwWindowShouldClose(win)) {
 			glfwMakeContextCurrent(win);
 			redraw();
+		} else {
+			return false;
 		}
-		return alive;
+		return true;
 	}
-	view::view(std::atomic_bool &alive,
-			const char *vert_fname, const char *frag_fname):
+	view::view(const char *vert_fname, const char *frag_fname):
 		vert_fname(vert_fname), frag_fname(frag_fname),
 			theta(0), phi(0), x(0), y(0), z(0)
 	{
-		if(!alive) {
-			return;
-		}
 		if(glfwInit() == 0) {
 			errors.emplace_back("Could not initialize GLFW.");
-			alive = false;
 			return;
 		}
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -152,14 +149,12 @@ namespace View {
 		
 		if(!(win = glfwCreateWindow(680, 680, "View", NULL, NULL))) {
 			errors.emplace_back("Could not create window.");
-			alive = false;
 			return;
 		}
 
 		glfwMakeContextCurrent(win);
 		if(gl3wInit()) {
 			errors.emplace_back("Could not initialize gl3w.");
-			alive = false;
 			return;
 		}
 		
@@ -174,6 +169,7 @@ namespace View {
 
 		glGenVertexArrays(1, &ids[e_id_va]);
 		glBindVertexArray(ids[e_id_va]);
+		alive = true;
 	}
 	view::~view(void) {
 		if(ids[e_id_prog]) {
