@@ -55,11 +55,15 @@ namespace View {
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, GL_FLOAT,
 				GL_FALSE, stride, nullptr);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT,
+				GL_FALSE, stride, nullptr);
 		
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ids[e_id_fbuf]);
 		glDrawElements(GL_TRIANGLES, nTriangles*3,
 				GL_UNSIGNED_INT, nullptr);
 
+		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(0);
 		glfwSwapBuffers(win);
 	}
