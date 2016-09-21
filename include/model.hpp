@@ -8,7 +8,7 @@
 namespace Model {
 	struct model {
 		std::vector<int> faces;
-		std::vector<float> vertices, normals;
+		std::vector<float> vertices, normals, vertex_normals;
 		std::vector<std::string> comments;
 		virtual ~model(void);
 	};

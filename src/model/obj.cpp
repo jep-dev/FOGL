@@ -1,6 +1,7 @@
 #include "model/obj.hpp"
 
 #include <cstring>
+#include <stdio.h>
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -40,9 +41,23 @@ namespace Model {
 		std::istringstream iss(line);
 		std::string word;
 		iss >> word;
-		int index;
-		while(iss >> index) {
-			faces.emplace_back(index-1);
+		if(line.find("//") != std::string::npos) {
+			int f0, fn0, f1, fn1, f2, fn2;
+			sscanf(line.c_str(), "f %d//%d %d//%d %d//%d",
+					&f0, &fn0, &f1, &fn1, &f2, &fn2);
+			faces.emplace_back(f0-1);
+			faces.emplace_back(f1-1);
+			faces.emplace_back(f2-1);
+			for(auto i : {fn0,fn1,fn2}) {
+				for(int j = 0; j < 3; j++) {
+					vertex_normals.emplace_back(normals[(i-1)*3+j]);
+				}
+			}
+		} else {
+			int index;
+			while(iss >> index) {
+				faces.emplace_back(index-1);
+			}
 		}
 		return e_ok;
 	}

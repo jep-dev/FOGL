@@ -23,6 +23,7 @@ namespace Model {
 			e_normal,
 			e_element_total
 		} e_element;
+
 		static const char *prefix(e_element el);
 
 		/** Loads an obj file with the given path into a vector of elements
@@ -70,7 +71,7 @@ namespace Model {
 				if(i == 0) {
 					os << prefix(e_face);
 				}
-				os << ' ' << f;
+				os << ' ' << (f+1);
 				if(i == 2) {
 					i = -1;
 					os << '\n';
