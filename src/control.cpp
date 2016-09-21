@@ -37,14 +37,17 @@ namespace Control {
 		glfwMakeContextCurrent(viewer.win);
 
 		glBindBuffer(GL_ARRAY_BUFFER, viewer.ids[view::e_id_vbuf]);
-		glBufferData(GL_ARRAY_BUFFER, model.floats.size() * sizeof(float),
-			(void*) &model.floats[0], GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, model.vertices.size() * sizeof(float),
+			(void*) &model.vertices[0], GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, viewer.ids[view::e_id_vnbuf]);
+		glBufferData(GL_ARRAY_BUFFER, model.normals.size() * sizeof(float),
+			(void*) &model.normals[0], GL_STATIC_DRAW);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,
 			viewer.ids[view::e_id_fbuf]);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, model.ints.size() * sizeof(int),
-			(void*) &model.ints[0], GL_STATIC_DRAW);
-		viewer.nTriangles = model.ints.size()/3;
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, model.faces.size() * sizeof(int),
+			(void*) &model.faces[0], GL_STATIC_DRAW);
+		viewer.nTriangles = model.faces.size()/3;
 		return true;
 	}
 
