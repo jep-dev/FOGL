@@ -7,15 +7,13 @@
 
 namespace Model {
 	struct model {
-		std::vector<bool> bools;
-		std::vector<int> ints;
-		std::vector<float> floats;
-		std::vector<std::string> strings;
+		std::vector<int> faces;
+		std::vector<float> vertices, normals;
+		std::vector<std::string> comments;
 		virtual ~model(void);
 	};
 }
 #include "model/obj.hpp"
-#include "model/mtl.hpp"
 #include "model/mesh.hpp"
 
 #endif
