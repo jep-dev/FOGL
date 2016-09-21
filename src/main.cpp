@@ -50,12 +50,26 @@ int main(int argc, const char *argv[]) {
 		std::cout << "Initialized model with obj "
 			<< obj_fname << '.' << std::endl;
 	} else {
-		model = mesh_t(25, 25,
+		int w = 20, h = 20;
+		/*model = trimesh_t(w, h,
 		[](float s, float t, std::vector<float> &vertices) {
-			auto theta = s*M_PI*2, phi = t*M_PI;
-			vertices.emplace_back(cos(theta)*sin(phi)); // X
-			vertices.emplace_back(sin(theta)*sin(phi)); // Y
-			vertices.emplace_back(cos(phi));            // Z
+			vertices.emplace_back(s);
+			vertices.emplace_back((t+1)/2);
+			vertices.emplace_back(1-s*s-pow((t+1)/2,2));
+		}).generate(w, h,
+		[](float s, float t, std::vector<float> &vertices) {
+			vertices.emplace_back(-s);
+			vertices.emplace_back(-(t+1)/2);
+			vertices.emplace_back(1-s*s-pow((t+1)/2,2));
+		});*/
+		model = hexmesh_t(w, h,
+		[](float s, float t, std::vector<float> &vertices) {
+			vertices.emplace_back(s);
+			vertices.emplace_back(t);
+			float n = 24, theta = s*M_PI*n, phi = t*M_PI/2*n,
+				ct = cos(theta), st = sin(theta),
+				cp = cos(phi), sp = sin(phi);
+			vertices.emplace_back((1-s*s-pow((t+1)/2,2))*(1+.1*ct*sp));
 		});
 		std::cout << "Initialized model with ad-hoc mesh." << std::endl;
 	}
