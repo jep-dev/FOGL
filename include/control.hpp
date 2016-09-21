@@ -17,7 +17,7 @@ namespace Control {
 		const Model::model &model;
 		View::view &viewer;
 
-		float r_dead = .125f;
+		float r_dead = .25f;
 		/** Joystick deadzone; zeroes inputs below threshold and normalizes
 		 * inputs above threshold.
 		 * @param x First axis
