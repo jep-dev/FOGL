@@ -63,9 +63,9 @@ namespace Control {
 					else if(i == 7)
 						viewer.x = viewer.y = viewer.z = 0;
 					else if(i == 4)
-						viewer.y -= .1;
+						viewer.w -= .1;
 					else if(i == 5)
-						viewer.y += .1;
+						viewer.w += .1;
 				}
 			}
 			int nAxes;
@@ -76,6 +76,9 @@ namespace Control {
 				deadzone(x, y);
 				viewer.x -= x/20;
 				viewer.z -= y/20;
+			}
+			if(nAxes >= 6) {
+				viewer.y += axes[2]/20 - axes[5]/20;
 			}
 			if(nAxes >= 5) {
 				float theta = axes[3], phi = axes[4];
@@ -88,16 +91,13 @@ namespace Control {
 
 	bool control::run(void) {
 		if(!alive) return false;
-		auto delay = 150;
+		auto delay = 15;
 
 		int frame = 0, dFrames = 0, fps = 0;
 		double t1 = glfwGetTime(), t2;
 		while(true) {
-			if(!poll()) {
+			if(!poll() || !viewer.run()) {
 				errors.emplace_back("Safely shutting down");
-				break;
-			} else if(!viewer.run()) {
-				errors.emplace_back("Failed to run view");
 				break;
 			}
 			if(delay > 1) {
