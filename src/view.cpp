@@ -19,6 +19,7 @@ namespace View {
 		float mag = 1.0f/tan(fov*M_PI/180),
 			ct = cos(theta/2), st = sin(theta/2),
 			cp = cos(phi/2), sp = sin(phi/2),
+			cw = cos(this->w), sw = sin(this->w),
 		mat_proj[]{ // Projection matrix
 			mag*h/w, 0, 0, 0,
 			0, mag, 0, 0,
@@ -30,10 +31,10 @@ namespace View {
 			st*cp, -st*sp,  ct, 0,
 			0,          0,   0, 1
 		}, mat_model[]{ // Model matrix
-			1, 0, 0, 0,
-			0, 1, 0, 0,
-			0, 0, 1, 0,
-			x, y, z-2.5f, 1
+			cw, 0, -sw,    0,
+			 0, 1,   0,    0,
+			sw, 0,  cw,    0,
+			x,  y, z-2.5f, 1
 		};
 
 		glUniformMatrix4fv(ids[e_id_proj], 1, GL_FALSE, mat_proj);
@@ -45,7 +46,6 @@ namespace View {
 		static constexpr const unsigned int
 			offset = 3*sizeof(float),
 			stride = offset,
-			//stride = 2*offset,
 			bits = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
 		setUniforms();
 		glClearColor(0.25,0.25,0.25,1.0);
@@ -56,15 +56,10 @@ namespace View {
 		glVertexAttribPointer(0, 3, GL_FLOAT,
 				GL_FALSE, stride, nullptr);
 		
- 		/*glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 3, GL_FLOAT,
-				GL_FALSE, stride, (void*) offset);*/
-
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ids[e_id_fbuf]);
 		glDrawElements(GL_TRIANGLES, nTriangles*3,
 				GL_UNSIGNED_INT, nullptr);
 
-		//glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(0);
 		glfwSwapBuffers(win);
 	}
@@ -136,7 +131,7 @@ namespace View {
 	}
 	view::view(const char *vert_fname, const char *frag_fname):
 		vert_fname(vert_fname), frag_fname(frag_fname),
-			theta(0), phi(0), x(0), y(0), z(0)
+			theta(0), phi(0), w(0), x(0), y(0), z(0)
 	{
 		if(glfwInit() == 0) {
 			errors.emplace_back("Could not initialize GLFW.");
