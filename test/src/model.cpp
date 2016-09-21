@@ -17,17 +17,12 @@
 int main(int argc, const char **argv) {
 	using namespace Model;
 	const char *obj_fname, *mtl_fname;
-	/*if(argc >= 3) {
-		mtl_fname = argv[2];
-	} else {
-		mtl_fname = MTL_PATH;
-	}*/
 	if(argc >= 2) {
 		obj_fname = argv[1];
 	} else {
 		obj_fname = OBJ_PATH;
 	}
-	obj_t obj;
+	/*obj_t obj;
 	endl(std::cout << "File: " << obj_fname);
 	switch(obj_t::load(obj_fname, obj)) {
 		case obj_t::e_err_io:
@@ -95,7 +90,7 @@ int main(int argc, const char **argv) {
 			std::cout << "{" << *beg_start++ << ", "
 				<< *end_start++ << "}" << std::endl;
 		}
-	}
+	}*/
 
 	/*material_t mtl;
 	std::cout << "\nFile: " << mtl_fname << std::endl;
@@ -112,20 +107,29 @@ int main(int argc, const char **argv) {
 		default: {} break;
 	}*/
 
-	int w = 150, h = 150;
-	mesh_t mesh(w, h, [](float s, float t, std::vector<float> &vertices) {
+	int w = 1, h = 1;
+	/*mesh_t mesh(w, h, [](float s, float t, std::vector<float> &vertices) {
 		auto theta = s*M_PI*2, phi = t*M_PI;
 		vertices.emplace_back(cos(theta)*sin(phi));
 		vertices.emplace_back(sin(theta)*sin(phi));
 		vertices.emplace_back(cos(phi));
+	});*/
+	auto mesh = trimesh_t(w, h, [](float s, float t, std::vector<float> &vertices) {
+		vertices.emplace_back(s);
+		vertices.emplace_back(t);
+		vertices.emplace_back(0);
+	}).generate(w, h, [](float s, float t, std::vector<float> &vertices) {
+		vertices.emplace_back(s+1);
+		vertices.emplace_back(t+1);
+		vertices.emplace_back(0);
 	});
-	std::ofstream file;
+	/*std::ofstream file;
 	file.open("share/sphere.obj");
 	if(!file.is_open()) {
 		std::cout << "Could not open file." << std::endl;
 	} else {
 		file << mesh;
 		file.close();
-	}
-	//std::cout << mesh << std::endl;
+	}*/
+	std::cout << mesh << std::endl;
 }
