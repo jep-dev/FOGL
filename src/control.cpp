@@ -41,7 +41,7 @@ namespace Control {
 			(void*) &model.vertices[0], GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, viewer.ids[view::e_id_vnbuf]);
 		glBufferData(GL_ARRAY_BUFFER, model.normals.size() * sizeof(float),
-			(void*) &model.normals[0], GL_STATIC_DRAW);
+			(void*) &model.vertex_normals[0], GL_STATIC_DRAW);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,
 			viewer.ids[view::e_id_fbuf]);
