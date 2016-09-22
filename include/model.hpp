@@ -7,6 +7,7 @@
 
 namespace Model {
 	struct model {
+		void fan(std::vector<int> face);
 		std::vector<int> faces;
 		std::vector<float> vertices, normals, vertex_normals;
 		std::vector<std::string> comments;
