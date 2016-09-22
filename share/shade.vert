@@ -15,6 +15,6 @@ void main() {
 	gl_Position = vm * vec4(vertex, 1.0);
 	vec4 tnorm = model * vec4(normal, 1.0);
 	vec3 half3 = vec3(.5,.5,.5);
-	vec3 dotted = dot(tnorm.xyz,vec3(-1,0,0))*half3+half3;
-	InColor = vec4(dotted/2+dotted*dotted*dotted/2,1.0);
+	vec3 dotted = dot(tnorm.xyz,normalize(vec3(-1,1,0)))*half3+half3;
+	InColor = vec4(dotted, 1.0);
 }
