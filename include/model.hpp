@@ -16,5 +16,6 @@ namespace Model {
 }
 #include "model/obj.hpp"
 #include "model/mesh.hpp"
+#include "model/node.hpp"
 
 #endif

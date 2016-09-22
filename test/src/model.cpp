@@ -42,7 +42,7 @@ int main(int argc, const char **argv) {
 			break;
 	}
 
-	int w = 1, h = 1;
+	int w = 10, h = 10;
 	/*mesh_t mesh(w, h, [](float s, float t, std::vector<float> &vertices) {
 		auto theta = s*M_PI*2, phi = t*M_PI;
 		vertices.emplace_back(cos(theta)*sin(phi));
@@ -58,6 +58,21 @@ int main(int argc, const char **argv) {
 		vertices.emplace_back(t+1);
 		vertices.emplace_back(0);
 	});
+
+	std::vector<node> nodes(h*w);
+	for(int row = 0, index = 0; row < h; row++) {
+		float t = row/float(h-1);
+		for(int col = 0; col < w; col++, index++) {
+			float s = col/float(w-1);
+			float x[3]{s,t,0};
+			nodes[index] = x;
+			if(row > 0)
+				node::connect(&nodes[index], &nodes[index-w]);
+			if(col > 0)
+				node::connect(&nodes[index], &nodes[index-1]);
+		}
+	}
+
 	//std::cout << mesh << std::endl;
 	/*std::ofstream file;
 	file.open("share/sphere.obj");
