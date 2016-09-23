@@ -26,10 +26,10 @@ namespace View {
 			0, 0, (far+near)/(far-near), -1,
 			0, 0, 2*far*near/(far-near), 0
 		}, mat_view[]{ // View matrix
-			ct*cp, -ct*sp, -st, 0,
-			sp,        cp,   0, 0,
-			st*cp, -st*sp,  ct, 0,
-			0,          0,   0, 1
+			ct, -st*sp, -st*cp, 0,
+			0, cp, -sp, 0,
+			st, ct*sp, ct*cp, 0,
+			0, 0, 0, 1
 		}, mat_model[]{ // Model matrix
 			cw, 0, -sw,    0,
 			 0, 1,   0,    0,
