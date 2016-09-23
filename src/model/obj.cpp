@@ -46,8 +46,8 @@ namespace Model {
 			sscanf(line.c_str(), "f %d//%d %d//%d %d//%d",
 					&f0, &fn0, &f1, &fn1, &f2, &fn2);
 			faces.emplace_back(f0-1);
-			faces.emplace_back(f1-1);
 			faces.emplace_back(f2-1);
+			faces.emplace_back(f1-1);
 			for(auto i : {fn0,fn1,fn2}) {
 				for(int j = 0; j < 3; j++) {
 					vertex_normals.emplace_back(normals[(i-1)*3+j]);
