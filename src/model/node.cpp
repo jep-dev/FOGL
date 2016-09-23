@@ -39,16 +39,10 @@ namespace Model {
 	}
 	node::~node(void) {}
 	std::vector<int> graph::faces(void) {
-		// TODO prevent duplicates including rotations?
 		std::vector<int> output;
-		//int i = 0;
 		for(const auto n : nodes) {
 			for(const auto a : n.adj) {
-				/*int j = std::find(std::begin(nodes), std::end(nodes), *a)
-					- std::begin(nodes);*/
 				for(const auto b : a -> adj) {
-					/*int k = std::find(std::begin(nodes), std::end(nodes), *b)
-						- std::begin(nodes);*/
 					if(a -> connected(b) && b -> id != n.id) {
 						output.emplace_back(n.id);
 						output.emplace_back(a->id);
@@ -56,7 +50,6 @@ namespace Model {
 					}
 				}
 			}
-			//i++;
 		}
 		return output;
 	}
