@@ -50,8 +50,8 @@ int main(int argc, const char *argv[]) {
 		std::cout << "Initialized model with obj "
 			<< obj_fname << '.' << std::endl;
 	} else {
-		int w = 20, h = 20;
-		model = trimesh_t(w, h,
+		int w = 200, h = 200;
+		/*model = trimesh_t(w, h,
 		[](float s, float t, std::vector<float> &vertices) {
 			vertices.emplace_back(s);
 			vertices.emplace_back((t+1)/2);
@@ -61,16 +61,16 @@ int main(int argc, const char *argv[]) {
 			vertices.emplace_back(-s);
 			vertices.emplace_back(-(t+1)/2);
 			vertices.emplace_back(1-s*s-pow((t+1)/2,2));
-		});
-		/*model = hexmesh_t(w, h,
+		});*/
+		model = hexmesh_t(w, h,
 		[](float s, float t, std::vector<float> &vertices) {
 			vertices.emplace_back(s);
 			vertices.emplace_back(t);
 			float n = 24, theta = s*M_PI*n, phi = t*M_PI/2*n,
 				ct = cos(theta), st = sin(theta),
 				cp = cos(phi), sp = sin(phi);
-			vertices.emplace_back((1-s*s-pow((t+1)/2,2))*(1+.05*ct*sp));
-		});*/
+			vertices.emplace_back(1-s*s-pow((t+1)/2,2));
+		});
 		std::cout << "Initialized model with ad-hoc mesh." << std::endl;
 	}
 

@@ -34,10 +34,10 @@ namespace View {
 			cw, 0, -sw,    0,
 			 0, 1,   0,    0,
 			sw, 0,  cw,    0,
-			x,  y, z-2.5f, 1
+			x,  y, z+2.5f, 1
 		};
 
-		glUniformMatrix4fv(ids[e_id_proj], 1, GL_FALSE, mat_proj);
+		glUniformMatrix4fv(ids[e_id_proj], 1, GL_TRUE, mat_proj);
 		glUniformMatrix4fv(ids[e_id_model], 1, GL_FALSE, mat_model);
 		glUniformMatrix4fv(ids[e_id_view], 1, GL_FALSE, mat_view);
 	}
